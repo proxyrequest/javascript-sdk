@@ -1,0 +1,128 @@
+{
+  "name": "@proxyrequest/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript SDK for the ProxyRequest public API.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./models": {
+      "import": {
+        "types": "./dist/models.d.ts",
+        "default": "./dist/models.js"
+      },
+      "require": {
+        "types": "./dist/models.d.cts",
+        "default": "./dist/models.cjs"
+      }
+    },
+    "./openapi": {
+      "import": {
+        "types": "./dist/openapi.d.ts",
+        "default": "./dist/openapi.js"
+      },
+      "require": {
+        "types": "./dist/openapi.d.cts",
+        "default": "./dist/openapi.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "models": [
+        "dist/models.d.ts"
+      ],
+      "openapi": [
+        "dist/openapi.d.ts"
+      ],
+      "*": [
+        "dist/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "docs",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "npm@11.19.0",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proxyrequest/javascript-sdk.git"
+  },
+  "homepage": "https://proxyrequest.com",
+  "bugs": {
+    "url": "https://github.com/proxyrequest/javascript-sdk/issues"
+  },
+  "author": {
+    "name": "ProxyRequest",
+    "email": "support@proxyrequest.com",
+    "url": "https://proxyrequest.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "proxyrequest",
+    "proxy",
+    "sdk",
+    "typescript",
+    "api",
+    "residential-proxy",
+    "white-label"
+  ],
+  "scripts": {
+    "generate:types": "openapi-typescript openapi/openapi.yaml --alphabetize -o src/generated/schema.ts",
+    "generate:resources": "tsx scripts/generate-sdk.ts",
+    "generate": "npm run generate:types && npm run generate:resources && biome format --write src/generated",
+    "generate:check": "npm run generate && git diff --exit-code -- src/generated",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "test:browser": "npm run build && playwright test",
+    "validate:package": "publint --strict && attw --pack . --profile node16",
+    "test:package": "node scripts/package-smoke.mjs",
+    "verify": "npm run generate:check && npm run lint && npm run typecheck && npm test && npm run build && npm run validate:package && npm run test:package",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "openapi-fetch": "0.17.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
+    "@biomejs/biome": "2.5.9",
+    "@playwright/test": "1.62.1",
+    "@types/node": "24.3.0",
+    "openapi-typescript": "7.13.0",
+    "publint": "0.3.24",
+    "tsdown": "0.22.14",
+    "tsx": "4.20.5",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11",
+    "yaml": "2.9.0"
+  }
+}

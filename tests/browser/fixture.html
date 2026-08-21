@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script type="importmap">
+      { "imports": { "openapi-fetch": "/node_modules/openapi-fetch/dist/index.mjs" } }
+    </script>
+  </head>
+  <body>
+    <main id="status">loading</main>
+    <script type="module">
+      import { ProxyRequestClient, WebhookVerifier } from "/dist/index.js";
+
+      globalThis.ProxyRequestSDK = { ProxyRequestClient, WebhookVerifier };
+      document.querySelector("#status").textContent = "ready";
+    </script>
+  </body>
+</html>

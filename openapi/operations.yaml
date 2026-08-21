@@ -1,0 +1,104 @@
+resources:
+  API Keys: {attribute: api_keys, class_name: APIKeysResource}
+  Affiliates: {attribute: affiliates, class_name: AffiliatesResource}
+  Analytics: {attribute: analytics, class_name: AnalyticsResource}
+  Authorization: {attribute: authorization, class_name: AuthorizationResource}
+  Coupons: {attribute: coupons, class_name: CouponsResource}
+  Invoices: {attribute: invoices, class_name: InvoicesResource}
+  Locations: {attribute: locations, class_name: LocationsResource}
+  News: {attribute: news, class_name: NewsResource}
+  Orders: {attribute: orders, class_name: OrdersResource}
+  Packages: {attribute: packages, class_name: PackagesResource}
+  Profile: {attribute: profile, class_name: ProfileResource}
+  Proxies: {attribute: proxies, class_name: ProxiesResource}
+  Rewards: {attribute: rewards, class_name: RewardsResource}
+  Sessions: {attribute: sessions, class_name: SessionsResource}
+  Settings: {attribute: settings, class_name: SettingsResource}
+  Telegram dashboard: {attribute: telegram, class_name: TelegramDashboardResource}
+  Telegram dashboard service: {attribute: telegram_service, class_name: TelegramServiceResource}
+  Users: {attribute: users, class_name: UsersResource}
+  Webhooks: {attribute: webhooks, class_name: WebhooksResource}
+
+operations:
+  affiliates_list: list
+  affiliates_rewards_list: list_rewards
+  affiliates_rewards_overall_retrieve: get_rewards_overall
+  analytics_transactions_retrieve: get_transactions
+  analytics_connections_retrieve: get_connections
+  analytics_domains_retrieve: list_domains
+  analytics_feed_retrieve: list_feed
+  analytics_logs_retrieve: list_logs
+  analytics_overall_retrieve: get_overall
+  api_keys_list: list
+  api_keys_create: create
+  api_keys_destroy: delete
+  coupons_list: list
+  coupons_create: create
+  coupons_retrieve: get
+  coupons_update: replace
+  coupons_partial_update: update
+  coupons_destroy: delete
+  coupons_redeems_list: list_redeems
+  coupons_calculate_price_create: calculate_price
+  integrations_telegram_connection_retrieve: get_connection
+  integrations_telegram_connection_partial_update: update_connection
+  integrations_telegram_connection_destroy: delete_connection
+  integrations_telegram_link_create: create_link
+  integrations_telegram_link_consume_create: consume_link
+  integrations_telegram_session_create: create_session
+  invoices_list: list
+  invoices_create: create
+  invoices_retrieve: get
+  invoices_destroy: delete
+  invoices_download_pdf_retrieve: download_pdf
+  invoices_pay_retrieve: get_payment_link
+  locations_asn_list: list_asns
+  locations_cities_list: list_cities
+  locations_cities_retrieve: get_city
+  locations_continents_list: list_continents
+  locations_continents_retrieve: get_continent
+  locations_countries_list: list_countries
+  locations_countries_retrieve: get_country
+  locations_isps_list: list_isps
+  locations_regions_list: list_regions
+  locations_regions_retrieve: get_region
+  login_create: login
+  login_google_create: login_with_google
+  news_list: list
+  orders_list: list
+  orders_retrieve: get
+  orders_partial_update: update_auto_renewal
+  orders_destroy: delete
+  packages_list: list
+  packages_commissions_list: list_commissions
+  profile_retrieve: get
+  profile_partial_update: update
+  profile_destroy: delete
+  profile_2fa_confirm_create: confirm_two_factor
+  profile_2fa_disable_create: disable_two_factor
+  profile_2fa_setup_create: setup_two_factor
+  profile_2fa_status_retrieve: get_two_factor_status
+  profile_change_password_create: change_password
+  proxies_generate_create: generate
+  recover_password_create: recover_password
+  refresh_create: refresh
+  reset_password_create: reset_password
+  rewards_list: list
+  rewards_claim_create: claim
+  sessions_list: list
+  sessions_destroy: delete
+  settings_retrieve: get
+  signup_create: signup
+  users_list: list
+  users_create: create
+  users_retrieve: get
+  users_partial_update: update
+  users_destroy: delete
+  users_data_add_create: add_data
+  users_data_subtract_create: subtract_data
+  users_orders_list: list_orders
+  users_password_create: reset_password
+  webhooks_list: list
+  webhooks_create: create
+  webhooks_retrieve: get
+  webhooks_destroy: delete
