@@ -22,6 +22,13 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
+      - name: Enable OIDC when no bootstrap token is configured
+        env:
+          BOOTSTRAP_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [[ -z "${BOOTSTRAP_NPM_TOKEN}" ]]; then
+            sed -i '/:_authToken=/d' "${NPM_CONFIG_USERCONFIG}"
+          fi
       - name: Use an npm CLI with Trusted Publishing support
         run: npm install --global npm@11.19.0
       - run: npm ci
