@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Automatic and explicit idempotency keys with bounded ambiguous-outcome retries.
+- Response metadata variants and explicit ETag/`If-Match` optimistic concurrency support.
+
 ## [1.0.0] - 2026-08-21
 
 ### Added

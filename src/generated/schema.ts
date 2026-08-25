@@ -4239,6 +4239,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
       };
       path: {
         /** @description A unique value identifying this API Key. */
@@ -4251,6 +4253,8 @@ export interface operations {
       /** @description No response body */
       204: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content?: never;
@@ -4302,6 +4306,21 @@ export interface operations {
       };
       /** @description The requested resource does not exist in the current account scope. */
       404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
@@ -4403,6 +4422,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
       };
       path?: never;
       cookie?: never;
@@ -4418,6 +4439,10 @@ export interface operations {
       /** @description The resource or action result was created successfully. */
       201: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content: {
@@ -4469,6 +4494,21 @@ export interface operations {
           };
         };
       };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   coupons_retrieve: {
@@ -4489,6 +4529,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -4563,6 +4605,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A unique value identifying this Coupon. */
@@ -4581,6 +4625,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -4647,6 +4693,23 @@ export interface operations {
           };
         };
       };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   coupons_destroy: {
@@ -4655,6 +4718,10 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A unique value identifying this Coupon. */
@@ -4667,6 +4734,8 @@ export interface operations {
       /** @description No response body */
       204: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content?: never;
@@ -4731,6 +4800,38 @@ export interface operations {
           };
         };
       };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   coupons_partial_update: {
@@ -4739,6 +4840,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A unique value identifying this Coupon. */
@@ -4757,6 +4860,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -4812,6 +4917,23 @@ export interface operations {
       404: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -5456,6 +5578,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
       };
       path?: never;
       cookie?: never;
@@ -5471,6 +5595,10 @@ export interface operations {
       /** @description The resource or action result was created successfully. */
       201: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content: {
@@ -5522,6 +5650,21 @@ export interface operations {
           };
         };
       };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   invoices_retrieve: {
@@ -5542,6 +5685,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -5616,6 +5761,10 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A unique value identifying this Invoice. */
@@ -5628,6 +5777,8 @@ export interface operations {
       /** @description No response body */
       204: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content?: never;
@@ -5681,6 +5832,38 @@ export interface operations {
       404: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6980,6 +7163,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7054,6 +7239,10 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A unique value identifying this Order. */
@@ -7066,6 +7255,8 @@ export interface operations {
       /** @description No response body */
       204: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content?: never;
@@ -7130,6 +7321,38 @@ export interface operations {
           };
         };
       };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   orders_partial_update: {
@@ -7138,6 +7361,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A unique value identifying this Order. */
@@ -7156,6 +7381,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7211,6 +7438,23 @@ export interface operations {
       404: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7401,6 +7645,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7460,6 +7706,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path?: never;
       cookie?: never;
@@ -7518,6 +7766,23 @@ export interface operations {
           };
         };
       };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   profile_partial_update: {
@@ -7526,6 +7791,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path?: never;
       cookie?: never;
@@ -7541,6 +7808,8 @@ export interface operations {
       /** @description The request was accepted and the updated resource is returned. */
       202: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7581,6 +7850,23 @@ export interface operations {
       403: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -8738,6 +9024,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
       };
       path?: never;
       cookie?: never;
@@ -8753,6 +9041,10 @@ export interface operations {
       /** @description The resource or action result was created successfully. */
       201: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content: {
@@ -8804,6 +9096,21 @@ export interface operations {
           };
         };
       };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   users_retrieve: {
@@ -8824,6 +9131,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -8898,6 +9207,10 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A UUID string identifying this user. */
@@ -8910,6 +9223,8 @@ export interface operations {
       /** @description No response body */
       204: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content?: never;
@@ -8974,6 +9289,38 @@ export interface operations {
           };
         };
       };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   users_partial_update: {
@@ -8982,6 +9329,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A UUID string identifying this user. */
@@ -9000,6 +9349,8 @@ export interface operations {
       /** @description The request was accepted and the updated resource is returned. */
       202: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -9066,6 +9417,23 @@ export interface operations {
           };
         };
       };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   users_data_add_create: {
@@ -9074,6 +9442,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
       };
       path: {
         /** @description A UUID string identifying this user. */
@@ -9092,6 +9462,8 @@ export interface operations {
       /** @description The request was accepted and the updated resource is returned. */
       202: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content: {
@@ -9145,6 +9517,21 @@ export interface operations {
       };
       /** @description The requested resource does not exist in the current account scope. */
       404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
@@ -9166,6 +9553,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
       };
       path: {
         /** @description A UUID string identifying this user. */
@@ -9184,6 +9573,8 @@ export interface operations {
       /** @description The request was accepted and the updated resource is returned. */
       202: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content: {
@@ -9237,6 +9628,21 @@ export interface operations {
       };
       /** @description The requested resource does not exist in the current account scope. */
       404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
@@ -9519,6 +9925,8 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
       };
       path?: never;
       cookie?: never;
@@ -9534,6 +9942,10 @@ export interface operations {
       /** @description The resource or action result was created successfully. */
       201: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content: {
@@ -9585,6 +9997,21 @@ export interface operations {
           };
         };
       };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
     };
   };
   webhooks_retrieve: {
@@ -9605,6 +10032,8 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {
@@ -9679,6 +10108,10 @@ export interface operations {
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
+        /** @description Strong ETag from the latest representation of this resource. */
+        "If-Match"?: string;
       };
       path: {
         /** @description A unique value identifying this Webhook. */
@@ -9691,6 +10124,8 @@ export interface operations {
       /** @description No response body */
       204: {
         headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
           [name: string]: unknown;
         };
         content?: never;
@@ -9744,6 +10179,38 @@ export interface operations {
       404: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The resource no longer matches the supplied ETag. */
+      412: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          /** @description Strong entity tag for optimistic concurrency control. */
+          ETag?: string;
           [name: string]: unknown;
         };
         content: {

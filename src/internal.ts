@@ -14,6 +14,7 @@ export interface OperationCallSpec {
   method: HttpMethod;
   path: string;
   binary?: boolean;
+  idempotent?: boolean;
 }
 
 export interface OperationCallData {
@@ -26,6 +27,18 @@ export interface OperationCallData {
 
 export interface ResourceClient {
   _call<Result>(spec: OperationCallSpec, data?: OperationCallData): Promise<Result>;
+  _callWithResponse<Result>(
+    spec: OperationCallSpec,
+    data?: OperationCallData,
+  ): Promise<ApiResponse<Result>>;
+}
+
+export interface ApiResponse<Result> {
+  data: Result;
+  statusCode: number;
+  headers: Readonly<Record<string, string>>;
+  etag?: string;
+  idempotencyReplayed: boolean;
 }
 
 export type OperationParameter<

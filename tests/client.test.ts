@@ -143,4 +143,123 @@ describe("ProxyRequestClient", () => {
     );
     expect(() => new ProxyRequestClient({ timeoutMs: -1 })).toThrow(RangeError);
   });
+
+  it("adds idempotency keys only to supported mutations by default", async () => {
+    const requests: Request[] = [];
+    const client = ProxyRequestClient.withApiKey("secret", {
+      fetch: async (input, init) => {
+        requests.push(new Request(input, init));
+        return Response.json({});
+      },
+    });
+
+    await client.invoices.create({ body: { gateway: "manual" } });
+    await client.apiKeys.create();
+    await client.settings.get();
+
+    expect(requests[0]?.headers.get("idempotency-key")).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u,
+    );
+    expect(requests[1]?.headers.get("idempotency-key")).toBeNull();
+    expect(requests[2]?.headers.get("idempotency-key")).toBeNull();
+  });
+
+  it("reuses one key for ambiguous retries and returns response metadata", async () => {
+    const keys: Array<string | null> = [];
+    let attempt = 0;
+    const client = ProxyRequestClient.withApiKey("secret", {
+      fetch: async (input, init) => {
+        const request = new Request(input, init);
+        keys.push(request.headers.get("idempotency-key"));
+        attempt += 1;
+        if (attempt === 1) throw new TypeError("connection reset");
+        if (attempt === 2) {
+          return Response.json(
+            { detail: "Still in progress." },
+            { status: 409, headers: { "Retry-After": "0" } },
+          );
+        }
+        return Response.json(
+          { id: "invoice-1" },
+          {
+            status: 201,
+            headers: { ETag: '"invoice-v1"', "Idempotency-Replayed": "true" },
+          },
+        );
+      },
+    });
+
+    const response = await client.invoices.createWithResponse({
+      body: { gateway: "manual" },
+      idempotencyKey: "invoice-checkout-1",
+    });
+
+    expect(keys).toEqual(["invoice-checkout-1", "invoice-checkout-1", "invoice-checkout-1"]);
+    expect(response.statusCode).toBe(201);
+    expect(response.etag).toBe('"invoice-v1"');
+    expect(response.idempotencyReplayed).toBe(true);
+  });
+
+  it("does not retry ordinary server errors", async () => {
+    let attempts = 0;
+    const client = ProxyRequestClient.withApiKey("secret", {
+      fetch: async () => {
+        attempts += 1;
+        return Response.json({ detail: "Unavailable" }, { status: 500 });
+      },
+    });
+
+    await expect(
+      client.invoices.create({
+        body: { gateway: "manual" },
+        idempotencyKey: "invoice-no-retry",
+      }),
+    ).rejects.toMatchObject({
+      kind: "server",
+      idempotencyKey: "invoice-no-retry",
+    });
+    expect(attempts).toBe(1);
+  });
+
+  it("can disable automatic keys while preserving explicit keys", async () => {
+    const keys: Array<string | null> = [];
+    const client = ProxyRequestClient.withApiKey("secret", {
+      idempotency: false,
+      fetch: async (input, init) => {
+        const request = new Request(input, init);
+        keys.push(request.headers.get("idempotency-key"));
+        return Response.json({}, { status: 201 });
+      },
+    });
+
+    await client.invoices.create({ body: { gateway: "manual" } });
+    await client.invoices.create({
+      body: { gateway: "manual" },
+      idempotencyKey: "manual-key",
+    });
+
+    expect(keys).toEqual([null, "manual-key"]);
+  });
+
+  it("sends If-Match and classifies 412 responses", async () => {
+    let ifMatch: string | null = null;
+    const client = ProxyRequestClient.withApiKey("secret", {
+      fetch: async (input, init) => {
+        ifMatch = new Request(input, init).headers.get("if-match");
+        return Response.json(
+          { detail: "The resource changed." },
+          { status: 412, headers: { ETag: '"user-v2"' } },
+        );
+      },
+    });
+
+    await expect(
+      client.users.update({
+        id: "00000000-0000-4000-8000-000000000001",
+        ifMatch: '"user-v1"',
+        body: { first_name: "Ada" },
+      }),
+    ).rejects.toMatchObject({ kind: "precondition", currentEtag: '"user-v2"' });
+    expect(ifMatch).toBe('"user-v1"');
+  });
 });

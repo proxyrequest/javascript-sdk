@@ -2,6 +2,7 @@
 
 import type { FileDownload } from "../files.js";
 import type {
+  ApiResponse,
   OperationBody,
   OperationParameter,
   OperationResult,
@@ -29,6 +30,7 @@ export type APIKeysCreateResponse = OperationResult<operations["api_keys_create"
 
 export interface APIKeysDeleteOptions {
   id: OperationParameter<operations["api_keys_destroy"], "path", "id">;
+  idempotencyKey?: OperationParameter<operations["api_keys_destroy"], "header", "Idempotency-Key">;
   acceptLanguage?: OperationParameter<operations["api_keys_destroy"], "header", "Accept-Language">;
   request?: RequestControls;
 }
@@ -44,7 +46,14 @@ export class APIKeysResource {
 
   /** List API keys */
   async list(options: APIKeysListOptions = {}): Promise<APIKeysListResponse> {
-    return this.#client._call<APIKeysListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List API keys; include response metadata. */
+  async listWithResponse(
+    options: APIKeysListOptions = {},
+  ): Promise<ApiResponse<APIKeysListResponse>> {
+    return this.#client._callWithResponse<APIKeysListResponse>(
       {
         operationId: "api_keys_list",
         method: "GET",
@@ -65,7 +74,14 @@ export class APIKeysResource {
 
   /** Create an API key */
   async create(options: APIKeysCreateOptions = {}): Promise<APIKeysCreateResponse> {
-    return this.#client._call<APIKeysCreateResponse>(
+    return (await this.createWithResponse(options)).data;
+  }
+
+  /** Create an API key; include response metadata. */
+  async createWithResponse(
+    options: APIKeysCreateOptions = {},
+  ): Promise<ApiResponse<APIKeysCreateResponse>> {
+    return this.#client._callWithResponse<APIKeysCreateResponse>(
       {
         operationId: "api_keys_create",
         method: "POST",
@@ -83,17 +99,26 @@ export class APIKeysResource {
 
   /** Revoke an API key */
   async delete(options: APIKeysDeleteOptions): Promise<APIKeysDeleteResponse> {
-    return this.#client._call<APIKeysDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Revoke an API key; include response metadata. */
+  async deleteWithResponse(
+    options: APIKeysDeleteOptions,
+  ): Promise<ApiResponse<APIKeysDeleteResponse>> {
+    return this.#client._callWithResponse<APIKeysDeleteResponse>(
       {
         operationId: "api_keys_destroy",
         method: "DELETE",
         path: "/api-keys/{id}",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.request === undefined ? {} : { request: options.request }),
@@ -146,7 +171,14 @@ export class AffiliatesResource {
 
   /** List referred customers */
   async list(options: AffiliatesListOptions = {}): Promise<AffiliatesListResponse> {
-    return this.#client._call<AffiliatesListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List referred customers; include response metadata. */
+  async listWithResponse(
+    options: AffiliatesListOptions = {},
+  ): Promise<ApiResponse<AffiliatesListResponse>> {
+    return this.#client._callWithResponse<AffiliatesListResponse>(
       {
         operationId: "affiliates_list",
         method: "GET",
@@ -169,7 +201,14 @@ export class AffiliatesResource {
   async listRewards(
     options: AffiliatesListRewardsOptions = {},
   ): Promise<AffiliatesListRewardsResponse> {
-    return this.#client._call<AffiliatesListRewardsResponse>(
+    return (await this.listRewardsWithResponse(options)).data;
+  }
+
+  /** List affiliate reward entries; include response metadata. */
+  async listRewardsWithResponse(
+    options: AffiliatesListRewardsOptions = {},
+  ): Promise<ApiResponse<AffiliatesListRewardsResponse>> {
+    return this.#client._callWithResponse<AffiliatesListRewardsResponse>(
       {
         operationId: "affiliates_rewards_list",
         method: "GET",
@@ -192,7 +231,14 @@ export class AffiliatesResource {
   async getRewardsOverall(
     options: AffiliatesGetRewardsOverallOptions = {},
   ): Promise<AffiliatesGetRewardsOverallResponse> {
-    return this.#client._call<AffiliatesGetRewardsOverallResponse>(
+    return (await this.getRewardsOverallWithResponse(options)).data;
+  }
+
+  /** Get affiliate earnings over time; include response metadata. */
+  async getRewardsOverallWithResponse(
+    options: AffiliatesGetRewardsOverallOptions = {},
+  ): Promise<ApiResponse<AffiliatesGetRewardsOverallResponse>> {
+    return this.#client._callWithResponse<AffiliatesGetRewardsOverallResponse>(
       {
         operationId: "affiliates_rewards_overall_retrieve",
         method: "GET",
@@ -372,7 +418,14 @@ export class AnalyticsResource {
   async getTransactions(
     options: AnalyticsGetTransactionsOptions,
   ): Promise<AnalyticsGetTransactionsResponse> {
-    return this.#client._call<AnalyticsGetTransactionsResponse>(
+    return (await this.getTransactionsWithResponse(options)).data;
+  }
+
+  /** List data transactions; include response metadata. */
+  async getTransactionsWithResponse(
+    options: AnalyticsGetTransactionsOptions,
+  ): Promise<ApiResponse<AnalyticsGetTransactionsResponse>> {
+    return this.#client._callWithResponse<AnalyticsGetTransactionsResponse>(
       {
         operationId: "analytics_transactions_retrieve",
         method: "GET",
@@ -404,7 +457,14 @@ export class AnalyticsResource {
   async getConnections(
     options: AnalyticsGetConnectionsOptions = {},
   ): Promise<AnalyticsGetConnectionsResponse> {
-    return this.#client._call<AnalyticsGetConnectionsResponse>(
+    return (await this.getConnectionsWithResponse(options)).data;
+  }
+
+  /** List active proxy connections; include response metadata. */
+  async getConnectionsWithResponse(
+    options: AnalyticsGetConnectionsOptions = {},
+  ): Promise<ApiResponse<AnalyticsGetConnectionsResponse>> {
+    return this.#client._callWithResponse<AnalyticsGetConnectionsResponse>(
       {
         operationId: "analytics_connections_retrieve",
         method: "GET",
@@ -429,7 +489,14 @@ export class AnalyticsResource {
   async listDomains(
     options: AnalyticsListDomainsOptions = {},
   ): Promise<AnalyticsListDomainsResponse> {
-    return this.#client._call<AnalyticsListDomainsResponse>(
+    return (await this.listDomainsWithResponse(options)).data;
+  }
+
+  /** List top destination domains; include response metadata. */
+  async listDomainsWithResponse(
+    options: AnalyticsListDomainsOptions = {},
+  ): Promise<ApiResponse<AnalyticsListDomainsResponse>> {
+    return this.#client._callWithResponse<AnalyticsListDomainsResponse>(
       {
         operationId: "analytics_domains_retrieve",
         method: "GET",
@@ -460,7 +527,14 @@ export class AnalyticsResource {
 
   /** List proxy request activity */
   async listFeed(options: AnalyticsListFeedOptions = {}): Promise<AnalyticsListFeedResponse> {
-    return this.#client._call<AnalyticsListFeedResponse>(
+    return (await this.listFeedWithResponse(options)).data;
+  }
+
+  /** List proxy request activity; include response metadata. */
+  async listFeedWithResponse(
+    options: AnalyticsListFeedOptions = {},
+  ): Promise<ApiResponse<AnalyticsListFeedResponse>> {
+    return this.#client._callWithResponse<AnalyticsListFeedResponse>(
       {
         operationId: "analytics_feed_retrieve",
         method: "GET",
@@ -493,7 +567,14 @@ export class AnalyticsResource {
 
   /** List proxy error logs */
   async listLogs(options: AnalyticsListLogsOptions = {}): Promise<AnalyticsListLogsResponse> {
-    return this.#client._call<AnalyticsListLogsResponse>(
+    return (await this.listLogsWithResponse(options)).data;
+  }
+
+  /** List proxy error logs; include response metadata. */
+  async listLogsWithResponse(
+    options: AnalyticsListLogsOptions = {},
+  ): Promise<ApiResponse<AnalyticsListLogsResponse>> {
+    return this.#client._callWithResponse<AnalyticsListLogsResponse>(
       {
         operationId: "analytics_logs_retrieve",
         method: "GET",
@@ -526,7 +607,14 @@ export class AnalyticsResource {
 
   /** Get traffic totals over time */
   async getOverall(options: AnalyticsGetOverallOptions = {}): Promise<AnalyticsGetOverallResponse> {
-    return this.#client._call<AnalyticsGetOverallResponse>(
+    return (await this.getOverallWithResponse(options)).data;
+  }
+
+  /** Get traffic totals over time; include response metadata. */
+  async getOverallWithResponse(
+    options: AnalyticsGetOverallOptions = {},
+  ): Promise<ApiResponse<AnalyticsGetOverallResponse>> {
+    return this.#client._callWithResponse<AnalyticsGetOverallResponse>(
       {
         operationId: "analytics_overall_retrieve",
         method: "GET",
@@ -613,7 +701,14 @@ export class AuthorizationResource {
 
   /** Sign in with email or username */
   async login(options: AuthorizationLoginOptions): Promise<AuthorizationLoginResponse> {
-    return this.#client._call<AuthorizationLoginResponse>(
+    return (await this.loginWithResponse(options)).data;
+  }
+
+  /** Sign in with email or username; include response metadata. */
+  async loginWithResponse(
+    options: AuthorizationLoginOptions,
+  ): Promise<ApiResponse<AuthorizationLoginResponse>> {
+    return this.#client._callWithResponse<AuthorizationLoginResponse>(
       {
         operationId: "login_create",
         method: "POST",
@@ -633,7 +728,14 @@ export class AuthorizationResource {
   async loginWithGoogle(
     options: AuthorizationLoginWithGoogleOptions,
   ): Promise<AuthorizationLoginWithGoogleResponse> {
-    return this.#client._call<AuthorizationLoginWithGoogleResponse>(
+    return (await this.loginWithGoogleWithResponse(options)).data;
+  }
+
+  /** Sign in with Google; include response metadata. */
+  async loginWithGoogleWithResponse(
+    options: AuthorizationLoginWithGoogleOptions,
+  ): Promise<ApiResponse<AuthorizationLoginWithGoogleResponse>> {
+    return this.#client._callWithResponse<AuthorizationLoginWithGoogleResponse>(
       {
         operationId: "login_google_create",
         method: "POST",
@@ -653,7 +755,14 @@ export class AuthorizationResource {
   async recoverPassword(
     options: AuthorizationRecoverPasswordOptions,
   ): Promise<AuthorizationRecoverPasswordResponse> {
-    return this.#client._call<AuthorizationRecoverPasswordResponse>(
+    return (await this.recoverPasswordWithResponse(options)).data;
+  }
+
+  /** Send a password recovery email; include response metadata. */
+  async recoverPasswordWithResponse(
+    options: AuthorizationRecoverPasswordOptions,
+  ): Promise<ApiResponse<AuthorizationRecoverPasswordResponse>> {
+    return this.#client._callWithResponse<AuthorizationRecoverPasswordResponse>(
       {
         operationId: "recover_password_create",
         method: "POST",
@@ -671,7 +780,14 @@ export class AuthorizationResource {
 
   /** Refresh an access token */
   async refresh(options: AuthorizationRefreshOptions): Promise<AuthorizationRefreshResponse> {
-    return this.#client._call<AuthorizationRefreshResponse>(
+    return (await this.refreshWithResponse(options)).data;
+  }
+
+  /** Refresh an access token; include response metadata. */
+  async refreshWithResponse(
+    options: AuthorizationRefreshOptions,
+  ): Promise<ApiResponse<AuthorizationRefreshResponse>> {
+    return this.#client._callWithResponse<AuthorizationRefreshResponse>(
       {
         operationId: "refresh_create",
         method: "POST",
@@ -689,7 +805,14 @@ export class AuthorizationResource {
 
   /** Create a customer account */
   async signup(options: AuthorizationSignupOptions): Promise<AuthorizationSignupResponse> {
-    return this.#client._call<AuthorizationSignupResponse>(
+    return (await this.signupWithResponse(options)).data;
+  }
+
+  /** Create a customer account; include response metadata. */
+  async signupWithResponse(
+    options: AuthorizationSignupOptions,
+  ): Promise<ApiResponse<AuthorizationSignupResponse>> {
+    return this.#client._callWithResponse<AuthorizationSignupResponse>(
       {
         operationId: "signup_create",
         method: "POST",
@@ -720,6 +843,7 @@ export interface CouponsListOptions {
 export type CouponsListResponse = OperationResult<operations["coupons_list"]>;
 
 export interface CouponsCreateOptions {
+  idempotencyKey?: OperationParameter<operations["coupons_create"], "header", "Idempotency-Key">;
   acceptLanguage?: OperationParameter<operations["coupons_create"], "header", "Accept-Language">;
   body: OperationBody<operations["coupons_create"]>;
   request?: RequestControls;
@@ -737,6 +861,7 @@ export type CouponsGetResponse = OperationResult<operations["coupons_retrieve"]>
 
 export interface CouponsReplaceOptions {
   id: OperationParameter<operations["coupons_update"], "path", "id">;
+  ifMatch?: OperationParameter<operations["coupons_update"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<operations["coupons_update"], "header", "Accept-Language">;
   body: OperationBody<operations["coupons_update"]>;
   request?: RequestControls;
@@ -746,6 +871,7 @@ export type CouponsReplaceResponse = OperationResult<operations["coupons_update"
 
 export interface CouponsUpdateOptions {
   id: OperationParameter<operations["coupons_partial_update"], "path", "id">;
+  ifMatch?: OperationParameter<operations["coupons_partial_update"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<
     operations["coupons_partial_update"],
     "header",
@@ -759,6 +885,8 @@ export type CouponsUpdateResponse = OperationResult<operations["coupons_partial_
 
 export interface CouponsDeleteOptions {
   id: OperationParameter<operations["coupons_destroy"], "path", "id">;
+  idempotencyKey?: OperationParameter<operations["coupons_destroy"], "header", "Idempotency-Key">;
+  ifMatch?: OperationParameter<operations["coupons_destroy"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<operations["coupons_destroy"], "header", "Accept-Language">;
   request?: RequestControls;
 }
@@ -805,7 +933,14 @@ export class CouponsResource {
 
   /** List available coupons */
   async list(options: CouponsListOptions = {}): Promise<CouponsListResponse> {
-    return this.#client._call<CouponsListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List available coupons; include response metadata. */
+  async listWithResponse(
+    options: CouponsListOptions = {},
+  ): Promise<ApiResponse<CouponsListResponse>> {
+    return this.#client._callWithResponse<CouponsListResponse>(
       {
         operationId: "coupons_list",
         method: "GET",
@@ -830,14 +965,23 @@ export class CouponsResource {
 
   /** Create a coupon */
   async create(options: CouponsCreateOptions): Promise<CouponsCreateResponse> {
-    return this.#client._call<CouponsCreateResponse>(
+    return (await this.createWithResponse(options)).data;
+  }
+
+  /** Create a coupon; include response metadata. */
+  async createWithResponse(
+    options: CouponsCreateOptions,
+  ): Promise<ApiResponse<CouponsCreateResponse>> {
+    return this.#client._callWithResponse<CouponsCreateResponse>(
       {
         operationId: "coupons_create",
         method: "POST",
         path: "/coupons",
+        idempotent: true,
       },
       {
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
@@ -848,7 +992,12 @@ export class CouponsResource {
 
   /** Get a coupon */
   async get(options: CouponsGetOptions): Promise<CouponsGetResponse> {
-    return this.#client._call<CouponsGetResponse>(
+    return (await this.getWithResponse(options)).data;
+  }
+
+  /** Get a coupon; include response metadata. */
+  async getWithResponse(options: CouponsGetOptions): Promise<ApiResponse<CouponsGetResponse>> {
+    return this.#client._callWithResponse<CouponsGetResponse>(
       {
         operationId: "coupons_retrieve",
         method: "GET",
@@ -868,7 +1017,14 @@ export class CouponsResource {
 
   /** Replace a coupon */
   async replace(options: CouponsReplaceOptions): Promise<CouponsReplaceResponse> {
-    return this.#client._call<CouponsReplaceResponse>(
+    return (await this.replaceWithResponse(options)).data;
+  }
+
+  /** Replace a coupon; include response metadata. */
+  async replaceWithResponse(
+    options: CouponsReplaceOptions,
+  ): Promise<ApiResponse<CouponsReplaceResponse>> {
+    return this.#client._callWithResponse<CouponsReplaceResponse>(
       {
         operationId: "coupons_update",
         method: "PUT",
@@ -879,6 +1035,7 @@ export class CouponsResource {
           id: options.id,
         },
         headers: {
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
@@ -889,7 +1046,14 @@ export class CouponsResource {
 
   /** Update a coupon */
   async update(options: CouponsUpdateOptions): Promise<CouponsUpdateResponse> {
-    return this.#client._call<CouponsUpdateResponse>(
+    return (await this.updateWithResponse(options)).data;
+  }
+
+  /** Update a coupon; include response metadata. */
+  async updateWithResponse(
+    options: CouponsUpdateOptions,
+  ): Promise<ApiResponse<CouponsUpdateResponse>> {
+    return this.#client._callWithResponse<CouponsUpdateResponse>(
       {
         operationId: "coupons_partial_update",
         method: "PATCH",
@@ -900,6 +1064,7 @@ export class CouponsResource {
           id: options.id,
         },
         headers: {
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.body === undefined ? {} : { body: options.body }),
@@ -910,17 +1075,27 @@ export class CouponsResource {
 
   /** Delete a coupon */
   async delete(options: CouponsDeleteOptions): Promise<CouponsDeleteResponse> {
-    return this.#client._call<CouponsDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Delete a coupon; include response metadata. */
+  async deleteWithResponse(
+    options: CouponsDeleteOptions,
+  ): Promise<ApiResponse<CouponsDeleteResponse>> {
+    return this.#client._callWithResponse<CouponsDeleteResponse>(
       {
         operationId: "coupons_destroy",
         method: "DELETE",
         path: "/coupons/{id}",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.request === undefined ? {} : { request: options.request }),
@@ -930,7 +1105,14 @@ export class CouponsResource {
 
   /** List coupon redemptions */
   async listRedeems(options: CouponsListRedeemsOptions): Promise<CouponsListRedeemsResponse> {
-    return this.#client._call<CouponsListRedeemsResponse>(
+    return (await this.listRedeemsWithResponse(options)).data;
+  }
+
+  /** List coupon redemptions; include response metadata. */
+  async listRedeemsWithResponse(
+    options: CouponsListRedeemsOptions,
+  ): Promise<ApiResponse<CouponsListRedeemsResponse>> {
+    return this.#client._callWithResponse<CouponsListRedeemsResponse>(
       {
         operationId: "coupons_redeems_list",
         method: "GET",
@@ -959,7 +1141,14 @@ export class CouponsResource {
   async calculatePrice(
     options: CouponsCalculatePriceOptions,
   ): Promise<CouponsCalculatePriceResponse> {
-    return this.#client._call<CouponsCalculatePriceResponse>(
+    return (await this.calculatePriceWithResponse(options)).data;
+  }
+
+  /** Calculate a discounted price; include response metadata. */
+  async calculatePriceWithResponse(
+    options: CouponsCalculatePriceOptions,
+  ): Promise<ApiResponse<CouponsCalculatePriceResponse>> {
+    return this.#client._callWithResponse<CouponsCalculatePriceResponse>(
       {
         operationId: "coupons_calculate_price_create",
         method: "POST",
@@ -995,6 +1184,7 @@ export interface InvoicesListOptions {
 export type InvoicesListResponse = OperationResult<operations["invoices_list"]>;
 
 export interface InvoicesCreateOptions {
+  idempotencyKey?: OperationParameter<operations["invoices_create"], "header", "Idempotency-Key">;
   acceptLanguage?: OperationParameter<operations["invoices_create"], "header", "Accept-Language">;
   body: OperationBody<operations["invoices_create"]>;
   request?: RequestControls;
@@ -1012,6 +1202,8 @@ export type InvoicesGetResponse = OperationResult<operations["invoices_retrieve"
 
 export interface InvoicesDeleteOptions {
   id: OperationParameter<operations["invoices_destroy"], "path", "id">;
+  idempotencyKey?: OperationParameter<operations["invoices_destroy"], "header", "Idempotency-Key">;
+  ifMatch?: OperationParameter<operations["invoices_destroy"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<operations["invoices_destroy"], "header", "Accept-Language">;
   request?: RequestControls;
 }
@@ -1051,7 +1243,14 @@ export class InvoicesResource {
 
   /** List invoices */
   async list(options: InvoicesListOptions = {}): Promise<InvoicesListResponse> {
-    return this.#client._call<InvoicesListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List invoices; include response metadata. */
+  async listWithResponse(
+    options: InvoicesListOptions = {},
+  ): Promise<ApiResponse<InvoicesListResponse>> {
+    return this.#client._callWithResponse<InvoicesListResponse>(
       {
         operationId: "invoices_list",
         method: "GET",
@@ -1081,14 +1280,23 @@ export class InvoicesResource {
 
   /** Create an invoice */
   async create(options: InvoicesCreateOptions): Promise<InvoicesCreateResponse> {
-    return this.#client._call<InvoicesCreateResponse>(
+    return (await this.createWithResponse(options)).data;
+  }
+
+  /** Create an invoice; include response metadata. */
+  async createWithResponse(
+    options: InvoicesCreateOptions,
+  ): Promise<ApiResponse<InvoicesCreateResponse>> {
+    return this.#client._callWithResponse<InvoicesCreateResponse>(
       {
         operationId: "invoices_create",
         method: "POST",
         path: "/invoices",
+        idempotent: true,
       },
       {
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
@@ -1099,7 +1307,12 @@ export class InvoicesResource {
 
   /** Get an invoice */
   async get(options: InvoicesGetOptions): Promise<InvoicesGetResponse> {
-    return this.#client._call<InvoicesGetResponse>(
+    return (await this.getWithResponse(options)).data;
+  }
+
+  /** Get an invoice; include response metadata. */
+  async getWithResponse(options: InvoicesGetOptions): Promise<ApiResponse<InvoicesGetResponse>> {
+    return this.#client._callWithResponse<InvoicesGetResponse>(
       {
         operationId: "invoices_retrieve",
         method: "GET",
@@ -1119,17 +1332,27 @@ export class InvoicesResource {
 
   /** Delete an invoice */
   async delete(options: InvoicesDeleteOptions): Promise<InvoicesDeleteResponse> {
-    return this.#client._call<InvoicesDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Delete an invoice; include response metadata. */
+  async deleteWithResponse(
+    options: InvoicesDeleteOptions,
+  ): Promise<ApiResponse<InvoicesDeleteResponse>> {
+    return this.#client._callWithResponse<InvoicesDeleteResponse>(
       {
         operationId: "invoices_destroy",
         method: "DELETE",
         path: "/invoices/{id}",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.request === undefined ? {} : { request: options.request }),
@@ -1139,7 +1362,14 @@ export class InvoicesResource {
 
   /** Download an invoice PDF */
   async downloadPdf(options: InvoicesDownloadPdfOptions): Promise<InvoicesDownloadPdfResponse> {
-    return this.#client._call<InvoicesDownloadPdfResponse>(
+    return (await this.downloadPdfWithResponse(options)).data;
+  }
+
+  /** Download an invoice PDF; include response metadata. */
+  async downloadPdfWithResponse(
+    options: InvoicesDownloadPdfOptions,
+  ): Promise<ApiResponse<InvoicesDownloadPdfResponse>> {
+    return this.#client._callWithResponse<InvoicesDownloadPdfResponse>(
       {
         operationId: "invoices_download_pdf_retrieve",
         method: "GET",
@@ -1162,7 +1392,14 @@ export class InvoicesResource {
   async getPaymentLink(
     options: InvoicesGetPaymentLinkOptions,
   ): Promise<InvoicesGetPaymentLinkResponse> {
-    return this.#client._call<InvoicesGetPaymentLinkResponse>(
+    return (await this.getPaymentLinkWithResponse(options)).data;
+  }
+
+  /** Get an invoice payment link; include response metadata. */
+  async getPaymentLinkWithResponse(
+    options: InvoicesGetPaymentLinkOptions,
+  ): Promise<ApiResponse<InvoicesGetPaymentLinkResponse>> {
+    return this.#client._callWithResponse<InvoicesGetPaymentLinkResponse>(
       {
         operationId: "invoices_pay_retrieve",
         method: "GET",
@@ -1360,7 +1597,14 @@ export class LocationsResource {
 
   /** List available autonomous systems */
   async listAsns(options: LocationsListAsnsOptions = {}): Promise<LocationsListAsnsResponse> {
-    return this.#client._call<LocationsListAsnsResponse>(
+    return (await this.listAsnsWithResponse(options)).data;
+  }
+
+  /** List available autonomous systems; include response metadata. */
+  async listAsnsWithResponse(
+    options: LocationsListAsnsOptions = {},
+  ): Promise<ApiResponse<LocationsListAsnsResponse>> {
+    return this.#client._callWithResponse<LocationsListAsnsResponse>(
       {
         operationId: "locations_asn_list",
         method: "GET",
@@ -1388,7 +1632,14 @@ export class LocationsResource {
 
   /** List available cities */
   async listCities(options: LocationsListCitiesOptions = {}): Promise<LocationsListCitiesResponse> {
-    return this.#client._call<LocationsListCitiesResponse>(
+    return (await this.listCitiesWithResponse(options)).data;
+  }
+
+  /** List available cities; include response metadata. */
+  async listCitiesWithResponse(
+    options: LocationsListCitiesOptions = {},
+  ): Promise<ApiResponse<LocationsListCitiesResponse>> {
+    return this.#client._callWithResponse<LocationsListCitiesResponse>(
       {
         operationId: "locations_cities_list",
         method: "GET",
@@ -1416,7 +1667,14 @@ export class LocationsResource {
 
   /** Get a city */
   async getCity(options: LocationsGetCityOptions): Promise<LocationsGetCityResponse> {
-    return this.#client._call<LocationsGetCityResponse>(
+    return (await this.getCityWithResponse(options)).data;
+  }
+
+  /** Get a city; include response metadata. */
+  async getCityWithResponse(
+    options: LocationsGetCityOptions,
+  ): Promise<ApiResponse<LocationsGetCityResponse>> {
+    return this.#client._callWithResponse<LocationsGetCityResponse>(
       {
         operationId: "locations_cities_retrieve",
         method: "GET",
@@ -1438,7 +1696,14 @@ export class LocationsResource {
   async listContinents(
     options: LocationsListContinentsOptions = {},
   ): Promise<LocationsListContinentsResponse> {
-    return this.#client._call<LocationsListContinentsResponse>(
+    return (await this.listContinentsWithResponse(options)).data;
+  }
+
+  /** List available continents; include response metadata. */
+  async listContinentsWithResponse(
+    options: LocationsListContinentsOptions = {},
+  ): Promise<ApiResponse<LocationsListContinentsResponse>> {
+    return this.#client._callWithResponse<LocationsListContinentsResponse>(
       {
         operationId: "locations_continents_list",
         method: "GET",
@@ -1466,7 +1731,14 @@ export class LocationsResource {
   async getContinent(
     options: LocationsGetContinentOptions,
   ): Promise<LocationsGetContinentResponse> {
-    return this.#client._call<LocationsGetContinentResponse>(
+    return (await this.getContinentWithResponse(options)).data;
+  }
+
+  /** Get a continent; include response metadata. */
+  async getContinentWithResponse(
+    options: LocationsGetContinentOptions,
+  ): Promise<ApiResponse<LocationsGetContinentResponse>> {
+    return this.#client._callWithResponse<LocationsGetContinentResponse>(
       {
         operationId: "locations_continents_retrieve",
         method: "GET",
@@ -1488,7 +1760,14 @@ export class LocationsResource {
   async listCountries(
     options: LocationsListCountriesOptions = {},
   ): Promise<LocationsListCountriesResponse> {
-    return this.#client._call<LocationsListCountriesResponse>(
+    return (await this.listCountriesWithResponse(options)).data;
+  }
+
+  /** List available countries; include response metadata. */
+  async listCountriesWithResponse(
+    options: LocationsListCountriesOptions = {},
+  ): Promise<ApiResponse<LocationsListCountriesResponse>> {
+    return this.#client._callWithResponse<LocationsListCountriesResponse>(
       {
         operationId: "locations_countries_list",
         method: "GET",
@@ -1514,7 +1793,14 @@ export class LocationsResource {
 
   /** Get a country */
   async getCountry(options: LocationsGetCountryOptions): Promise<LocationsGetCountryResponse> {
-    return this.#client._call<LocationsGetCountryResponse>(
+    return (await this.getCountryWithResponse(options)).data;
+  }
+
+  /** Get a country; include response metadata. */
+  async getCountryWithResponse(
+    options: LocationsGetCountryOptions,
+  ): Promise<ApiResponse<LocationsGetCountryResponse>> {
+    return this.#client._callWithResponse<LocationsGetCountryResponse>(
       {
         operationId: "locations_countries_retrieve",
         method: "GET",
@@ -1534,7 +1820,14 @@ export class LocationsResource {
 
   /** List available internet service providers */
   async listIsps(options: LocationsListIspsOptions = {}): Promise<LocationsListIspsResponse> {
-    return this.#client._call<LocationsListIspsResponse>(
+    return (await this.listIspsWithResponse(options)).data;
+  }
+
+  /** List available internet service providers; include response metadata. */
+  async listIspsWithResponse(
+    options: LocationsListIspsOptions = {},
+  ): Promise<ApiResponse<LocationsListIspsResponse>> {
+    return this.#client._callWithResponse<LocationsListIspsResponse>(
       {
         operationId: "locations_isps_list",
         method: "GET",
@@ -1563,7 +1856,14 @@ export class LocationsResource {
   async listRegions(
     options: LocationsListRegionsOptions = {},
   ): Promise<LocationsListRegionsResponse> {
-    return this.#client._call<LocationsListRegionsResponse>(
+    return (await this.listRegionsWithResponse(options)).data;
+  }
+
+  /** List available regions; include response metadata. */
+  async listRegionsWithResponse(
+    options: LocationsListRegionsOptions = {},
+  ): Promise<ApiResponse<LocationsListRegionsResponse>> {
+    return this.#client._callWithResponse<LocationsListRegionsResponse>(
       {
         operationId: "locations_regions_list",
         method: "GET",
@@ -1590,7 +1890,14 @@ export class LocationsResource {
 
   /** Get a region */
   async getRegion(options: LocationsGetRegionOptions): Promise<LocationsGetRegionResponse> {
-    return this.#client._call<LocationsGetRegionResponse>(
+    return (await this.getRegionWithResponse(options)).data;
+  }
+
+  /** Get a region; include response metadata. */
+  async getRegionWithResponse(
+    options: LocationsGetRegionOptions,
+  ): Promise<ApiResponse<LocationsGetRegionResponse>> {
+    return this.#client._callWithResponse<LocationsGetRegionResponse>(
       {
         operationId: "locations_regions_retrieve",
         method: "GET",
@@ -1629,7 +1936,12 @@ export class NewsResource {
 
   /** List product announcements */
   async list(options: NewsListOptions = {}): Promise<NewsListResponse> {
-    return this.#client._call<NewsListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List product announcements; include response metadata. */
+  async listWithResponse(options: NewsListOptions = {}): Promise<ApiResponse<NewsListResponse>> {
+    return this.#client._callWithResponse<NewsListResponse>(
       {
         operationId: "news_list",
         method: "GET",
@@ -1677,6 +1989,7 @@ export type OrdersGetResponse = OperationResult<operations["orders_retrieve"]>;
 
 export interface OrdersUpdateAutoRenewalOptions {
   id: OperationParameter<operations["orders_partial_update"], "path", "id">;
+  ifMatch?: OperationParameter<operations["orders_partial_update"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<
     operations["orders_partial_update"],
     "header",
@@ -1690,6 +2003,8 @@ export type OrdersUpdateAutoRenewalResponse = OperationResult<operations["orders
 
 export interface OrdersDeleteOptions {
   id: OperationParameter<operations["orders_destroy"], "path", "id">;
+  idempotencyKey?: OperationParameter<operations["orders_destroy"], "header", "Idempotency-Key">;
+  ifMatch?: OperationParameter<operations["orders_destroy"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<operations["orders_destroy"], "header", "Accept-Language">;
   request?: RequestControls;
 }
@@ -1717,7 +2032,14 @@ export class OrdersResource {
 
   /** List active orders */
   async list(options: OrdersListOptions = {}): Promise<OrdersListResponse> {
-    return this.#client._call<OrdersListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List active orders; include response metadata. */
+  async listWithResponse(
+    options: OrdersListOptions = {},
+  ): Promise<ApiResponse<OrdersListResponse>> {
+    return this.#client._callWithResponse<OrdersListResponse>(
       {
         operationId: "orders_list",
         method: "GET",
@@ -1745,7 +2067,12 @@ export class OrdersResource {
 
   /** Get an order */
   async get(options: OrdersGetOptions): Promise<OrdersGetResponse> {
-    return this.#client._call<OrdersGetResponse>(
+    return (await this.getWithResponse(options)).data;
+  }
+
+  /** Get an order; include response metadata. */
+  async getWithResponse(options: OrdersGetOptions): Promise<ApiResponse<OrdersGetResponse>> {
+    return this.#client._callWithResponse<OrdersGetResponse>(
       {
         operationId: "orders_retrieve",
         method: "GET",
@@ -1767,7 +2094,14 @@ export class OrdersResource {
   async updateAutoRenewal(
     options: OrdersUpdateAutoRenewalOptions,
   ): Promise<OrdersUpdateAutoRenewalResponse> {
-    return this.#client._call<OrdersUpdateAutoRenewalResponse>(
+    return (await this.updateAutoRenewalWithResponse(options)).data;
+  }
+
+  /** Update order auto-renewal; include response metadata. */
+  async updateAutoRenewalWithResponse(
+    options: OrdersUpdateAutoRenewalOptions,
+  ): Promise<ApiResponse<OrdersUpdateAutoRenewalResponse>> {
+    return this.#client._callWithResponse<OrdersUpdateAutoRenewalResponse>(
       {
         operationId: "orders_partial_update",
         method: "PATCH",
@@ -1778,6 +2112,7 @@ export class OrdersResource {
           id: options.id,
         },
         headers: {
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.body === undefined ? {} : { body: options.body }),
@@ -1788,17 +2123,27 @@ export class OrdersResource {
 
   /** Delete a sub-user order */
   async delete(options: OrdersDeleteOptions): Promise<OrdersDeleteResponse> {
-    return this.#client._call<OrdersDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Delete a sub-user order; include response metadata. */
+  async deleteWithResponse(
+    options: OrdersDeleteOptions,
+  ): Promise<ApiResponse<OrdersDeleteResponse>> {
+    return this.#client._callWithResponse<OrdersDeleteResponse>(
       {
         operationId: "orders_destroy",
         method: "DELETE",
         path: "/orders/{id}",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.request === undefined ? {} : { request: options.request }),
@@ -1808,7 +2153,14 @@ export class OrdersResource {
 
   /** Reset an order's proxy password */
   async resetPassword(options: OrdersResetPasswordOptions): Promise<OrdersResetPasswordResponse> {
-    return this.#client._call<OrdersResetPasswordResponse>(
+    return (await this.resetPasswordWithResponse(options)).data;
+  }
+
+  /** Reset an order's proxy password; include response metadata. */
+  async resetPasswordWithResponse(
+    options: OrdersResetPasswordOptions,
+  ): Promise<ApiResponse<OrdersResetPasswordResponse>> {
+    return this.#client._callWithResponse<OrdersResetPasswordResponse>(
       {
         operationId: "reset_password_create",
         method: "POST",
@@ -1871,7 +2223,14 @@ export class PackagesResource {
 
   /** List available proxy packages */
   async list(options: PackagesListOptions = {}): Promise<PackagesListResponse> {
-    return this.#client._call<PackagesListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List available proxy packages; include response metadata. */
+  async listWithResponse(
+    options: PackagesListOptions = {},
+  ): Promise<ApiResponse<PackagesListResponse>> {
+    return this.#client._callWithResponse<PackagesListResponse>(
       {
         operationId: "packages_list",
         method: "GET",
@@ -1899,7 +2258,14 @@ export class PackagesResource {
   async listCommissions(
     options: PackagesListCommissionsOptions = {},
   ): Promise<PackagesListCommissionsResponse> {
-    return this.#client._call<PackagesListCommissionsResponse>(
+    return (await this.listCommissionsWithResponse(options)).data;
+  }
+
+  /** List affiliate package commissions; include response metadata. */
+  async listCommissionsWithResponse(
+    options: PackagesListCommissionsOptions = {},
+  ): Promise<ApiResponse<PackagesListCommissionsResponse>> {
+    return this.#client._callWithResponse<PackagesListCommissionsResponse>(
       {
         operationId: "packages_commissions_list",
         method: "GET",
@@ -1931,6 +2297,7 @@ export interface ProfileGetOptions {
 export type ProfileGetResponse = OperationResult<operations["profile_retrieve"]>;
 
 export interface ProfileUpdateOptions {
+  ifMatch?: OperationParameter<operations["profile_partial_update"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<
     operations["profile_partial_update"],
     "header",
@@ -1943,6 +2310,7 @@ export interface ProfileUpdateOptions {
 export type ProfileUpdateResponse = OperationResult<operations["profile_partial_update"]>;
 
 export interface ProfileDeleteOptions {
+  ifMatch?: OperationParameter<operations["profile_destroy"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<operations["profile_destroy"], "header", "Accept-Language">;
   request?: RequestControls;
 }
@@ -2024,7 +2392,12 @@ export class ProfileResource {
 
   /** Get the current profile */
   async get(options: ProfileGetOptions = {}): Promise<ProfileGetResponse> {
-    return this.#client._call<ProfileGetResponse>(
+    return (await this.getWithResponse(options)).data;
+  }
+
+  /** Get the current profile; include response metadata. */
+  async getWithResponse(options: ProfileGetOptions = {}): Promise<ApiResponse<ProfileGetResponse>> {
+    return this.#client._callWithResponse<ProfileGetResponse>(
       {
         operationId: "profile_retrieve",
         method: "GET",
@@ -2041,7 +2414,14 @@ export class ProfileResource {
 
   /** Update the current profile */
   async update(options: ProfileUpdateOptions = {}): Promise<ProfileUpdateResponse> {
-    return this.#client._call<ProfileUpdateResponse>(
+    return (await this.updateWithResponse(options)).data;
+  }
+
+  /** Update the current profile; include response metadata. */
+  async updateWithResponse(
+    options: ProfileUpdateOptions = {},
+  ): Promise<ApiResponse<ProfileUpdateResponse>> {
+    return this.#client._callWithResponse<ProfileUpdateResponse>(
       {
         operationId: "profile_partial_update",
         method: "PATCH",
@@ -2049,6 +2429,7 @@ export class ProfileResource {
       },
       {
         headers: {
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.body === undefined ? {} : { body: options.body }),
@@ -2059,7 +2440,14 @@ export class ProfileResource {
 
   /** Delete the current account */
   async delete(options: ProfileDeleteOptions = {}): Promise<ProfileDeleteResponse> {
-    return this.#client._call<ProfileDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Delete the current account; include response metadata. */
+  async deleteWithResponse(
+    options: ProfileDeleteOptions = {},
+  ): Promise<ApiResponse<ProfileDeleteResponse>> {
+    return this.#client._callWithResponse<ProfileDeleteResponse>(
       {
         operationId: "profile_destroy",
         method: "DELETE",
@@ -2067,6 +2455,7 @@ export class ProfileResource {
       },
       {
         headers: {
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.request === undefined ? {} : { request: options.request }),
@@ -2078,7 +2467,14 @@ export class ProfileResource {
   async confirmTwoFactor(
     options: ProfileConfirmTwoFactorOptions,
   ): Promise<ProfileConfirmTwoFactorResponse> {
-    return this.#client._call<ProfileConfirmTwoFactorResponse>(
+    return (await this.confirmTwoFactorWithResponse(options)).data;
+  }
+
+  /** Confirm two-factor setup; include response metadata. */
+  async confirmTwoFactorWithResponse(
+    options: ProfileConfirmTwoFactorOptions,
+  ): Promise<ApiResponse<ProfileConfirmTwoFactorResponse>> {
+    return this.#client._callWithResponse<ProfileConfirmTwoFactorResponse>(
       {
         operationId: "profile_2fa_confirm_create",
         method: "POST",
@@ -2098,7 +2494,14 @@ export class ProfileResource {
   async disableTwoFactor(
     options: ProfileDisableTwoFactorOptions,
   ): Promise<ProfileDisableTwoFactorResponse> {
-    return this.#client._call<ProfileDisableTwoFactorResponse>(
+    return (await this.disableTwoFactorWithResponse(options)).data;
+  }
+
+  /** Disable two-factor authentication; include response metadata. */
+  async disableTwoFactorWithResponse(
+    options: ProfileDisableTwoFactorOptions,
+  ): Promise<ApiResponse<ProfileDisableTwoFactorResponse>> {
+    return this.#client._callWithResponse<ProfileDisableTwoFactorResponse>(
       {
         operationId: "profile_2fa_disable_create",
         method: "POST",
@@ -2118,7 +2521,14 @@ export class ProfileResource {
   async setupTwoFactor(
     options: ProfileSetupTwoFactorOptions = {},
   ): Promise<ProfileSetupTwoFactorResponse> {
-    return this.#client._call<ProfileSetupTwoFactorResponse>(
+    return (await this.setupTwoFactorWithResponse(options)).data;
+  }
+
+  /** Start two-factor setup; include response metadata. */
+  async setupTwoFactorWithResponse(
+    options: ProfileSetupTwoFactorOptions = {},
+  ): Promise<ApiResponse<ProfileSetupTwoFactorResponse>> {
+    return this.#client._callWithResponse<ProfileSetupTwoFactorResponse>(
       {
         operationId: "profile_2fa_setup_create",
         method: "POST",
@@ -2137,7 +2547,14 @@ export class ProfileResource {
   async getTwoFactorStatus(
     options: ProfileGetTwoFactorStatusOptions = {},
   ): Promise<ProfileGetTwoFactorStatusResponse> {
-    return this.#client._call<ProfileGetTwoFactorStatusResponse>(
+    return (await this.getTwoFactorStatusWithResponse(options)).data;
+  }
+
+  /** Get two-factor status; include response metadata. */
+  async getTwoFactorStatusWithResponse(
+    options: ProfileGetTwoFactorStatusOptions = {},
+  ): Promise<ApiResponse<ProfileGetTwoFactorStatusResponse>> {
+    return this.#client._callWithResponse<ProfileGetTwoFactorStatusResponse>(
       {
         operationId: "profile_2fa_status_retrieve",
         method: "GET",
@@ -2156,7 +2573,14 @@ export class ProfileResource {
   async changePassword(
     options: ProfileChangePasswordOptions,
   ): Promise<ProfileChangePasswordResponse> {
-    return this.#client._call<ProfileChangePasswordResponse>(
+    return (await this.changePasswordWithResponse(options)).data;
+  }
+
+  /** Change the account password; include response metadata. */
+  async changePasswordWithResponse(
+    options: ProfileChangePasswordOptions,
+  ): Promise<ApiResponse<ProfileChangePasswordResponse>> {
+    return this.#client._callWithResponse<ProfileChangePasswordResponse>(
       {
         operationId: "profile_change_password_create",
         method: "POST",
@@ -2194,7 +2618,14 @@ export class ProxiesResource {
 
   /** Generate proxy credentials */
   async generate(options: ProxiesGenerateOptions): Promise<ProxiesGenerateResponse> {
-    return this.#client._call<ProxiesGenerateResponse>(
+    return (await this.generateWithResponse(options)).data;
+  }
+
+  /** Generate proxy credentials; include response metadata. */
+  async generateWithResponse(
+    options: ProxiesGenerateOptions,
+  ): Promise<ApiResponse<ProxiesGenerateResponse>> {
+    return this.#client._callWithResponse<ProxiesGenerateResponse>(
       {
         operationId: "proxies_generate_create",
         method: "POST",
@@ -2245,7 +2676,14 @@ export class RewardsResource {
 
   /** List account rewards */
   async list(options: RewardsListOptions = {}): Promise<RewardsListResponse> {
-    return this.#client._call<RewardsListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List account rewards; include response metadata. */
+  async listWithResponse(
+    options: RewardsListOptions = {},
+  ): Promise<ApiResponse<RewardsListResponse>> {
+    return this.#client._callWithResponse<RewardsListResponse>(
       {
         operationId: "rewards_list",
         method: "GET",
@@ -2270,7 +2708,14 @@ export class RewardsResource {
 
   /** Claim available rewards */
   async claim(options: RewardsClaimOptions): Promise<RewardsClaimResponse> {
-    return this.#client._call<RewardsClaimResponse>(
+    return (await this.claimWithResponse(options)).data;
+  }
+
+  /** Claim available rewards; include response metadata. */
+  async claimWithResponse(
+    options: RewardsClaimOptions,
+  ): Promise<ApiResponse<RewardsClaimResponse>> {
+    return this.#client._callWithResponse<RewardsClaimResponse>(
       {
         operationId: "rewards_claim_create",
         method: "POST",
@@ -2311,7 +2756,14 @@ export class SessionsResource {
 
   /** List active proxy sessions */
   async list(options: SessionsListOptions = {}): Promise<SessionsListResponse> {
-    return this.#client._call<SessionsListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List active proxy sessions; include response metadata. */
+  async listWithResponse(
+    options: SessionsListOptions = {},
+  ): Promise<ApiResponse<SessionsListResponse>> {
+    return this.#client._callWithResponse<SessionsListResponse>(
       {
         operationId: "sessions_list",
         method: "GET",
@@ -2328,7 +2780,14 @@ export class SessionsResource {
 
   /** Revoke a proxy session */
   async delete(options: SessionsDeleteOptions): Promise<SessionsDeleteResponse> {
-    return this.#client._call<SessionsDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Revoke a proxy session; include response metadata. */
+  async deleteWithResponse(
+    options: SessionsDeleteOptions,
+  ): Promise<ApiResponse<SessionsDeleteResponse>> {
+    return this.#client._callWithResponse<SessionsDeleteResponse>(
       {
         operationId: "sessions_destroy",
         method: "DELETE",
@@ -2363,7 +2822,14 @@ export class SettingsResource {
 
   /** Get account settings */
   async get(options: SettingsGetOptions = {}): Promise<SettingsGetResponse> {
-    return this.#client._call<SettingsGetResponse>(
+    return (await this.getWithResponse(options)).data;
+  }
+
+  /** Get account settings; include response metadata. */
+  async getWithResponse(
+    options: SettingsGetOptions = {},
+  ): Promise<ApiResponse<SettingsGetResponse>> {
+    return this.#client._callWithResponse<SettingsGetResponse>(
       {
         operationId: "settings_retrieve",
         method: "GET",
@@ -2443,7 +2909,14 @@ export class TelegramDashboardResource {
   async getConnection(
     options: TelegramDashboardGetConnectionOptions = {},
   ): Promise<TelegramDashboardGetConnectionResponse> {
-    return this.#client._call<TelegramDashboardGetConnectionResponse>(
+    return (await this.getConnectionWithResponse(options)).data;
+  }
+
+  /** Get the Telegram dashboard connection; include response metadata. */
+  async getConnectionWithResponse(
+    options: TelegramDashboardGetConnectionOptions = {},
+  ): Promise<ApiResponse<TelegramDashboardGetConnectionResponse>> {
+    return this.#client._callWithResponse<TelegramDashboardGetConnectionResponse>(
       {
         operationId: "integrations_telegram_connection_retrieve",
         method: "GET",
@@ -2462,7 +2935,14 @@ export class TelegramDashboardResource {
   async updateConnection(
     options: TelegramDashboardUpdateConnectionOptions = {},
   ): Promise<TelegramDashboardUpdateConnectionResponse> {
-    return this.#client._call<TelegramDashboardUpdateConnectionResponse>(
+    return (await this.updateConnectionWithResponse(options)).data;
+  }
+
+  /** Update Telegram dashboard preferences; include response metadata. */
+  async updateConnectionWithResponse(
+    options: TelegramDashboardUpdateConnectionOptions = {},
+  ): Promise<ApiResponse<TelegramDashboardUpdateConnectionResponse>> {
+    return this.#client._callWithResponse<TelegramDashboardUpdateConnectionResponse>(
       {
         operationId: "integrations_telegram_connection_partial_update",
         method: "PATCH",
@@ -2482,7 +2962,14 @@ export class TelegramDashboardResource {
   async deleteConnection(
     options: TelegramDashboardDeleteConnectionOptions = {},
   ): Promise<TelegramDashboardDeleteConnectionResponse> {
-    return this.#client._call<TelegramDashboardDeleteConnectionResponse>(
+    return (await this.deleteConnectionWithResponse(options)).data;
+  }
+
+  /** Disconnect the Telegram dashboard; include response metadata. */
+  async deleteConnectionWithResponse(
+    options: TelegramDashboardDeleteConnectionOptions = {},
+  ): Promise<ApiResponse<TelegramDashboardDeleteConnectionResponse>> {
+    return this.#client._callWithResponse<TelegramDashboardDeleteConnectionResponse>(
       {
         operationId: "integrations_telegram_connection_destroy",
         method: "DELETE",
@@ -2501,7 +2988,14 @@ export class TelegramDashboardResource {
   async createLink(
     options: TelegramDashboardCreateLinkOptions = {},
   ): Promise<TelegramDashboardCreateLinkResponse> {
-    return this.#client._call<TelegramDashboardCreateLinkResponse>(
+    return (await this.createLinkWithResponse(options)).data;
+  }
+
+  /** Create a Telegram account link; include response metadata. */
+  async createLinkWithResponse(
+    options: TelegramDashboardCreateLinkOptions = {},
+  ): Promise<ApiResponse<TelegramDashboardCreateLinkResponse>> {
+    return this.#client._callWithResponse<TelegramDashboardCreateLinkResponse>(
       {
         operationId: "integrations_telegram_link_create",
         method: "POST",
@@ -2566,7 +3060,14 @@ export class TelegramServiceResource {
   async consumeLink(
     options: TelegramServiceConsumeLinkOptions,
   ): Promise<TelegramServiceConsumeLinkResponse> {
-    return this.#client._call<TelegramServiceConsumeLinkResponse>(
+    return (await this.consumeLinkWithResponse(options)).data;
+  }
+
+  /** Consume a Telegram account link; include response metadata. */
+  async consumeLinkWithResponse(
+    options: TelegramServiceConsumeLinkOptions,
+  ): Promise<ApiResponse<TelegramServiceConsumeLinkResponse>> {
+    return this.#client._callWithResponse<TelegramServiceConsumeLinkResponse>(
       {
         operationId: "integrations_telegram_link_consume_create",
         method: "POST",
@@ -2587,7 +3088,14 @@ export class TelegramServiceResource {
   async createSession(
     options: TelegramServiceCreateSessionOptions,
   ): Promise<TelegramServiceCreateSessionResponse> {
-    return this.#client._call<TelegramServiceCreateSessionResponse>(
+    return (await this.createSessionWithResponse(options)).data;
+  }
+
+  /** Create a Telegram API session; include response metadata. */
+  async createSessionWithResponse(
+    options: TelegramServiceCreateSessionOptions,
+  ): Promise<ApiResponse<TelegramServiceCreateSessionResponse>> {
+    return this.#client._callWithResponse<TelegramServiceCreateSessionResponse>(
       {
         operationId: "integrations_telegram_session_create",
         method: "POST",
@@ -2621,6 +3129,7 @@ export interface UsersListOptions {
 export type UsersListResponse = OperationResult<operations["users_list"]>;
 
 export interface UsersCreateOptions {
+  idempotencyKey?: OperationParameter<operations["users_create"], "header", "Idempotency-Key">;
   acceptLanguage?: OperationParameter<operations["users_create"], "header", "Accept-Language">;
   body: OperationBody<operations["users_create"]>;
   request?: RequestControls;
@@ -2638,6 +3147,7 @@ export type UsersGetResponse = OperationResult<operations["users_retrieve"]>;
 
 export interface UsersUpdateOptions {
   id: OperationParameter<operations["users_partial_update"], "path", "id">;
+  ifMatch?: OperationParameter<operations["users_partial_update"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<
     operations["users_partial_update"],
     "header",
@@ -2651,6 +3161,8 @@ export type UsersUpdateResponse = OperationResult<operations["users_partial_upda
 
 export interface UsersDeleteOptions {
   id: OperationParameter<operations["users_destroy"], "path", "id">;
+  idempotencyKey?: OperationParameter<operations["users_destroy"], "header", "Idempotency-Key">;
+  ifMatch?: OperationParameter<operations["users_destroy"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<operations["users_destroy"], "header", "Accept-Language">;
   request?: RequestControls;
 }
@@ -2659,6 +3171,11 @@ export type UsersDeleteResponse = OperationResult<operations["users_destroy"]>;
 
 export interface UsersAddDataOptions {
   id: OperationParameter<operations["users_data_add_create"], "path", "id">;
+  idempotencyKey?: OperationParameter<
+    operations["users_data_add_create"],
+    "header",
+    "Idempotency-Key"
+  >;
   acceptLanguage?: OperationParameter<
     operations["users_data_add_create"],
     "header",
@@ -2672,6 +3189,11 @@ export type UsersAddDataResponse = OperationResult<operations["users_data_add_cr
 
 export interface UsersSubtractDataOptions {
   id: OperationParameter<operations["users_data_subtract_create"], "path", "id">;
+  idempotencyKey?: OperationParameter<
+    operations["users_data_subtract_create"],
+    "header",
+    "Idempotency-Key"
+  >;
   acceptLanguage?: OperationParameter<
     operations["users_data_subtract_create"],
     "header",
@@ -2719,7 +3241,12 @@ export class UsersResource {
 
   /** List users in the current account */
   async list(options: UsersListOptions = {}): Promise<UsersListResponse> {
-    return this.#client._call<UsersListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List users in the current account; include response metadata. */
+  async listWithResponse(options: UsersListOptions = {}): Promise<ApiResponse<UsersListResponse>> {
+    return this.#client._callWithResponse<UsersListResponse>(
       {
         operationId: "users_list",
         method: "GET",
@@ -2746,14 +3273,21 @@ export class UsersResource {
 
   /** Create a sub-user */
   async create(options: UsersCreateOptions): Promise<UsersCreateResponse> {
-    return this.#client._call<UsersCreateResponse>(
+    return (await this.createWithResponse(options)).data;
+  }
+
+  /** Create a sub-user; include response metadata. */
+  async createWithResponse(options: UsersCreateOptions): Promise<ApiResponse<UsersCreateResponse>> {
+    return this.#client._callWithResponse<UsersCreateResponse>(
       {
         operationId: "users_create",
         method: "POST",
         path: "/users",
+        idempotent: true,
       },
       {
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
@@ -2764,7 +3298,12 @@ export class UsersResource {
 
   /** Get a user */
   async get(options: UsersGetOptions): Promise<UsersGetResponse> {
-    return this.#client._call<UsersGetResponse>(
+    return (await this.getWithResponse(options)).data;
+  }
+
+  /** Get a user; include response metadata. */
+  async getWithResponse(options: UsersGetOptions): Promise<ApiResponse<UsersGetResponse>> {
+    return this.#client._callWithResponse<UsersGetResponse>(
       {
         operationId: "users_retrieve",
         method: "GET",
@@ -2784,7 +3323,12 @@ export class UsersResource {
 
   /** Update a user */
   async update(options: UsersUpdateOptions): Promise<UsersUpdateResponse> {
-    return this.#client._call<UsersUpdateResponse>(
+    return (await this.updateWithResponse(options)).data;
+  }
+
+  /** Update a user; include response metadata. */
+  async updateWithResponse(options: UsersUpdateOptions): Promise<ApiResponse<UsersUpdateResponse>> {
+    return this.#client._callWithResponse<UsersUpdateResponse>(
       {
         operationId: "users_partial_update",
         method: "PATCH",
@@ -2795,6 +3339,7 @@ export class UsersResource {
           id: options.id,
         },
         headers: {
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.body === undefined ? {} : { body: options.body }),
@@ -2805,17 +3350,25 @@ export class UsersResource {
 
   /** Delete a user */
   async delete(options: UsersDeleteOptions): Promise<UsersDeleteResponse> {
-    return this.#client._call<UsersDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Delete a user; include response metadata. */
+  async deleteWithResponse(options: UsersDeleteOptions): Promise<ApiResponse<UsersDeleteResponse>> {
+    return this.#client._callWithResponse<UsersDeleteResponse>(
       {
         operationId: "users_destroy",
         method: "DELETE",
         path: "/users/{id}",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.request === undefined ? {} : { request: options.request }),
@@ -2825,17 +3378,26 @@ export class UsersResource {
 
   /** Add data to a sub-user order */
   async addData(options: UsersAddDataOptions): Promise<UsersAddDataResponse> {
-    return this.#client._call<UsersAddDataResponse>(
+    return (await this.addDataWithResponse(options)).data;
+  }
+
+  /** Add data to a sub-user order; include response metadata. */
+  async addDataWithResponse(
+    options: UsersAddDataOptions,
+  ): Promise<ApiResponse<UsersAddDataResponse>> {
+    return this.#client._callWithResponse<UsersAddDataResponse>(
       {
         operationId: "users_data_add_create",
         method: "POST",
         path: "/users/{id}/data/add",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
@@ -2846,17 +3408,26 @@ export class UsersResource {
 
   /** Subtract data from a sub-user order */
   async subtractData(options: UsersSubtractDataOptions): Promise<UsersSubtractDataResponse> {
-    return this.#client._call<UsersSubtractDataResponse>(
+    return (await this.subtractDataWithResponse(options)).data;
+  }
+
+  /** Subtract data from a sub-user order; include response metadata. */
+  async subtractDataWithResponse(
+    options: UsersSubtractDataOptions,
+  ): Promise<ApiResponse<UsersSubtractDataResponse>> {
+    return this.#client._callWithResponse<UsersSubtractDataResponse>(
       {
         operationId: "users_data_subtract_create",
         method: "POST",
         path: "/users/{id}/data/subtract",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
@@ -2867,7 +3438,14 @@ export class UsersResource {
 
   /** List a sub-user's orders */
   async listOrders(options: UsersListOrdersOptions): Promise<UsersListOrdersResponse> {
-    return this.#client._call<UsersListOrdersResponse>(
+    return (await this.listOrdersWithResponse(options)).data;
+  }
+
+  /** List a sub-user's orders; include response metadata. */
+  async listOrdersWithResponse(
+    options: UsersListOrdersOptions,
+  ): Promise<ApiResponse<UsersListOrdersResponse>> {
+    return this.#client._callWithResponse<UsersListOrdersResponse>(
       {
         operationId: "users_orders_list",
         method: "GET",
@@ -2895,7 +3473,14 @@ export class UsersResource {
 
   /** Rotate a sub-user proxy password */
   async resetPassword(options: UsersResetPasswordOptions): Promise<UsersResetPasswordResponse> {
-    return this.#client._call<UsersResetPasswordResponse>(
+    return (await this.resetPasswordWithResponse(options)).data;
+  }
+
+  /** Rotate a sub-user proxy password; include response metadata. */
+  async resetPasswordWithResponse(
+    options: UsersResetPasswordOptions,
+  ): Promise<ApiResponse<UsersResetPasswordResponse>> {
+    return this.#client._callWithResponse<UsersResetPasswordResponse>(
       {
         operationId: "users_password_create",
         method: "POST",
@@ -2925,6 +3510,7 @@ export interface WebhooksListOptions {
 export type WebhooksListResponse = OperationResult<operations["webhooks_list"]>;
 
 export interface WebhooksCreateOptions {
+  idempotencyKey?: OperationParameter<operations["webhooks_create"], "header", "Idempotency-Key">;
   acceptLanguage?: OperationParameter<operations["webhooks_create"], "header", "Accept-Language">;
   body: OperationBody<operations["webhooks_create"]>;
   request?: RequestControls;
@@ -2942,6 +3528,8 @@ export type WebhooksGetResponse = OperationResult<operations["webhooks_retrieve"
 
 export interface WebhooksDeleteOptions {
   id: OperationParameter<operations["webhooks_destroy"], "path", "id">;
+  idempotencyKey?: OperationParameter<operations["webhooks_destroy"], "header", "Idempotency-Key">;
+  ifMatch?: OperationParameter<operations["webhooks_destroy"], "header", "If-Match">;
   acceptLanguage?: OperationParameter<operations["webhooks_destroy"], "header", "Accept-Language">;
   request?: RequestControls;
 }
@@ -2957,7 +3545,14 @@ export class WebhooksResource {
 
   /** List customer webhooks */
   async list(options: WebhooksListOptions = {}): Promise<WebhooksListResponse> {
-    return this.#client._call<WebhooksListResponse>(
+    return (await this.listWithResponse(options)).data;
+  }
+
+  /** List customer webhooks; include response metadata. */
+  async listWithResponse(
+    options: WebhooksListOptions = {},
+  ): Promise<ApiResponse<WebhooksListResponse>> {
+    return this.#client._callWithResponse<WebhooksListResponse>(
       {
         operationId: "webhooks_list",
         method: "GET",
@@ -2978,14 +3573,23 @@ export class WebhooksResource {
 
   /** Create a customer webhook */
   async create(options: WebhooksCreateOptions): Promise<WebhooksCreateResponse> {
-    return this.#client._call<WebhooksCreateResponse>(
+    return (await this.createWithResponse(options)).data;
+  }
+
+  /** Create a customer webhook; include response metadata. */
+  async createWithResponse(
+    options: WebhooksCreateOptions,
+  ): Promise<ApiResponse<WebhooksCreateResponse>> {
+    return this.#client._callWithResponse<WebhooksCreateResponse>(
       {
         operationId: "webhooks_create",
         method: "POST",
         path: "/webhooks",
+        idempotent: true,
       },
       {
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
@@ -2996,7 +3600,12 @@ export class WebhooksResource {
 
   /** Get a customer webhook */
   async get(options: WebhooksGetOptions): Promise<WebhooksGetResponse> {
-    return this.#client._call<WebhooksGetResponse>(
+    return (await this.getWithResponse(options)).data;
+  }
+
+  /** Get a customer webhook; include response metadata. */
+  async getWithResponse(options: WebhooksGetOptions): Promise<ApiResponse<WebhooksGetResponse>> {
+    return this.#client._callWithResponse<WebhooksGetResponse>(
       {
         operationId: "webhooks_retrieve",
         method: "GET",
@@ -3016,17 +3625,27 @@ export class WebhooksResource {
 
   /** Delete a customer webhook */
   async delete(options: WebhooksDeleteOptions): Promise<WebhooksDeleteResponse> {
-    return this.#client._call<WebhooksDeleteResponse>(
+    return (await this.deleteWithResponse(options)).data;
+  }
+
+  /** Delete a customer webhook; include response metadata. */
+  async deleteWithResponse(
+    options: WebhooksDeleteOptions,
+  ): Promise<ApiResponse<WebhooksDeleteResponse>> {
+    return this.#client._callWithResponse<WebhooksDeleteResponse>(
       {
         operationId: "webhooks_destroy",
         method: "DELETE",
         path: "/webhooks/{id}",
+        idempotent: true,
       },
       {
         path: {
           id: options.id,
         },
         headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "If-Match": options.ifMatch,
           "Accept-Language": options.acceptLanguage,
         },
         ...(options.request === undefined ? {} : { request: options.request }),

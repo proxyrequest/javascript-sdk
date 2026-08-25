@@ -18,7 +18,7 @@ export {
 export { FileDownload } from "./files.js";
 export type * from "./generated/models.js";
 export * from "./generated/resources.js";
-export type { RequestControls } from "./internal.js";
+export type { ApiResponse, RequestControls } from "./internal.js";
 export {
   type PageParameters,
   type PaginatedPage,

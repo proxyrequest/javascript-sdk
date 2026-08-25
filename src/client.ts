@@ -4,6 +4,7 @@ import { FileDownload } from "./files.js";
 import { createResourceCollection, type ResourceCollection } from "./generated/resources.js";
 import type { paths } from "./generated/schema.js";
 import type {
+  ApiResponse,
   OperationCallData,
   OperationCallSpec,
   RequestControls,
@@ -25,6 +26,8 @@ export interface ClientCommonOptions {
   timeoutMs?: number;
   fetch?: typeof globalThis.fetch;
   headers?: HeadersInit;
+  /** Automatically protect supported mutations with an Idempotency-Key. */
+  idempotency?: boolean;
 }
 
 export type ClientOptions = ClientCommonOptions &
@@ -63,6 +66,7 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
   readonly baseUrl: string;
   readonly language: string;
   readonly timeoutMs: number;
+  readonly idempotency: boolean;
   readonly #fetch: typeof globalThis.fetch;
   readonly #headers: Headers;
   readonly #openapi: OpenApiClient<paths, `${string}/${string}`>;
@@ -71,6 +75,7 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
     this.baseUrl = normalizeBaseUrl(options.baseUrl ?? DEFAULT_BASE_URL);
     this.language = options.language ?? "en";
     this.timeoutMs = options.timeoutMs ?? 15_000;
+    this.idempotency = options.idempotency ?? true;
     if (!Number.isFinite(this.timeoutMs) || this.timeoutMs < 0) {
       throw new RangeError("timeoutMs must be a non-negative finite number.");
     }
@@ -140,50 +145,86 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
   }
 
   async _call<Result>(spec: OperationCallSpec, data: OperationCallData = {}): Promise<Result> {
-    const controls = data.request ?? {};
-    const timeout = requestSignal(controls.signal, controls.timeoutMs ?? this.timeoutMs);
-    const options = {
-      params: {
-        ...(data.path === undefined ? {} : { path: data.path }),
-        ...(data.query === undefined ? {} : { query: data.query }),
-        ...(data.headers === undefined ? {} : { header: data.headers }),
-      },
-      ...(data.body === undefined ? {} : { body: data.body }),
-      ...(controls.headers === undefined ? {} : { headers: controls.headers }),
-      signal: timeout.signal,
-      ...(spec.binary ? { parseAs: "arrayBuffer" as const } : {}),
-    };
+    return (await this._callWithResponse<Result>(spec, data)).data;
+  }
 
-    try {
-      const method = this.#openapi[spec.method] as (
-        path: string,
-        options: unknown,
-      ) => Promise<{ data?: unknown; error?: unknown; response: Response }>;
-      const result = await method(spec.path, options);
-      if (result.error !== undefined) {
-        throw ApiError.unexpected(
-          `ProxyRequest returned an undocumented error for ${spec.operationId}.`,
-          result.error,
-        );
-      }
-      if (spec.binary) {
-        if (!(result.data instanceof ArrayBuffer)) {
+  async _callWithResponse<Result>(
+    spec: OperationCallSpec,
+    data: OperationCallData = {},
+  ): Promise<ApiResponse<Result>> {
+    const controls = data.request ?? {};
+    const controlHeaders = new Headers(controls.headers);
+    const parameterKey = stringHeader(data.headers?.["Idempotency-Key"]);
+    const controlKey = controlHeaders.get("Idempotency-Key") ?? undefined;
+    const idempotencyKey = spec.idempotent
+      ? (parameterKey ?? controlKey ?? (this.idempotency ? newIdempotencyKey() : undefined))
+      : undefined;
+    if (spec.idempotent) controlHeaders.delete("Idempotency-Key");
+    const operationHeaders = {
+      ...data.headers,
+      ...(idempotencyKey === undefined ? {} : { "Idempotency-Key": idempotencyKey }),
+    };
+    const method = this.#openapi[spec.method] as (
+      path: string,
+      options: unknown,
+    ) => Promise<{ data?: unknown; error?: unknown; response: Response }>;
+
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const timeout = requestSignal(controls.signal, controls.timeoutMs ?? this.timeoutMs);
+      try {
+        const result = await method(spec.path, {
+          params: {
+            ...(data.path === undefined ? {} : { path: data.path }),
+            ...(data.query === undefined ? {} : { query: data.query }),
+            ...(Object.keys(operationHeaders).length === 0 ? {} : { header: operationHeaders }),
+          },
+          ...(data.body === undefined ? {} : { body: data.body }),
+          ...([...controlHeaders].length === 0 ? {} : { headers: controlHeaders }),
+          signal: timeout.signal,
+          ...(spec.binary ? { parseAs: "arrayBuffer" as const } : {}),
+        });
+        if (result.error !== undefined) {
           throw ApiError.unexpected(
-            `ProxyRequest returned an invalid file for ${spec.operationId}.`,
+            `ProxyRequest returned an undocumented error for ${spec.operationId}.`,
+            result.error,
           );
         }
-        return FileDownload.fromResponse(result.data, result.response.headers) as Result;
+        const dataValue = spec.binary
+          ? binaryResult<Result>(spec, result.data, result.response.headers)
+          : (result.data as Result);
+        const headers = headersToRecord(result.response.headers);
+        const etag = headers.etag;
+        return {
+          data: dataValue,
+          statusCode: result.response.status,
+          headers,
+          ...(etag === undefined ? {} : { etag }),
+          idempotencyReplayed: headers["idempotency-replayed"]?.toLowerCase() === "true",
+        };
+      } catch (error) {
+        const apiError = (
+          error instanceof ApiError
+            ? error
+            : ApiError.unexpected(
+                `Unable to process the ProxyRequest response for ${spec.operationId}.`,
+                error,
+              )
+        ).withIdempotencyKey(idempotencyKey);
+        const delay = retryDelay(apiError, attempt);
+        if (
+          attempt >= 2 ||
+          idempotencyKey === undefined ||
+          controls.signal?.aborted ||
+          delay === undefined
+        ) {
+          throw apiError;
+        }
+        await wait(delay, controls.signal);
+      } finally {
+        timeout.cleanup();
       }
-      return result.data as Result;
-    } catch (error) {
-      if (error instanceof ApiError) throw error;
-      throw ApiError.unexpected(
-        `Unable to process the ProxyRequest response for ${spec.operationId}.`,
-        error,
-      );
-    } finally {
-      timeout.cleanup();
     }
+    throw ApiError.unexpected(`Unable to complete ${spec.operationId}.`);
   }
 
   async request(method: string, path: string, options: RawRequestOptions = {}): Promise<Response> {
@@ -291,4 +332,54 @@ function isBodyInit(value: unknown): value is BodyInit {
     value instanceof URLSearchParams ||
     value instanceof ReadableStream
   );
+}
+
+function stringHeader(value: unknown): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function newIdempotencyKey(): string {
+  if (typeof globalThis.crypto?.randomUUID !== "function") {
+    throw new Error("crypto.randomUUID() is required for automatic idempotency keys.");
+  }
+  return globalThis.crypto.randomUUID();
+}
+
+function binaryResult<Result>(spec: OperationCallSpec, data: unknown, headers: Headers): Result {
+  if (!(data instanceof ArrayBuffer)) {
+    throw ApiError.unexpected(`ProxyRequest returned an invalid file for ${spec.operationId}.`);
+  }
+  return FileDownload.fromResponse(data, headers) as Result;
+}
+
+function headersToRecord(headers: Headers): Readonly<Record<string, string>> {
+  return Object.freeze(Object.fromEntries(headers.entries()));
+}
+
+function retryDelay(error: ApiError, attempt: number): number | undefined {
+  if (error.kind === "network") return attempt === 0 ? 100 : 200;
+  if (
+    error.statusCode === 409 &&
+    error.retryAfter !== undefined &&
+    error.retryAfter >= 0 &&
+    error.retryAfter <= 5
+  ) {
+    return error.retryAfter * 1_000;
+  }
+  return undefined;
+}
+
+function wait(milliseconds: number, signal: AbortSignal | undefined): Promise<void> {
+  if (signal?.aborted) return Promise.reject(ApiError.network(signal.reason));
+  return new Promise((resolvePromise, reject) => {
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", abort);
+      resolvePromise();
+    }, milliseconds);
+    const abort = () => {
+      clearTimeout(timer);
+      reject(ApiError.network(signal?.reason));
+    };
+    signal?.addEventListener("abort", abort, { once: true });
+  });
 }

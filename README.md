@@ -173,6 +173,42 @@ console.log(generated.proxies);
 
 See [catalog and proxies](https://proxyrequest.com/docs/integration/catalog-and-proxies/) and the separate [proxy connection documentation](https://proxyrequest.com/docs/proxy/authentication/).
 
+## Safe mutations and optimistic concurrency
+
+For API operations that declare `Idempotency-Key`, the SDK generates a UUID by
+default. It reuses that key for up to three total attempts when the outcome is
+ambiguous: a network failure, or `409 Conflict` with a numeric `Retry-After` of
+at most five seconds. Other HTTP errors are returned immediately. Existing
+method calls need no changes; pass a stable key when it must survive a process
+restart:
+
+```ts
+const response = await client.invoices.createWithResponse({
+  body: { gateway: "stripe", package_id: packageId },
+  idempotencyKey: `checkout:${orderId}`,
+});
+
+console.log(response.data.id, response.etag, response.idempotencyReplayed);
+```
+
+Every generated method also has a `WithResponse` variant exposing `statusCode`,
+`headers`, `etag`, and `idempotencyReplayed`. Automatic key generation can be
+disabled without blocking explicit keys:
+
+```ts
+const client = ProxyRequestClient.withApiKey(apiKey, { idempotency: false });
+```
+
+Updates and deletes that declare `If-Match` accept the latest strong ETag:
+
+```ts
+await client.users.update({ id: userId, ifMatch: response.etag, body: changes });
+```
+
+A stale value raises `ApiError` with `kind === "precondition"` and the current
+server ETag in `currentEtag`. The SDK deliberately does not cache ETags: callers
+choose which representation is being updated.
+
 ## Pagination
 
 List methods return the API page model. Use `client.paginate()` when you want a lazy async stream:
@@ -205,7 +241,7 @@ try {
 }
 ```
 
-Kinds include `validation`, `authentication`, `permission`, `not_found`, `conflict`, `rate_limit`, `server`, `network`, and `unexpected`. The SDK does not retry or refresh tokens automatically. See [common integration errors](https://proxyrequest.com/docs/integration/common-errors/).
+Kinds include `validation`, `authentication`, `permission`, `not_found`, `conflict`, `precondition`, `rate_limit`, `server`, `network`, and `unexpected`. Only ambiguous outcomes for idempotent operations are retried automatically; tokens are never refreshed automatically. See [common integration errors](https://proxyrequest.com/docs/integration/common-errors/).
 
 ## Per-request controls and custom Fetch
 

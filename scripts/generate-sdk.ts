@@ -182,6 +182,7 @@ function renderResources(resourceValues: ResourceDefinition[]): string {
 
 import type { FileDownload } from "../files.js";
 import type {
+  ApiResponse,
   OperationBody,
   OperationParameter,
   OperationResult,
@@ -276,12 +277,20 @@ function renderMethod(resource: ResourceDefinition, operation: GeneratedOperatio
   const summary = sanitizeComment(
     operation.operation.summary ?? operation.operation.description ?? operation.operationId,
   );
+  const idempotent = operation.parameters.some(
+    (parameter) => parameter.in === "header" && parameter.name === "Idempotency-Key",
+  );
   return `  /** ${summary} */
   async ${operation.methodName}(options: ${optionsName}${isRequired ? "" : " = {}"}): Promise<${responseName}> {
-    return this.#client._call<${responseName}>({
+    return (await this.${operation.methodName}WithResponse(options)).data;
+  }
+
+  /** ${summary}; include response metadata. */
+  async ${operation.methodName}WithResponse(options: ${optionsName}${isRequired ? "" : " = {}"}): Promise<ApiResponse<${responseName}>> {
+    return this.#client._callWithResponse<${responseName}>({
       operationId: ${quote(operation.operationId)},
       method: ${quote(operation.httpMethod)},
-      path: ${quote(operation.path)},${operation.binary ? "\n      binary: true," : ""}
+      path: ${quote(operation.path)},${operation.binary ? "\n      binary: true," : ""}${idempotent ? "\n      idempotent: true," : ""}
     }, {
 ${sections.join("\n")}
     });

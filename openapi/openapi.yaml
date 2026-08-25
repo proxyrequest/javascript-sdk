@@ -2364,6 +2364,15 @@ paths:
           type: string
         description: A unique value identifying this API Key.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
       - name: Accept-Language
         in: header
         required: false
@@ -2386,6 +2395,13 @@ paths:
       responses:
         '204':
           description: No response body
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '401':
           content:
             application/json:
@@ -2505,6 +2521,32 @@ paths:
                   value:
                     non_field_errors:
                     - The request could not be processed.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
@@ -2815,6 +2857,17 @@ paths:
                     marketer: 550e8400-e29b-41d4-a716-446655440001
                     user: 550e8400-e29b-41d4-a716-446655440001
           description: The resource or action result was created successfully.
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -2906,7 +2959,42 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
       parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
       - name: Accept-Language
         in: header
         required: false
@@ -2978,6 +3066,11 @@ paths:
                     marketer: 550e8400-e29b-41d4-a716-446655440001
                     user: 550e8400-e29b-41d4-a716-446655440001
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '401':
           content:
             application/json:
@@ -3111,6 +3204,12 @@ paths:
           type: string
         description: A unique value identifying this Coupon.
         required: true
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -3241,6 +3340,11 @@ paths:
                     marketer: 550e8400-e29b-41d4-a716-446655440001
                     user: 550e8400-e29b-41d4-a716-446655440001
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -3363,6 +3467,35 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
     patch:
       operationId: coupons_partial_update
       description: Updates selected coupon fields. Staff access is required.
@@ -3374,6 +3507,12 @@ paths:
           type: string
         description: A unique value identifying this Coupon.
         required: true
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -3503,6 +3642,11 @@ paths:
                     marketer: 550e8400-e29b-41d4-a716-446655440001
                     user: 550e8400-e29b-41d4-a716-446655440001
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -3625,6 +3769,35 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
     delete:
       operationId: coupons_destroy
       description: Deletes a coupon that is no longer needed. Staff access is required.
@@ -3636,6 +3809,21 @@ paths:
           type: string
         description: A unique value identifying this Coupon.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -3658,6 +3846,13 @@ paths:
       responses:
         '204':
           description: No response body
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '400':
           content:
             application/json:
@@ -3780,6 +3975,61 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
   /coupons/{id}/redeems:
     get:
       operationId: coupons_redeems_list
@@ -5365,6 +5615,17 @@ paths:
                     company_vat_number: company vat number
                     paid: '2026-07-01T12:30:00Z'
           description: The resource or action result was created successfully.
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -5456,7 +5717,42 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
       parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
       - name: Accept-Language
         in: header
         required: false
@@ -5589,6 +5885,11 @@ paths:
                     company_vat_number: company vat number
                     paid: '2026-07-01T12:30:00Z'
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '401':
           content:
             application/json:
@@ -5723,6 +6024,21 @@ paths:
           type: string
         description: A unique value identifying this Invoice.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -5745,6 +6061,13 @@ paths:
       responses:
         '204':
           description: No response body
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '401':
           content:
             application/json:
@@ -5867,6 +6190,61 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
   /invoices/{id}/download/pdf:
     get:
       operationId: invoices_download_pdf_retrieve
@@ -8726,6 +9104,11 @@ paths:
                     data_updated: '2026-07-01T12:30:00Z'
                     expires: '2026-07-01T12:30:00Z'
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '401':
           content:
             application/json:
@@ -8861,6 +9244,12 @@ paths:
           type: string
         description: A unique value identifying this Order.
         required: true
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -8939,6 +9328,11 @@ paths:
                     updated: '2026-07-01T12:30:00Z'
                     created: '2026-07-01T12:30:00Z'
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -9061,6 +9455,35 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
     delete:
       operationId: orders_destroy
       description: Removes an active order owned by a managed sub-user. Remaining
@@ -9073,6 +9496,21 @@ paths:
           type: string
         description: A unique value identifying this Order.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -9095,6 +9533,13 @@ paths:
       responses:
         '204':
           description: No response body
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '401':
           content:
             application/json:
@@ -9217,6 +9662,61 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
   /packages:
     get:
       operationId: packages_list
@@ -9652,6 +10152,11 @@ paths:
                     otp_enabled: true
                   summary: Current profile
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '401':
           content:
             application/json:
@@ -9852,6 +10357,11 @@ paths:
                     otp_enabled: true
                   summary: Updated profile
           description: The request was accepted and the updated resource is returned.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -9943,7 +10453,42 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
       parameters:
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -10062,7 +10607,42 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
       parameters:
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -12704,6 +13284,17 @@ paths:
                     otp_enabled: true
                   summary: Created user
           description: The resource or action result was created successfully.
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -12795,7 +13386,42 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
       parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
       - name: Accept-Language
         in: header
         required: false
@@ -12861,6 +13487,11 @@ paths:
                     otp_enabled: true
                   summary: User details
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '401':
           content:
             application/json:
@@ -12996,6 +13627,12 @@ paths:
           format: uuid
         description: A UUID string identifying this user.
         required: true
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -13123,6 +13760,11 @@ paths:
                     otp_enabled: true
                   summary: Updated user
           description: The request was accepted and the updated resource is returned.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -13245,6 +13887,35 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
     delete:
       operationId: users_destroy
       description: Deletes a user that the authenticated account is allowed to manage.
@@ -13257,6 +13928,21 @@ paths:
           format: uuid
         description: A UUID string identifying this user.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -13279,6 +13965,13 @@ paths:
       responses:
         '204':
           description: No response body
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '401':
           content:
             application/json:
@@ -13401,6 +14094,61 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
   /users/{id}/data/add:
     post:
       operationId: users_data_add_create
@@ -13415,6 +14163,15 @@ paths:
           format: uuid
         description: A UUID string identifying this user.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
       - name: Accept-Language
         in: header
         required: false
@@ -13494,6 +14251,13 @@ paths:
                     updated: '2026-07-01T12:30:00Z'
                     created: '2026-07-01T12:30:00Z'
           description: The request was accepted and the updated resource is returned.
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '400':
           content:
             application/json:
@@ -13616,6 +14380,32 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
   /users/{id}/data/subtract:
     post:
       operationId: users_data_subtract_create
@@ -13630,6 +14420,15 @@ paths:
           format: uuid
         description: A UUID string identifying this user.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
       - name: Accept-Language
         in: header
         required: false
@@ -13709,6 +14508,13 @@ paths:
                     updated: '2026-07-01T12:30:00Z'
                     created: '2026-07-01T12:30:00Z'
           description: The request was accepted and the updated resource is returned.
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '400':
           content:
             application/json:
@@ -13828,6 +14634,32 @@ paths:
                   summary: Resource not found
           description: The requested resource does not exist in the current account
             scope.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
@@ -14475,6 +15307,17 @@ paths:
                     retry_timeout: 1
                     created: '2026-07-01T12:30:00Z'
           description: The resource or action result was created successfully.
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '400':
           content:
             application/json:
@@ -14566,7 +15409,42 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
       parameters:
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
       - name: Accept-Language
         in: header
         required: false
@@ -14631,6 +15509,11 @@ paths:
                     retry_timeout: 1
                     created: '2026-07-01T12:30:00Z'
           description: The operation completed successfully.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
         '401':
           content:
             application/json:
@@ -14765,6 +15648,21 @@ paths:
           type: string
         description: A unique value identifying this Webhook.
         required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+        description: Strong ETag from the latest representation of this resource.
       - name: Accept-Language
         in: header
         required: false
@@ -14787,6 +15685,13 @@ paths:
       responses:
         '204':
           description: No response body
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
         '401':
           content:
             application/json:
@@ -14909,6 +15814,61 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '412':
+          description: The resource no longer matches the supplied ETag.
+          headers:
+            ETag:
+              description: Strong entity tag for optimistic concurrency control.
+              schema:
+                type: string
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
 components:
   schemas:
     APIKeyCreate:

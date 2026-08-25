@@ -6,6 +6,7 @@ export type ErrorKind =
   | "permission"
   | "not_found"
   | "conflict"
+  | "precondition"
   | "rate_limit"
   | "server"
   | "network"
@@ -23,6 +24,8 @@ export interface ApiErrorOptions {
   requestId?: string;
   retryAfter?: number;
   contentLanguage?: string;
+  currentEtag?: string;
+  idempotencyKey?: string;
   headers?: Record<string, string>;
   rawBody?: Uint8Array;
   cause?: unknown;
@@ -37,6 +40,8 @@ export class ApiError extends ProxyRequestError {
   readonly requestId: string | undefined;
   readonly retryAfter: number | undefined;
   readonly contentLanguage: string | undefined;
+  readonly currentEtag: string | undefined;
+  readonly idempotencyKey: string | undefined;
   readonly headers: Readonly<Record<string, string>>;
   readonly rawBody: Uint8Array;
   override readonly cause: unknown;
@@ -50,6 +55,8 @@ export class ApiError extends ProxyRequestError {
     this.requestId = options.requestId;
     this.retryAfter = options.retryAfter;
     this.contentLanguage = options.contentLanguage;
+    this.currentEtag = options.currentEtag;
+    this.idempotencyKey = options.idempotencyKey;
     this.headers = options.headers ?? {};
     this.rawBody = options.rawBody ?? new Uint8Array();
     this.cause = options.cause;
@@ -77,6 +84,7 @@ export class ApiError extends ProxyRequestError {
     const requestId = header(headers, "x-request-id", "x-correlation-id");
     const retryAfter = numberHeader(headers, "retry-after");
     const contentLanguage = header(headers, "content-language");
+    const currentEtag = header(headers, "etag");
     return new ApiError(detail ?? `ProxyRequest API returned HTTP ${statusCode}.`, {
       kind,
       statusCode,
@@ -85,6 +93,7 @@ export class ApiError extends ProxyRequestError {
       ...(requestId === undefined ? {} : { requestId }),
       ...(retryAfter === undefined ? {} : { retryAfter }),
       ...(contentLanguage === undefined ? {} : { contentLanguage }),
+      ...(currentEtag === undefined ? {} : { currentEtag }),
       headers,
       rawBody,
     });
@@ -104,6 +113,24 @@ export class ApiError extends ProxyRequestError {
       ...(cause === undefined ? {} : { cause }),
     });
   }
+
+  withIdempotencyKey(idempotencyKey: string | undefined): ApiError {
+    if (idempotencyKey === undefined || this.idempotencyKey === idempotencyKey) return this;
+    return new ApiError(this.message, {
+      kind: this.kind,
+      ...(this.statusCode === undefined ? {} : { statusCode: this.statusCode }),
+      ...(this.detail === undefined ? {} : { detail: this.detail }),
+      fieldErrors: { ...this.fieldErrors },
+      ...(this.requestId === undefined ? {} : { requestId: this.requestId }),
+      ...(this.retryAfter === undefined ? {} : { retryAfter: this.retryAfter }),
+      ...(this.contentLanguage === undefined ? {} : { contentLanguage: this.contentLanguage }),
+      ...(this.currentEtag === undefined ? {} : { currentEtag: this.currentEtag }),
+      idempotencyKey,
+      headers: { ...this.headers },
+      rawBody: this.rawBody,
+      ...(this.cause === undefined ? {} : { cause: this.cause }),
+    });
+  }
 }
 
 export class PaginationError extends ProxyRequestError {
@@ -120,6 +147,7 @@ function kindForStatus(statusCode: number): ErrorKind {
   if (statusCode === 403) return "permission";
   if (statusCode === 404) return "not_found";
   if (statusCode === 409) return "conflict";
+  if (statusCode === 412) return "precondition";
   if (statusCode === 429) return "rate_limit";
   if (statusCode >= 500) return "server";
   return "unexpected";
