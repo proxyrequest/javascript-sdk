@@ -80,11 +80,11 @@ Public login, signup, locations, and similar calls can use an anonymous client:
 const client = ProxyRequestClient.anonymous();
 ```
 
-Never embed a Static API key, Telegram service secret, or webhook secret in frontend JavaScript. Browser support is intended for anonymous or appropriately scoped end-user token flows. See the service documentation on [authentication and API fundamentals](https://proxyrequest.com/docs/integration/api-fundamentals/).
+Never embed a Static API key or webhook secret in frontend JavaScript. Browser support is intended for anonymous or appropriately scoped end-user token flows. See the service documentation on [authentication and API fundamentals](https://proxyrequest.com/docs/integration/api-fundamentals/).
 
 ## Resource API
 
-The client exposes all 82 operations through 19 resource groups:
+The client exposes all 80 operations through 18 resource groups:
 
 ```ts
 client.apiKeys;
@@ -103,7 +103,6 @@ client.rewards;
 client.sessions;
 client.settings;
 client.telegram;
-client.telegramService;
 client.users;
 client.webhooks;
 ```

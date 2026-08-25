@@ -3011,108 +3011,6 @@ export class TelegramDashboardResource {
   }
 }
 
-export interface TelegramServiceConsumeLinkOptions {
-  serviceSecret: OperationParameter<
-    operations["integrations_telegram_link_consume_create"],
-    "header",
-    "X-ProxyRequest-Telegram-Secret"
-  >;
-  acceptLanguage?: OperationParameter<
-    operations["integrations_telegram_link_consume_create"],
-    "header",
-    "Accept-Language"
-  >;
-  body: OperationBody<operations["integrations_telegram_link_consume_create"]>;
-  request?: RequestControls;
-}
-
-export type TelegramServiceConsumeLinkResponse = OperationResult<
-  operations["integrations_telegram_link_consume_create"]
->;
-
-export interface TelegramServiceCreateSessionOptions {
-  serviceSecret: OperationParameter<
-    operations["integrations_telegram_session_create"],
-    "header",
-    "X-ProxyRequest-Telegram-Secret"
-  >;
-  acceptLanguage?: OperationParameter<
-    operations["integrations_telegram_session_create"],
-    "header",
-    "Accept-Language"
-  >;
-  body: OperationBody<operations["integrations_telegram_session_create"]>;
-  request?: RequestControls;
-}
-
-export type TelegramServiceCreateSessionResponse = OperationResult<
-  operations["integrations_telegram_session_create"]
->;
-
-export class TelegramServiceResource {
-  readonly #client: ResourceClient;
-
-  constructor(client: ResourceClient) {
-    this.#client = client;
-  }
-
-  /** Consume a Telegram account link */
-  async consumeLink(
-    options: TelegramServiceConsumeLinkOptions,
-  ): Promise<TelegramServiceConsumeLinkResponse> {
-    return (await this.consumeLinkWithResponse(options)).data;
-  }
-
-  /** Consume a Telegram account link; include response metadata. */
-  async consumeLinkWithResponse(
-    options: TelegramServiceConsumeLinkOptions,
-  ): Promise<ApiResponse<TelegramServiceConsumeLinkResponse>> {
-    return this.#client._callWithResponse<TelegramServiceConsumeLinkResponse>(
-      {
-        operationId: "integrations_telegram_link_consume_create",
-        method: "POST",
-        path: "/integrations/telegram/link/consume",
-      },
-      {
-        headers: {
-          "X-ProxyRequest-Telegram-Secret": options.serviceSecret,
-          "Accept-Language": options.acceptLanguage,
-        },
-        body: options.body,
-        ...(options.request === undefined ? {} : { request: options.request }),
-      },
-    );
-  }
-
-  /** Create a Telegram API session */
-  async createSession(
-    options: TelegramServiceCreateSessionOptions,
-  ): Promise<TelegramServiceCreateSessionResponse> {
-    return (await this.createSessionWithResponse(options)).data;
-  }
-
-  /** Create a Telegram API session; include response metadata. */
-  async createSessionWithResponse(
-    options: TelegramServiceCreateSessionOptions,
-  ): Promise<ApiResponse<TelegramServiceCreateSessionResponse>> {
-    return this.#client._callWithResponse<TelegramServiceCreateSessionResponse>(
-      {
-        operationId: "integrations_telegram_session_create",
-        method: "POST",
-        path: "/integrations/telegram/session",
-      },
-      {
-        headers: {
-          "X-ProxyRequest-Telegram-Secret": options.serviceSecret,
-          "Accept-Language": options.acceptLanguage,
-        },
-        body: options.body,
-        ...(options.request === undefined ? {} : { request: options.request }),
-      },
-    );
-  }
-}
-
 export interface UsersListOptions {
   email?: OperationParameter<operations["users_list"], "query", "email">;
   id?: OperationParameter<operations["users_list"], "query", "id">;
@@ -3671,7 +3569,6 @@ export interface ResourceCollection {
   readonly sessions: SessionsResource;
   readonly settings: SettingsResource;
   readonly telegram: TelegramDashboardResource;
-  readonly telegramService: TelegramServiceResource;
   readonly users: UsersResource;
   readonly webhooks: WebhooksResource;
 }
@@ -3694,7 +3591,6 @@ export function createResourceCollection(client: ResourceClient): ResourceCollec
     sessions: new SessionsResource(client),
     settings: new SettingsResource(client),
     telegram: new TelegramDashboardResource(client),
-    telegramService: new TelegramServiceResource(client),
     users: new UsersResource(client),
     webhooks: new WebhooksResource(client),
   };

@@ -312,10 +312,7 @@ ${aliases.join("\n")}
 }
 
 function publicParameterNames(parameters: OpenApiParameter[]): string[] {
-  const bases = parameters.map((parameter) => {
-    if (parameter.name.toLowerCase() === "x-proxyrequest-telegram-secret") return "serviceSecret";
-    return camelCase(parameter.name);
-  });
+  const bases = parameters.map((parameter) => camelCase(parameter.name));
   return bases.map((base, index) => {
     const duplicates = bases.filter((candidate) => candidate === base).length;
     if (duplicates <= 1) return base;

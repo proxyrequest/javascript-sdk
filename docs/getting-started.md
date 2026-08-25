@@ -5,9 +5,8 @@
 - Use a Static API key for server-to-server operator and reseller automation.
 - Use a Bearer access token for a signed-in dashboard user.
 - Use an anonymous client only for endpoints explicitly documented as public.
-- Pass the Telegram service secret only to `client.telegramService` calls.
 
-Static keys and service secrets must never be included in browser bundles. Create and rotate keys through `client.apiKeys` or the dashboard, restrict source IPs where appropriate, and use separate keys per integration.
+Static keys must never be included in browser bundles. Create and rotate keys through `client.apiKeys` or the dashboard, restrict source IPs where appropriate, and use separate keys per integration.
 
 ## Configure the client
 

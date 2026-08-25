@@ -372,46 +372,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/integrations/telegram/link/consume": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Consume a Telegram account link
-     * @description Links a private Telegram chat after validating the single-use token.
-     */
-    post: operations["integrations_telegram_link_consume_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/integrations/telegram/session": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create a Telegram API session
-     * @description Returns a two-minute access token for an already linked private chat.
-     */
-    post: operations["integrations_telegram_session_create"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   "/invoices": {
     parameters: {
       query?: never;
@@ -2913,32 +2873,12 @@ export interface components {
       telegram_username?: string;
       timezone: string;
     };
-    TelegramLinkConsumeRequest: {
-      chat_id: number;
-      language_code?: string;
-      telegram_user_id: number;
-      token: string;
-      username?: string;
-    };
     TelegramLinkResponse: {
       /** Format: uri */
       bot_url: string;
       /** Format: date-time */
       expires_at: string;
       status: string;
-    };
-    TelegramSessionRequest: {
-      chat_id: number;
-      telegram_user_id: number;
-    };
-    TelegramSessionResponse: {
-      access: string;
-      expires_in: number;
-      locale: string;
-      timezone: string;
-      user: {
-        [key: string]: unknown;
-      };
     };
     TokenPairResponse: {
       /** @description Long-lived token used to request a new access token. */
@@ -5378,98 +5318,6 @@ export interface operations {
       };
       /** @description The authenticated account cannot perform this operation. */
       403: {
-        headers: {
-          "Content-Language": components["headers"]["ContentLanguage"];
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
-        };
-      };
-    };
-  };
-  integrations_telegram_link_consume_create: {
-    parameters: {
-      query?: never;
-      header: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
-        "Accept-Language"?: string;
-        /** @description Shared service credential configured on the ProxyRequest bot runtime. */
-        "X-ProxyRequest-Telegram-Secret": string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["TelegramLinkConsumeRequest"];
-        "application/x-www-form-urlencoded": components["schemas"]["TelegramLinkConsumeRequest"];
-        "multipart/form-data": components["schemas"]["TelegramLinkConsumeRequest"];
-      };
-    };
-    responses: {
-      /** @description The operation completed successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TelegramConnectionResponse"];
-        };
-      };
-      /** @description The request is malformed or violates a business rule. */
-      400: {
-        headers: {
-          "Content-Language": components["headers"]["ContentLanguage"];
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
-        };
-      };
-    };
-  };
-  integrations_telegram_session_create: {
-    parameters: {
-      query?: never;
-      header: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
-        "Accept-Language"?: string;
-        /** @description Shared service credential configured on the ProxyRequest bot runtime. */
-        "X-ProxyRequest-Telegram-Secret": string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["TelegramSessionRequest"];
-        "application/x-www-form-urlencoded": components["schemas"]["TelegramSessionRequest"];
-        "multipart/form-data": components["schemas"]["TelegramSessionRequest"];
-      };
-    };
-    responses: {
-      /** @description The operation completed successfully. */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TelegramSessionResponse"];
-        };
-      };
-      /** @description The request is malformed or violates a business rule. */
-      400: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;

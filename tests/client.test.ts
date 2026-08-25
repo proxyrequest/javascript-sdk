@@ -39,30 +39,6 @@ describe("ProxyRequestClient", () => {
     expect(authorizations).toEqual(["Bearer access-token", null]);
   });
 
-  it("keeps Telegram service auth explicit and isolated", async () => {
-    let request: Request | undefined;
-    const client = ProxyRequestClient.anonymous({
-      fetch: async (input, init) => {
-        request = new Request(input, init);
-        return Response.json({
-          access: "token",
-          expires_in: 60,
-          locale: "en",
-          timezone: "UTC",
-          user: {},
-        });
-      },
-    });
-
-    await client.telegramService.createSession({
-      serviceSecret: "telegram-secret",
-      body: { chat_id: 10, telegram_user_id: 20 },
-    });
-
-    expect(request?.headers.get("x-proxyrequest-telegram-secret")).toBe("telegram-secret");
-    expect(request?.headers.get("authorization")).toBeNull();
-  });
-
   it("returns invoice downloads as a universal FileDownload", async () => {
     const client = ProxyRequestClient.withApiKey("secret", {
       fetch: async () =>
