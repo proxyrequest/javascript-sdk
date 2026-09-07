@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Changed
+
+- Regenerated from the public backend contract (81 operations, 129 schemas).
+- Removed the disabled sessions-management resource; 79 supported operations remain.
+- Corrected OTP login unions, MFA request bodies, payment fields, nullable invoices,
+  and configuration-dependent user/invoice responses.
+- Replaced fixed contract-size gates with operation-ID and coverage validation.
+- Added backend-serializer fixtures and compatibility regression tests.
+
 ### Added
 
 - Automatic and explicit idempotency keys with bounded ambiguous-outcome retries.

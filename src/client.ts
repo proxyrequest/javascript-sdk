@@ -56,7 +56,6 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
   readonly profile: ResourceCollection["profile"];
   readonly proxies: ResourceCollection["proxies"];
   readonly rewards: ResourceCollection["rewards"];
-  readonly sessions: ResourceCollection["sessions"];
   readonly settings: ResourceCollection["settings"];
   readonly telegram: ResourceCollection["telegram"];
   readonly users: ResourceCollection["users"];
@@ -120,7 +119,6 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
     this.profile = resources.profile;
     this.proxies = resources.proxies;
     this.rewards = resources.rewards;
-    this.sessions = resources.sessions;
     this.settings = resources.settings;
     this.telegram = resources.telegram;
     this.users = resources.users;

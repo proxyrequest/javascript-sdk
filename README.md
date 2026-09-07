@@ -14,7 +14,7 @@ The official TypeScript SDK for the [ProxyRequest public API](https://proxyreque
 - customer and sub-user accounts;
 - packages, traffic allocations, connection limits, and proxy credentials;
 - invoices, payment links, coupons, rewards, and reseller workflows;
-- residential and static ISP proxy inventory, targeting, routing, and sessions;
+- residential and static ISP proxy inventory, targeting, routing, and sticky proxy credentials;
 - usage accounting, analytics, operational visibility, and webhooks;
 - dashboard, branding, API automation, and Telegram integration.
 
@@ -84,7 +84,13 @@ Never embed a Static API key or webhook secret in frontend JavaScript. Browser s
 
 ## Resource API
 
-The client exposes all 80 operations through 18 resource groups:
+The client exposes 79 supported operations through 17 resource groups. The pinned
+public schema contains 81 operations; the disabled `sessions_list` and
+`sessions_destroy` operations are intentionally excluded from the SDK. Sticky
+session options in proxy generation remain supported.
+
+See [backend compatibility and MFA](docs/backend-compatibility.md) for the updated
+login flow, variable response models, and migration notes.
 
 ```ts
 client.apiKeys;
@@ -100,7 +106,6 @@ client.packages;
 client.profile;
 client.proxies;
 client.rewards;
-client.sessions;
 client.settings;
 client.telegram;
 client.users;

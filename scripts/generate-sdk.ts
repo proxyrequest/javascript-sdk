@@ -1,11 +1,10 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { parse } from "yaml";
+import { loadSdkSchema } from "./sdk-schema.js";
 
 const root = resolve(import.meta.dirname, "..");
-const schema = parse(
-  await readFile(resolve(root, "openapi/openapi.yaml"), "utf8"),
-) as OpenApiSchema;
+const schema = (await loadSdkSchema()) as unknown as OpenApiSchema;
 const configuration = parse(
   await readFile(resolve(root, "openapi/operations.yaml"), "utf8"),
 ) as GeneratorConfiguration;

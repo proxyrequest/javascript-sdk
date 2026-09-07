@@ -95,7 +95,7 @@
   ],
   "scripts": {
     "sync:openapi": "tsx scripts/sync-openapi.ts",
-    "generate:types": "openapi-typescript openapi/openapi.yaml --alphabetize -o src/generated/schema.ts",
+    "generate:types": "tsx scripts/generate-types.ts",
     "generate:resources": "tsx scripts/generate-sdk.ts",
     "generate": "npm run generate:types && npm run generate:resources && biome format --write src/generated",
     "generate:check": "npm run generate && git diff --exit-code -- src/generated",

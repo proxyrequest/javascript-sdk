@@ -21,13 +21,22 @@ if (Object.keys(document.paths ?? {}).some((path) => path.startsWith("/admin")))
   throw new Error("The public schema unexpectedly contains admin paths.");
 }
 
-const methods = new Set(["get", "post", "put", "patch", "delete"]);
-const operations = Object.values(document.paths ?? {}).reduce(
-  (total, item) => total + Object.keys(item).filter((method) => methods.has(method)).length,
-  0,
-);
+const methods = new Set(["get", "post", "put", "patch", "delete", "head", "options", "trace"]);
+const operationIds = new Set<string>();
+for (const [path, item] of Object.entries(document.paths ?? {})) {
+  if ("$ref" in item) throw new Error(`Unresolved path reference: ${path}`);
+  for (const [method, operation] of Object.entries(item)) {
+    if (!methods.has(method)) continue;
+    const id = (operation as { operationId?: unknown } | null)?.operationId;
+    if (typeof id !== "string" || !id.trim() || operationIds.has(id)) {
+      throw new Error(`Missing or duplicate operationId at ${method} ${path}`);
+    }
+    operationIds.add(id);
+  }
+}
+const operations = operationIds.size;
 const schemas = Object.keys(document.components?.schemas ?? {}).length;
-if (operations !== 82 || schemas !== 127) {
+if (operations === 0 || schemas === 0) {
   throw new Error(`Unexpected contract size: ${operations} operations and ${schemas} schemas.`);
 }
 
@@ -51,6 +60,7 @@ await writeFile(
   `${JSON.stringify(
     {
       commit,
+      excludedOperations: ["sessions_destroy", "sessions_list"],
       operations,
       repository: "papaproxy/api",
       schemas,
@@ -61,6 +71,13 @@ await writeFile(
     2,
   )}\n`,
 );
+
+await execFileAsync(process.execPath, [
+  resolve(root, "node_modules/@biomejs/biome/bin/biome"),
+  "format",
+  "--write",
+  resolve(root, "openapi/source.json"),
+]);
 
 console.log(`Synced ${operations} operations and ${schemas} schemas (${digest.slice(0, 12)}).`);
 

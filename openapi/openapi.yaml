@@ -4961,15 +4961,55 @@ paths:
           type: string
           title: Payment Gateway
           enum:
+          - anymoney
+          - binance
+          - braintree
+          - btcpay
+          - checkoutcom
           - coinbase
           - coingate
+          - coinpayments
+          - comgate
           - cryptomus
+          - gopay
+          - halyk_epay
+          - iyzico
+          - kaspi_pay
+          - liqpay
           - manual
+          - mollie
+          - monei
+          - monobank
+          - nexi_xpay
+          - nowpayments
+          - payone
+          - payplug
+          - paytr
+          - paytrail
+          - payu
+          - przelewy24
+          - redsys
           - stripe
+          - tpay
+          - unzer
+          - usegateway
+          - vipps_mobilepay
           - wallet
+          - wayforpay
+          - whitepay
         description: The payment gateway used for processing the payment. * `coinbase`
           - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` -
-          Coingate * `wallet` - Wallet * `manual` - Manual
+          Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay
+          * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance
+          Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom`
+          - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server
+          * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay *
+          `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24`
+          - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI *
+          `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` -
+          Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk
+          ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail`
+          - Paytrail
       - in: query
         name: internal_id
         schema:
@@ -5063,7 +5103,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedInvoiceList'
+                $ref: '#/components/schemas/PaginatedInvoiceReadList'
               examples:
                 example:
                   summary: Example response
@@ -5122,6 +5162,12 @@ paths:
                         valid_until: '2026-07-01T12:30:00Z'
                         marketer: 550e8400-e29b-41d4-a716-446655440001
                         user: 550e8400-e29b-41d4-a716-446655440001
+                      payment_amount: 1
+                      payment_currency: payment currency
+                      fx_market_rate: fx market rate
+                      fx_effective_rate: fx effective rate
+                      fx_markup_percent: fx markup percent
+                      fx_quoted_at: '2026-07-01T12:30:00Z'
                       updated: '2026-07-01T12:30:00Z'
                       created: '2026-07-01T12:30:00Z'
                       type: static
@@ -5137,8 +5183,10 @@ paths:
                       price_total: 1
                       gateway: coinbase
                       payment_url: https://developer.example.com/resource
-                      coingate_order_token: coingate order token
-                      coinbase_charge_id: 550e8400-e29b-41d4-a716-446655440001
+                      currency: USD
+                      provider_checkout_id: 550e8400-e29b-41d4-a716-446655440001
+                      provider_payment_id: 550e8400-e29b-41d4-a716-446655440001
+                      checkout_status: not_required
                       vat: 24.99
                       company_name: company name
                       company_address: company address
@@ -5269,6 +5317,7 @@ paths:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
                   gateway: crypto
                   crypto_currency: crypto currency
+                  payment_currency: payment currency
                   coupon_code: coupon code
                   country_code: us
                   data: 1073741824
@@ -5290,6 +5339,7 @@ paths:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
                   gateway: crypto
                   crypto_currency: crypto currency
+                  payment_currency: payment currency
                   coupon_code: coupon code
                   country_code: us
                   data: 1073741824
@@ -5364,6 +5414,12 @@ paths:
                       valid_until: '2026-07-01T12:30:00Z'
                       marketer: 550e8400-e29b-41d4-a716-446655440001
                       user: 550e8400-e29b-41d4-a716-446655440001
+                    payment_amount: 1
+                    payment_currency: payment currency
+                    fx_market_rate: fx market rate
+                    fx_effective_rate: fx effective rate
+                    fx_markup_percent: fx markup percent
+                    fx_quoted_at: '2026-07-01T12:30:00Z'
                     updated: '2026-07-01T12:30:00Z'
                     created: '2026-07-01T12:30:00Z'
                     type: static
@@ -5379,8 +5435,10 @@ paths:
                     price_total: 1
                     gateway: coinbase
                     payment_url: https://developer.example.com/resource
-                    coingate_order_token: coingate order token
-                    coinbase_charge_id: 550e8400-e29b-41d4-a716-446655440001
+                    currency: USD
+                    provider_checkout_id: 550e8400-e29b-41d4-a716-446655440001
+                    provider_payment_id: 550e8400-e29b-41d4-a716-446655440001
+                    checkout_status: not_required
                     vat: 24.99
                     company_name: company name
                     company_address: company address
@@ -5492,6 +5550,42 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
+        '502':
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - invoice_id
+                - gateway
+                - retryable
+                - non_field_errors
+                - translation
+                properties:
+                  invoice_id:
+                    type: string
+                    format: uuid
+                  gateway:
+                    type: string
+                  retryable:
+                    type: boolean
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+              examples:
+                PaymentProviderUnavailable:
+                  value:
+                    invoice_id: 550e8400-e29b-41d4-a716-446655440000
+                    gateway: whitepay
+                    retryable: true
+                    non_field_errors:
+                    - Payment checkout could not be initialized
+                  summary: Payment provider unavailable
+          description: The upstream payment provider could not initialize checkout.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
         '409':
           description: The idempotency key is in progress or was reused for a different
             request.
@@ -5579,7 +5673,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Invoice'
+                $ref: '#/components/schemas/InvoiceRead'
               examples:
                 example:
                   summary: Example response
@@ -5634,6 +5728,12 @@ paths:
                       valid_until: '2026-07-01T12:30:00Z'
                       marketer: 550e8400-e29b-41d4-a716-446655440001
                       user: 550e8400-e29b-41d4-a716-446655440001
+                    payment_amount: 1
+                    payment_currency: payment currency
+                    fx_market_rate: fx market rate
+                    fx_effective_rate: fx effective rate
+                    fx_markup_percent: fx markup percent
+                    fx_quoted_at: '2026-07-01T12:30:00Z'
                     updated: '2026-07-01T12:30:00Z'
                     created: '2026-07-01T12:30:00Z'
                     type: static
@@ -5649,8 +5749,10 @@ paths:
                     price_total: 1
                     gateway: coinbase
                     payment_url: https://developer.example.com/resource
-                    coingate_order_token: coingate order token
-                    coinbase_charge_id: 550e8400-e29b-41d4-a716-446655440001
+                    currency: USD
+                    provider_checkout_id: 550e8400-e29b-41d4-a716-446655440001
+                    provider_payment_id: 550e8400-e29b-41d4-a716-446655440001
+                    checkout_status: not_required
                     vat: 24.99
                     company_name: company name
                     company_address: company address
@@ -8242,6 +8344,19 @@ paths:
                     refresh: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsInVzZXJfaWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDEifQ.example-signature
                   summary: Issued tokens
           description: The operation completed successfully.
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OTPChallenge'
+              examples:
+                AuthenticatorRequired:
+                  value:
+                    status: otp_required
+                    challenge: a-single-use-challenge-returned-by-login
+                    expires_in: 300
+                  summary: Authenticator required
+          description: The request was accepted and the updated resource is returned.
         '400':
           content:
             application/json:
@@ -8346,6 +8461,19 @@ paths:
                     refresh: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsInVzZXJfaWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDEifQ.example-signature
                   summary: Issued tokens
           description: The operation completed successfully.
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OTPChallenge'
+              examples:
+                AuthenticatorRequired:
+                  value:
+                    status: otp_required
+                    challenge: a-single-use-challenge-returned-by-login
+                    expires_in: 300
+                  summary: Authenticator required
+          description: The request was accepted and the updated resource is returned.
         '400':
           content:
             application/json:
@@ -8404,6 +8532,105 @@ paths:
                     detail: You do not have permission to perform this action.
                   summary: Permission denied
           description: The authenticated account cannot perform this operation.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        schema:
+          type: string
+          default: en
+        description: 'Preferred language for human-readable API errors. Supported
+          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
+          and quality weights are accepted; unsupported or omitted values use English.'
+        examples:
+          German:
+            value: de
+          Weighted:
+            value: fr-CA, fr;q=0.9, en;q=0.5
+  /login/otp:
+    post:
+      operationId: login_otp_create
+      description: Exchanges a single-use sign-in challenge and authenticator code
+        for account tokens.
+      summary: Complete two-factor sign-in
+      tags:
+      - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+            examples:
+              CompleteTOTPSign-in:
+                value:
+                  challenge: a-single-use-challenge-returned-by-login
+                  code: '492031'
+                summary: Complete TOTP sign-in
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+            examples:
+              CompleteTOTPSign-in:
+                value:
+                  challenge: a-single-use-challenge-returned-by-login
+                  code: '492031'
+                summary: Complete TOTP sign-in
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+            examples:
+              CompleteTOTPSign-in:
+                value:
+                  challenge: a-single-use-challenge-returned-by-login
+                  code: '492031'
+                summary: Complete TOTP sign-in
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPairResponse'
+              examples:
+                IssuedTokens:
+                  value:
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwidXNlcl9pZCI6IjU1MGU4NDAwLWUyOWItNDFkNC1hNzE2LTQ0NjY1NTQ0MDAwMSJ9.example-signature
+                    refresh: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsInVzZXJfaWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDEifQ.example-signature
+                  summary: Issued tokens
+          description: The operation completed successfully.
+        '400':
+          description: The request is malformed or violates a business rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Validation error
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
@@ -10435,9 +10662,9 @@ paths:
   /profile/2fa/confirm:
     post:
       operationId: profile_2fa_confirm_create
-      description: Verifies a six-digit TOTP code generated from the pending secret
-        and enables two-factor authentication for the account.
-      summary: Confirm two-factor setup
+      description: Activates the pending authenticator after verifying its code and
+        revokes previous JWTs.
+      summary: Confirm two-factor authentication
       tags:
       - Profile
       requestBody:
@@ -10454,18 +10681,18 @@ paths:
             schema:
               $ref: '#/components/schemas/TwoFactorConfirmRequest'
             examples:
-              example:
-                summary: Example request
+              ConfirmTOTP:
                 value:
-                  code: us
+                  code: '492031'
+                summary: Confirm TOTP
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/TwoFactorConfirmRequest'
             examples:
-              example:
-                summary: Example request
+              ConfirmTOTP:
                 value:
-                  code: us
+                  code: '492031'
+                summary: Confirm TOTP
         required: true
       security:
       - BearerAuth: []
@@ -10591,8 +10818,8 @@ paths:
   /profile/2fa/disable:
     post:
       operationId: profile_2fa_disable_create
-      description: Verifies a current TOTP code, disables two-factor authentication,
-        and removes the stored TOTP secret.
+      description: Requires the primary factor and current authenticator code, then
+        revokes previous JWTs.
       summary: Disable two-factor authentication
       tags:
       - Profile
@@ -10604,24 +10831,42 @@ paths:
             examples:
               DisableTOTP:
                 value:
+                  password: Correct-Horse-Battery-Staple-42
                   code: '492031'
                 summary: Disable TOTP
+              PasswordlessGoogleAccount:
+                value:
+                  credential: google-id-token
+                  code: '492031'
+                summary: Passwordless Google account
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/TwoFactorDisableRequest'
             examples:
-              example:
-                summary: Example request
+              DisableTOTP:
                 value:
-                  code: us
+                  password: Correct-Horse-Battery-Staple-42
+                  code: '492031'
+                summary: Disable TOTP
+              PasswordlessGoogleAccount:
+                value:
+                  credential: google-id-token
+                  code: '492031'
+                summary: Passwordless Google account
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/TwoFactorDisableRequest'
             examples:
-              example:
-                summary: Example request
+              DisableTOTP:
                 value:
-                  code: us
+                  password: Correct-Horse-Battery-Staple-42
+                  code: '492031'
+                summary: Disable TOTP
+              PasswordlessGoogleAccount:
+                value:
+                  credential: google-id-token
+                  code: '492031'
+                summary: Passwordless Google account
         required: true
       security:
       - BearerAuth: []
@@ -10747,11 +10992,64 @@ paths:
   /profile/2fa/setup:
     post:
       operationId: profile_2fa_setup_create
-      description: Creates a new TOTP secret and provisioning URI. Two-factor authentication
-        remains disabled until the code is confirmed.
-      summary: Start two-factor setup
+      description: Confirms the primary factor and prepares a pending secret without
+        disabling current protection.
+      summary: Prepare two-factor authentication
       tags:
       - Profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TwoFactorSetupRequestRequest'
+            examples:
+              InitialSetup:
+                value:
+                  password: Correct-Horse-Battery-Staple-42
+                summary: Initial setup
+              ReplaceAuthenticator:
+                value:
+                  password: Correct-Horse-Battery-Staple-42
+                  code: '492031'
+                summary: Replace authenticator
+              PasswordlessGoogleAccount:
+                value:
+                  credential: google-id-token
+                summary: Passwordless Google account
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TwoFactorSetupRequestRequest'
+            examples:
+              InitialSetup:
+                value:
+                  password: Correct-Horse-Battery-Staple-42
+                summary: Initial setup
+              ReplaceAuthenticator:
+                value:
+                  password: Correct-Horse-Battery-Staple-42
+                  code: '492031'
+                summary: Replace authenticator
+              PasswordlessGoogleAccount:
+                value:
+                  credential: google-id-token
+                summary: Passwordless Google account
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TwoFactorSetupRequestRequest'
+            examples:
+              InitialSetup:
+                value:
+                  password: Correct-Horse-Battery-Staple-42
+                summary: Initial setup
+              ReplaceAuthenticator:
+                value:
+                  password: Correct-Horse-Battery-Staple-42
+                  code: '492031'
+                summary: Replace authenticator
+              PasswordlessGoogleAccount:
+                value:
+                  credential: google-id-token
+                summary: Passwordless Google account
       security:
       - BearerAuth: []
       - StaticAuth: []
@@ -10769,6 +11067,37 @@ paths:
                     qr_png_base64: iVBORw0KGgoAAAANSUhEUgAA...
                   summary: TOTP setup
           description: The operation completed successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                ValidationError:
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+                  summary: Validation error
+          description: The request is malformed or violates a business rule.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
         '401':
           content:
             application/json:
@@ -10826,37 +11155,6 @@ paths:
                     detail: You do not have permission to perform this action.
                   summary: Permission denied
           description: The authenticated account cannot perform this operation.
-          headers:
-            Content-Language:
-              $ref: '#/components/headers/ContentLanguage'
-        '400':
-          description: The request is malformed or violates a business rule.
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Validation and API error payload. Field names may be
-                  added dynamically; field errors are returned as arrays of human-readable
-                  messages.
-                properties:
-                  detail:
-                    type: string
-                  non_field_errors:
-                    type: array
-                    items:
-                      type: string
-                additionalProperties:
-                  oneOf:
-                  - type: string
-                  - type: array
-                    items:
-                      type: string
-              examples:
-                example:
-                  summary: Validation error
-                  value:
-                    non_field_errors:
-                    - The request could not be processed.
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
@@ -12089,62 +12387,14 @@ paths:
   /sessions:
     get:
       operationId: sessions_list
-      description: Returns sticky proxy session identifiers owned by the authenticated
-        username. At most the configured safety limit is returned.
-      summary: List active proxy sessions
+      description: Session ownership cannot be verified with the current proxy format.
+      summary: Session listing temporarily unavailable
       tags:
       - Sessions
       security:
       - BearerAuth: []
       - StaticAuth: []
       responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SessionListResponse'
-              examples:
-                ActiveSessions:
-                  value:
-                  - count: 2
-                    results:
-                    - session:developer:residential-us:7f6c1d
-                    - session:developer:residential-us:08b3a2
-                  summary: Active sessions
-          description: The operation completed successfully.
-        '400':
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Validation and API error payload. Field names may be
-                  added dynamically; field errors are returned as arrays of human-readable
-                  messages.
-                properties:
-                  detail:
-                    type: string
-                  non_field_errors:
-                    type: array
-                    items:
-                      type: string
-                additionalProperties:
-                  oneOf:
-                  - type: string
-                  - type: array
-                    items:
-                      type: string
-              examples:
-                ValidationError:
-                  value:
-                    non_field_errors:
-                    - The request could not be processed.
-                  summary: Validation error
-          description: The request is malformed or violates a business rule.
-          headers:
-            Content-Language:
-              $ref: '#/components/headers/ContentLanguage'
         '401':
           content:
             application/json:
@@ -12202,6 +12452,37 @@ paths:
                     detail: You do not have permission to perform this action.
                   summary: Permission denied
           description: The authenticated account cannot perform this operation.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '400':
+          description: The request is malformed or violates a business rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Validation error
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
@@ -12223,20 +12504,14 @@ paths:
   /sessions/{id}:
     delete:
       operationId: sessions_destroy
-      description: Deletes matching sticky-session keys owned by the authenticated
-        username. The path value is treated as the session identifier fragment.
-      summary: Revoke a proxy session
+      description: Session ownership cannot be verified with the current proxy format.
+      summary: Session deletion temporarily unavailable
       parameters:
       - in: path
         name: id
         schema:
           type: string
-        description: Sticky session identifier or unique suffix.
         required: true
-        examples:
-          SessionSuffix:
-            value: 7f6c1d
-            summary: Session suffix
       - name: Accept-Language
         in: header
         required: false
@@ -12257,48 +12532,6 @@ paths:
       - BearerAuth: []
       - StaticAuth: []
       responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SessionDeleteResponse'
-              examples:
-                SessionRevoked:
-                  value:
-                    deleted: true
-                  summary: Session revoked
-          description: The operation completed successfully.
-        '400':
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Validation and API error payload. Field names may be
-                  added dynamically; field errors are returned as arrays of human-readable
-                  messages.
-                properties:
-                  detail:
-                    type: string
-                  non_field_errors:
-                    type: array
-                    items:
-                      type: string
-                additionalProperties:
-                  oneOf:
-                  - type: string
-                  - type: array
-                    items:
-                      type: string
-              examples:
-                ValidationError:
-                  value:
-                    non_field_errors:
-                    - The request could not be processed.
-                  summary: Validation error
-          description: The request is malformed or violates a business rule.
-          headers:
-            Content-Language:
-              $ref: '#/components/headers/ContentLanguage'
         '401':
           content:
             application/json:
@@ -12356,6 +12589,37 @@ paths:
                     detail: You do not have permission to perform this action.
                   summary: Permission denied
           description: The authenticated account cannot perform this operation.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '400':
+          description: The request is malformed or violates a business rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Validation error
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
@@ -12440,6 +12704,20 @@ paths:
                     - stripe
                     - crypto
                     - wallet
+                    payment_gateways:
+                    - code: stripe
+                      name: Stripe
+                      kind: card
+                      supported_currencies:
+                      - EUR
+                      supported_crypto_currencies: []
+                      requires_crypto_currency: false
+                    - code: wallet
+                      name: Wallet
+                      kind: wallet
+                      supported_currencies: []
+                      supported_crypto_currencies: []
+                      requires_crypto_currency: false
                   summary: Account settings
           description: The operation completed successfully.
         '401':
@@ -12854,6 +13132,26 @@ paths:
                       data_updated: '2026-07-01T12:30:00Z'
                       proxy_password: p9W4rT2xK7mQ
                       proxy_password_reset: '2026-07-01T12:30:00Z'
+                      orders:
+                      - id: 550e8400-e29b-41d4-a716-446655440001
+                        is_auto_renewal: true
+                        auto_renewal_percentage: 1
+                        auto_renewal_data: 1
+                        package: {}
+                        proxy_password: p9W4rT2xK7mQ
+                        proxy_password_reset: '2026-07-01T12:30:00Z'
+                        pools:
+                        - residential
+                        data: 1073741824
+                        data_remaining: 1
+                        data_spent: 1073741824
+                        ledgers:
+                        - {}
+                        latest_data_top_up: 1
+                        latest_data_top_up_date: '2026-07-01T12:30:00Z'
+                        data_updated: '2026-07-01T12:30:00Z'
+                        updated: '2026-07-01T12:30:00Z'
+                        created: '2026-07-01T12:30:00Z'
           description: The operation completed successfully.
         '400':
           content:
@@ -15846,6 +16144,15 @@ components:
       - new_password1
       - new_password2
       - old_password
+    CheckoutStatusEnum:
+      enum:
+      - not_required
+      - initializing
+      - ready
+      - failed
+      type: string
+      description: '* `not_required` - Not required * `initializing` - Initializing
+        * `ready` - Ready * `failed` - Failed'
     City:
       type: object
       properties:
@@ -16591,10 +16898,12 @@ components:
           allOf:
           - $ref: '#/components/schemas/PackageShort'
           readOnly: true
+          nullable: true
         country:
           allOf:
           - $ref: '#/components/schemas/Country'
           readOnly: true
+          nullable: true
         user_id:
           type: string
           format: uuid
@@ -16602,6 +16911,27 @@ components:
         coupon:
           allOf:
           - $ref: '#/components/schemas/CouponShort'
+          readOnly: true
+          nullable: true
+        payment_amount:
+          type: integer
+          readOnly: true
+        payment_currency:
+          type: string
+          readOnly: true
+        fx_market_rate:
+          type: string
+          readOnly: true
+        fx_effective_rate:
+          type: string
+          readOnly: true
+        fx_markup_percent:
+          type: string
+          readOnly: true
+        fx_quoted_at:
+          type: string
+          format: date-time
+          nullable: true
           readOnly: true
         updated:
           type: string
@@ -16683,23 +17013,38 @@ components:
           title: Payment Gateway
           description: The payment gateway used for processing the payment. * `coinbase`
             - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate`
-            - Coingate * `wallet` - Wallet * `manual` - Manual
+            - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay
+            * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance
+            Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom`
+            - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server
+            * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay
+            * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay
+            * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate *
+            `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` -
+            Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay
+            * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay`
+            - Vipps MobilePay * `paytrail` - Paytrail
         payment_url:
           type: string
           format: uri
           description: The URL for making the payment. Optional field with a maximum
             length of 500 characters.
           maxLength: 500
-        coingate_order_token:
+        currency:
           type: string
-          description: The Coingate order token for the payment. Optional field with
-            a maximum length of 255 characters.
-          maxLength: 255
-        coinbase_charge_id:
+          title: Billing Currency
+          description: ISO 4217 currency captured when the invoice is created.
+          maxLength: 3
+        provider_checkout_id:
           type: string
-          description: The Coinbase charge ID for the payment. Optional field with
-            a maximum length of 255 characters.
+          description: Provider-side hosted checkout identifier used for reconciliation.
           maxLength: 255
+        provider_payment_id:
+          type: string
+          description: Provider-side payment or transaction identifier used for reconciliation.
+          maxLength: 255
+        checkout_status:
+          $ref: '#/components/schemas/CheckoutStatusEnum'
         vat:
           type: number
           format: double
@@ -16735,18 +17080,68 @@ components:
       - country
       - coupon
       - created
+      - fx_effective_rate
+      - fx_market_rate
+      - fx_markup_percent
+      - fx_quoted_at
       - package
+      - payment_amount
+      - payment_currency
       - updated
       - user_id
     InvoiceCreateRequestGatewayEnum:
       enum:
       - crypto
+      - credit_card
       - wallet
       - manual
       - stripe
+      - coinbase
+      - cryptomus
+      - coingate
+      - whitepay
+      - wayforpay
+      - usegateway
+      - binance
+      - anymoney
+      - coinpayments
+      - checkoutcom
+      - nowpayments
+      - btcpay
+      - braintree
+      - monobank
+      - liqpay
+      - iyzico
+      - paytr
+      - payu
+      - tpay
+      - przelewy24
+      - gopay
+      - comgate
+      - monei
+      - redsys
+      - payplug
+      - mollie
+      - unzer
+      - payone
+      - nexi_xpay
+      - halyk_epay
+      - kaspi_pay
+      - vipps_mobilepay
+      - paytrail
       type: string
-      description: '* `crypto` - crypto * `wallet` - wallet * `manual` - manual *
-        `stripe` - stripe'
+      description: '* `crypto` - crypto * `credit_card` - credit_card * `wallet` -
+        wallet * `manual` - manual * `stripe` - stripe * `coinbase` - coinbase * `cryptomus`
+        - cryptomus * `coingate` - coingate * `whitepay` - whitepay * `wayforpay`
+        - wayforpay * `usegateway` - usegateway * `binance` - binance * `anymoney`
+        - anymoney * `coinpayments` - coinpayments * `checkoutcom` - checkoutcom *
+        `nowpayments` - nowpayments * `btcpay` - btcpay * `braintree` - braintree
+        * `monobank` - monobank * `liqpay` - liqpay * `iyzico` - iyzico * `paytr`
+        - paytr * `payu` - payu * `tpay` - tpay * `przelewy24` - przelewy24 * `gopay`
+        - gopay * `comgate` - comgate * `monei` - monei * `redsys` - redsys * `payplug`
+        - payplug * `mollie` - mollie * `unzer` - unzer * `payone` - payone * `nexi_xpay`
+        - nexi_xpay * `halyk_epay` - halyk_epay * `kaspi_pay` - kaspi_pay * `vipps_mobilepay`
+        - vipps_mobilepay * `paytrail` - paytrail'
     InvoiceCreateRequestRequest:
       type: object
       properties:
@@ -16763,6 +17158,11 @@ components:
         crypto_currency:
           type: string
           minLength: 1
+        payment_currency:
+          type: string
+          minLength: 1
+          description: ISO 4217 currency charged by a regional fiat provider.
+          maxLength: 3
         coupon_code:
           type: string
         country_code:
@@ -16804,9 +17204,207 @@ components:
       - coingate
       - wallet
       - manual
+      - whitepay
+      - wayforpay
+      - usegateway
+      - binance
+      - anymoney
+      - coinpayments
+      - checkoutcom
+      - nowpayments
+      - btcpay
+      - braintree
+      - monobank
+      - liqpay
+      - iyzico
+      - paytr
+      - payu
+      - tpay
+      - przelewy24
+      - gopay
+      - comgate
+      - monei
+      - redsys
+      - payplug
+      - mollie
+      - unzer
+      - payone
+      - nexi_xpay
+      - halyk_epay
+      - kaspi_pay
+      - vipps_mobilepay
+      - paytrail
       type: string
       description: '* `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` -
-        Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual'
+        Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay`
+        - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance`
+        - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom`
+        - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server *
+        `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico`
+        - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24`
+        - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys`
+        - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone`
+        - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay`
+        - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail'
+    InvoiceRead:
+      anyOf:
+      - $ref: '#/components/schemas/Invoice'
+      - $ref: '#/components/schemas/InvoiceShort'
+      description: Full invoice in package-based deployments; short invoice otherwise.
+        Invoice creation always returns the full Invoice representation.
+    InvoiceShort:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 36
+        coupon:
+          allOf:
+          - $ref: '#/components/schemas/Coupon'
+          readOnly: true
+          nullable: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/Country'
+          readOnly: true
+          nullable: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        is_one_time:
+          type: boolean
+          title: One-Time Purchase
+          description: Indicates whether this invoice is for a one-time purchase.
+            Default is False, meaning it is a recurring invoice.
+        is_payout:
+          type: boolean
+          title: Payout
+          description: Indicates whether this invoice is a payout to the marketer.
+            Default is False.
+        internal_id:
+          type: string
+          description: A unique identifier for the invoice, generated automatically.
+          maxLength: 25
+        status:
+          allOf:
+          - $ref: '#/components/schemas/InvoiceStatusEnum'
+          description: After changing invoice status to PAID, the invoice will be
+            processed and user package created in case none exists. If you need to
+            cancel the invoice, make sure to subtract data from the user package after
+            changing the invoice status. Changing the status from PAID to any other
+            will not affect the user package's data or proxies. * `pending` - Pending
+            * `paid` - Paid * `unpaid` - Unpaid * `error` - Error
+        description:
+          type: string
+          description: A description of the invoice. This field is optional and can
+            be left blank.
+        connection_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: -1
+          description: The maximum number of concurrent connections allowed for this
+            package.
+        data:
+          type: integer
+          maximum: 1000000000000000
+          minimum: 0
+          format: int64
+          title: Data (bytes)
+          description: The amount of data in bytes.
+        balance:
+          type: integer
+          maximum: 10000000000
+          minimum: 0
+          format: int64
+          title: Balance Top Up (cents)
+          description: The balance to top up for the user. Must be zero or positive.
+        price_total:
+          type: integer
+          maximum: 10000000000
+          minimum: 1
+          format: int64
+          title: Price (cents)
+          description: The total price of the invoice, including any discounts. Must
+            be at least 1 cent.
+        gateway:
+          allOf:
+          - $ref: '#/components/schemas/InvoiceGatewayEnum'
+          title: Payment Gateway
+          description: The payment gateway used for processing the payment. * `coinbase`
+            - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate`
+            - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay
+            * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance
+            Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom`
+            - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server
+            * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay
+            * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay
+            * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate *
+            `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` -
+            Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay
+            * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay`
+            - Vipps MobilePay * `paytrail` - Paytrail
+        currency:
+          type: string
+          title: Billing Currency
+          description: ISO 4217 currency captured when the invoice is created.
+          maxLength: 3
+        provider_checkout_id:
+          type: string
+          description: Provider-side hosted checkout identifier used for reconciliation.
+          maxLength: 255
+        provider_payment_id:
+          type: string
+          description: Provider-side payment or transaction identifier used for reconciliation.
+          maxLength: 255
+        checkout_status:
+          $ref: '#/components/schemas/CheckoutStatusEnum'
+        vat:
+          type: number
+          format: double
+          maximum: 100.0
+          minimum: 0.0
+          title: VAT (%)
+          description: The VAT percentage applied to the invoice. Must be between
+            0 and 100.
+        company_name:
+          type: string
+          maxLength: 255
+        company_address:
+          type: string
+          maxLength: 255
+        company_city:
+          type: string
+          maxLength: 255
+        company_postal_code:
+          type: string
+          maxLength: 255
+        company_registration_number:
+          type: string
+          maxLength: 255
+        company_vat_number:
+          type: string
+          maxLength: 255
+        paid:
+          type: string
+          format: date-time
+          nullable: true
+          description: The date and time when the invoice was paid.
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+          description: The date and time when the invoice expires. If not set, the
+            invoice does not expire.
+      required:
+      - country
+      - coupon
+      - created
+      - updated
     InvoiceStatusEnum:
       enum:
       - pending
@@ -17050,6 +17648,19 @@ components:
       required:
       - content
       - title
+    OTPChallenge:
+      type: object
+      properties:
+        status:
+          type: string
+        challenge:
+          type: string
+        expires_in:
+          type: integer
+      required:
+      - challenge
+      - expires_in
+      - status
     Order:
       type: object
       properties:
@@ -17696,7 +18307,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ISP'
-    PaginatedInvoiceList:
+    PaginatedInvoiceReadList:
       type: object
       required:
       - count
@@ -17718,7 +18329,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Invoice'
+            $ref: '#/components/schemas/InvoiceRead'
     PaginatedLocationASNRecordList:
       type: object
       required:
@@ -18175,6 +18786,32 @@ components:
           type: object
           additionalProperties: {}
           description: Additional metadata for the user. Maximum 50 fields.
+    PaymentGateway:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        supported_currencies:
+          type: array
+          items:
+            type: string
+        supported_crypto_currencies:
+          type: array
+          items:
+            type: string
+        requires_crypto_currency:
+          type: boolean
+      required:
+      - code
+      - kind
+      - name
+      - requires_crypto_currency
+      - supported_crypto_currencies
+      - supported_currencies
     PaymentLinkResponse:
       type: object
       properties:
@@ -18425,25 +19062,6 @@ components:
       type: string
       description: '* `pending` - Pending * `paid` - Paid * `review` - Review * `cancelled`
         - Cancelled'
-    SessionDeleteResponse:
-      type: object
-      properties:
-        deleted:
-          type: boolean
-      required:
-      - deleted
-    SessionListResponse:
-      type: object
-      properties:
-        count:
-          type: integer
-        results:
-          type: array
-          items:
-            type: string
-      required:
-      - count
-      - results
     SettingsCrypto:
       type: object
       properties:
@@ -18533,6 +19151,10 @@ components:
           type: array
           items:
             type: string
+        payment_gateways:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentGateway'
       required:
       - crypto
       - data_available
@@ -18540,6 +19162,7 @@ components:
       - gateways
       - orders_active
       - orders_total
+      - payment_gateways
       - payment_methods
       - referrals
       - spent_total
@@ -18821,12 +19444,35 @@ components:
     TwoFactorDisableRequest:
       type: object
       properties:
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        credential:
+          type: string
+          writeOnly: true
+          minLength: 1
         code:
           type: string
           minLength: 6
           maxLength: 8
       required:
       - code
+    TwoFactorSetupRequestRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        credential:
+          type: string
+          writeOnly: true
+          minLength: 1
+        code:
+          type: string
+          minLength: 1
+          pattern: ^[0-9]{6}$
     TwoFactorSetupResponse:
       type: object
       properties:
@@ -18987,45 +19633,46 @@ components:
         data:
           type: integer
           nullable: true
-          description: Available data allowance for the user
+          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
           readOnly: true
         data_spent:
           type: integer
           nullable: true
-          description: Amount of data consumed by the user
+          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
           readOnly: true
         data_updated:
           type: string
           format: date-time
           nullable: true
-          description: Last update timestamp for user's data
+          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
           readOnly: true
         proxy_password:
           type: string
           nullable: true
-          description: Proxy authentication password
+          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
           readOnly: true
         proxy_password_reset:
           type: string
           format: date-time
           nullable: true
-          description: Last proxy password reset timestamp
+          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
           readOnly: true
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+          readOnly: true
+          description: Present only when SITE_PACKAGE_BASED_AUTH is enabled.
       required:
       - allowed_ips
       - blocked_domains
       - coupons
       - currency
-      - data
-      - data_spent
-      - data_updated
       - date_joined
       - date_joined_ts
       - email
       - id
       - parent_id
-      - proxy_password
-      - proxy_password_reset
       - referral_balance_earned
       - referral_balance_pending
       - referral_code
@@ -19137,6 +19784,20 @@ components:
           format: uuid
           description: Package whose proxy password should be rotated. Required only
             when package-based authentication is enabled.
+    VerifyOTPRequest:
+      type: object
+      properties:
+        challenge:
+          type: string
+          minLength: 1
+          maxLength: 128
+        code:
+          type: string
+          minLength: 1
+          pattern: ^[0-9]{6}$
+      required:
+      - challenge
+      - code
     WebhookCreateRequest:
       type: object
       properties:

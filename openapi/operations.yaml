@@ -12,7 +12,6 @@ resources:
   Profile: {attribute: profile, class_name: ProfileResource}
   Proxies: {attribute: proxies, class_name: ProxiesResource}
   Rewards: {attribute: rewards, class_name: RewardsResource}
-  Sessions: {attribute: sessions, class_name: SessionsResource}
   Settings: {attribute: settings, class_name: SettingsResource}
   Telegram dashboard: {attribute: telegram, class_name: TelegramDashboardResource}
   Users: {attribute: users, class_name: UsersResource}
@@ -61,6 +60,7 @@ operations:
   locations_regions_retrieve: get_region
   login_create: login
   login_google_create: login_with_google
+  login_otp_create: verify_otp
   news_list: list
   orders_list: list
   orders_retrieve: get
@@ -82,8 +82,6 @@ operations:
   reset_password_create: reset_password
   rewards_list: list
   rewards_claim_create: claim
-  sessions_list: list
-  sessions_destroy: delete
   settings_retrieve: get
   signup_create: signup
   users_list: list

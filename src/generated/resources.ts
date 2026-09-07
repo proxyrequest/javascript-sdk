@@ -662,6 +662,14 @@ export type AuthorizationLoginWithGoogleResponse = OperationResult<
   operations["login_google_create"]
 >;
 
+export interface AuthorizationVerifyOtpOptions {
+  acceptLanguage?: OperationParameter<operations["login_otp_create"], "header", "Accept-Language">;
+  body: OperationBody<operations["login_otp_create"]>;
+  request?: RequestControls;
+}
+
+export type AuthorizationVerifyOtpResponse = OperationResult<operations["login_otp_create"]>;
+
 export interface AuthorizationRecoverPasswordOptions {
   acceptLanguage?: OperationParameter<
     operations["recover_password_create"],
@@ -740,6 +748,31 @@ export class AuthorizationResource {
         operationId: "login_google_create",
         method: "POST",
         path: "/login/google",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Complete two-factor sign-in */
+  async verifyOtp(options: AuthorizationVerifyOtpOptions): Promise<AuthorizationVerifyOtpResponse> {
+    return (await this.verifyOtpWithResponse(options)).data;
+  }
+
+  /** Complete two-factor sign-in; include response metadata. */
+  async verifyOtpWithResponse(
+    options: AuthorizationVerifyOtpOptions,
+  ): Promise<ApiResponse<AuthorizationVerifyOtpResponse>> {
+    return this.#client._callWithResponse<AuthorizationVerifyOtpResponse>(
+      {
+        operationId: "login_otp_create",
+        method: "POST",
+        path: "/login/otp",
       },
       {
         headers: {
@@ -2351,6 +2384,7 @@ export interface ProfileSetupTwoFactorOptions {
     "header",
     "Accept-Language"
   >;
+  body?: OperationBody<operations["profile_2fa_setup_create"]>;
   request?: RequestControls;
 }
 
@@ -2463,14 +2497,14 @@ export class ProfileResource {
     );
   }
 
-  /** Confirm two-factor setup */
+  /** Confirm two-factor authentication */
   async confirmTwoFactor(
     options: ProfileConfirmTwoFactorOptions,
   ): Promise<ProfileConfirmTwoFactorResponse> {
     return (await this.confirmTwoFactorWithResponse(options)).data;
   }
 
-  /** Confirm two-factor setup; include response metadata. */
+  /** Confirm two-factor authentication; include response metadata. */
   async confirmTwoFactorWithResponse(
     options: ProfileConfirmTwoFactorOptions,
   ): Promise<ApiResponse<ProfileConfirmTwoFactorResponse>> {
@@ -2517,14 +2551,14 @@ export class ProfileResource {
     );
   }
 
-  /** Start two-factor setup */
+  /** Prepare two-factor authentication */
   async setupTwoFactor(
     options: ProfileSetupTwoFactorOptions = {},
   ): Promise<ProfileSetupTwoFactorResponse> {
     return (await this.setupTwoFactorWithResponse(options)).data;
   }
 
-  /** Start two-factor setup; include response metadata. */
+  /** Prepare two-factor authentication; include response metadata. */
   async setupTwoFactorWithResponse(
     options: ProfileSetupTwoFactorOptions = {},
   ): Promise<ApiResponse<ProfileSetupTwoFactorResponse>> {
@@ -2538,6 +2572,7 @@ export class ProfileResource {
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
+        ...(options.body === undefined ? {} : { body: options.body }),
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );
@@ -2726,80 +2761,6 @@ export class RewardsResource {
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
-        ...(options.request === undefined ? {} : { request: options.request }),
-      },
-    );
-  }
-}
-
-export interface SessionsListOptions {
-  acceptLanguage?: OperationParameter<operations["sessions_list"], "header", "Accept-Language">;
-  request?: RequestControls;
-}
-
-export type SessionsListResponse = OperationResult<operations["sessions_list"]>;
-
-export interface SessionsDeleteOptions {
-  id: OperationParameter<operations["sessions_destroy"], "path", "id">;
-  acceptLanguage?: OperationParameter<operations["sessions_destroy"], "header", "Accept-Language">;
-  request?: RequestControls;
-}
-
-export type SessionsDeleteResponse = OperationResult<operations["sessions_destroy"]>;
-
-export class SessionsResource {
-  readonly #client: ResourceClient;
-
-  constructor(client: ResourceClient) {
-    this.#client = client;
-  }
-
-  /** List active proxy sessions */
-  async list(options: SessionsListOptions = {}): Promise<SessionsListResponse> {
-    return (await this.listWithResponse(options)).data;
-  }
-
-  /** List active proxy sessions; include response metadata. */
-  async listWithResponse(
-    options: SessionsListOptions = {},
-  ): Promise<ApiResponse<SessionsListResponse>> {
-    return this.#client._callWithResponse<SessionsListResponse>(
-      {
-        operationId: "sessions_list",
-        method: "GET",
-        path: "/sessions",
-      },
-      {
-        headers: {
-          "Accept-Language": options.acceptLanguage,
-        },
-        ...(options.request === undefined ? {} : { request: options.request }),
-      },
-    );
-  }
-
-  /** Revoke a proxy session */
-  async delete(options: SessionsDeleteOptions): Promise<SessionsDeleteResponse> {
-    return (await this.deleteWithResponse(options)).data;
-  }
-
-  /** Revoke a proxy session; include response metadata. */
-  async deleteWithResponse(
-    options: SessionsDeleteOptions,
-  ): Promise<ApiResponse<SessionsDeleteResponse>> {
-    return this.#client._callWithResponse<SessionsDeleteResponse>(
-      {
-        operationId: "sessions_destroy",
-        method: "DELETE",
-        path: "/sessions/{id}",
-      },
-      {
-        path: {
-          id: options.id,
-        },
-        headers: {
-          "Accept-Language": options.acceptLanguage,
-        },
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );
@@ -3566,7 +3527,6 @@ export interface ResourceCollection {
   readonly profile: ProfileResource;
   readonly proxies: ProxiesResource;
   readonly rewards: RewardsResource;
-  readonly sessions: SessionsResource;
   readonly settings: SettingsResource;
   readonly telegram: TelegramDashboardResource;
   readonly users: UsersResource;
@@ -3588,7 +3548,6 @@ export function createResourceCollection(client: ResourceClient): ResourceCollec
     profile: new ProfileResource(client),
     proxies: new ProxiesResource(client),
     rewards: new RewardsResource(client),
-    sessions: new SessionsResource(client),
     settings: new SettingsResource(client),
     telegram: new TelegramDashboardResource(client),
     users: new UsersResource(client),
