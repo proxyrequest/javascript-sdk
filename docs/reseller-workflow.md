@@ -27,7 +27,7 @@ const invoice = await client.invoices.create({
 const { payment_url } = await client.invoices.getPaymentLink({ id: invoice.id! });
 ```
 
-Store the ProxyRequest invoice ID with your local checkout record. Treat invoice state and verified webhooks as the authoritative payment result. Use idempotency and reconciliation in your own application whenever a local action can be retried.
+Store the ProxyRequest invoice ID with your local checkout record. Treat invoice state and verified webhooks as the authoritative payment result. If a write ends without a final result, inspect the affected resource before repeating it.
 
 Further reading:
 

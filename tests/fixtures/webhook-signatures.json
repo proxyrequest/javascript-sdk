@@ -1,0 +1,32 @@
+[
+  {
+    "body": "{\"hello\":\"world\"}",
+    "secret": "super-secret",
+    "signature": "5wDDfJLTJLjXr4cfnNOxikeVi5Cy4qZleyqDMRlZ048=",
+    "jsonObject": true
+  },
+  {
+    "body": "{\"events\":[{\"username\":\"тест 🌍\",\"bytes\":1024}]}\n",
+    "secret": "super-secret",
+    "signature": "N9dnoZ9XfJg/VQPbILUx0Sc/xA543WJrHok14lEZmD0=",
+    "jsonObject": true
+  },
+  {
+    "body": " { \"events\": [] }\r\n",
+    "secret": "super-secret",
+    "signature": "8izh0G3Pp7KZmxobGUfp+yKb9RRN3D4Csj/c27VsIOs=",
+    "jsonObject": true
+  },
+  {
+    "body": "not json",
+    "secret": "super-secret",
+    "signature": "E9V0WjQRDqgR5Bp8WL/ey1/KjZHyvUh0Ul/vOjLcLa4=",
+    "jsonObject": false
+  },
+  {
+    "body": "[]",
+    "secret": "super-secret",
+    "signature": "f6HutRgtLe+0Zx8lnhbne/xG3lquDqA+QfJdA2Nvn7I=",
+    "jsonObject": false
+  }
+]

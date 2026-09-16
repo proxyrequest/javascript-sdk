@@ -58,8 +58,8 @@ mutations after an authentication failure.
 - Payment amounts/currencies, checkout state, and current gateway values are typed.
   Gateway types also accept future strings; the server validates request values.
 - `*WithResponse` methods expose HTTP status and headers alongside data.
-  Keep the idempotency key when investigating an ambiguous create result; do not
-  retry a paid operation with a fresh key simply because the first reply failed.
+  Preserve the local operation record when investigating an ambiguous create
+  result; inspect platform state before repeating a paid operation.
 
 Compatibility tests use synthetic responses produced by actual backend serializers
 for both configuration modes, plus mocked MFA and failure scenarios. They do not

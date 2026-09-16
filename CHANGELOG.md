@@ -6,6 +6,9 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Changed
 
+- Replace the incorrect webhook verifier with the actual `X-Signature`
+  Base64 HMAC-SHA256 format over exact raw bytes.
+
 - Regenerated from the public backend contract (81 operations, 130 schemas).
 - Added the optional `pending`/`paid` status to invoice creation requests.
 - Removed the disabled sessions-management resource; 79 supported operations remain.

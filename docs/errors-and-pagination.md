@@ -12,7 +12,7 @@
 - `contentLanguage`, `headers`, and `rawBody` preserve response context;
 - `cause` preserves the underlying transport or decoding error.
 
-The SDK intentionally does not retry. Decide at the application layer whether a request is idempotent, apply bounded exponential backoff for eligible network/429/5xx failures, honor `retryAfter`, and never automatically retry a payment or mutation without an idempotency strategy.
+The SDK performs a small number of automatic retries for supported writes after transient network failures and retryable conflicts. Other failed writes are returned immediately. If the final outcome is uncertain, inspect the affected resource before submitting another payment or mutation. Apply bounded exponential backoff to safe reads and honor `retryAfter`.
 
 ## Pagination
 

@@ -175,7 +175,7 @@ TypeError: CouponsViewSet.redeems() got an unexpected keyword argument 'pk'
 - Все 80 старых операций имеют публичные методы и варианты `WithResponse`; HTTP-методы/пути соответствуют сохранённому контракту.
 - Заголовки `Authorization: Static ...` и `Bearer ...`, язык, ETag/If-Match и idempotency реализованы; поддерживаемые операции получают один ключ на попытки повторного запроса.
 - Пагинатор извлекает offset и повторно вызывает тот же ресурс, а не отправляет авторизацию на URL из `next`.
-- Алгоритм webhook совпадает с серверным подписанием (`api/apps/webhooks/management/commands/send_webhook_events.py:55`): HMAC-SHA256 от `timestamp.rawBody`, заголовки `X-Webhook-Signature` и `X-Webhook-Timestamp`.
+- Проверка webhook соответствует фактическому accountant sender: `X-Signature` содержит стандартный Base64 от HMAC-SHA256 по точным байтам исходного тела. Timestamp в подпись не входит.
 - `request()` позволяет временно вызвать новый endpoint; отсутствие типизированного метода не означает отсутствие низкоуровневого обхода.
 
 ## Проверки и порядок исправлений

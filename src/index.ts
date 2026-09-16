@@ -25,4 +25,4 @@ export {
   type PaginationOptions,
   paginate,
 } from "./pagination.js";
-export { type WebhookVerificationOptions, WebhookVerifier } from "./webhooks.js";
+export { WebhookVerifier } from "./webhooks.js";

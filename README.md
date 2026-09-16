@@ -177,31 +177,25 @@ console.log(generated.proxies);
 
 See [catalog and proxies](https://proxyrequest.com/docs/integration/catalog-and-proxies/) and the separate [proxy connection documentation](https://proxyrequest.com/docs/proxy/authentication/).
 
-## Safe mutations and optimistic concurrency
+## Automatic retries and optimistic concurrency
 
-For API operations that declare `Idempotency-Key`, the SDK generates a UUID by
-default. It reuses that key for up to three total attempts when the outcome is
-ambiguous: a network failure, or `409 Conflict` with a numeric `Retry-After` of
-at most five seconds. Other HTTP errors are returned immediately. Existing
-method calls need no changes; pass a stable key when it must survive a process
-restart:
+The SDK automatically protects supported writes during up to three total
+attempts after a network failure, or after `409 Conflict` with a numeric
+`Retry-After` of at most five seconds. Other HTTP errors are returned
+immediately. This protection applies inside one running call. If the process
+stops before saving the result, inspect the affected resource before submitting
+another write:
 
 ```ts
 const response = await client.invoices.createWithResponse({
   body: { gateway: "stripe", package_id: packageId },
-  idempotencyKey: `checkout:${orderId}`,
 });
 
-console.log(response.data.id, response.etag, response.idempotencyReplayed);
+console.log(response.data.id, response.etag);
 ```
 
 Every generated method also has a `WithResponse` variant exposing `statusCode`,
-`headers`, `etag`, and `idempotencyReplayed`. Automatic key generation can be
-disabled without blocking explicit keys:
-
-```ts
-const client = ProxyRequestClient.withApiKey(apiKey, { idempotency: false });
-```
+`headers`, and `etag`.
 
 Updates and deletes that declare `If-Match` accept the latest strong ETag:
 
@@ -245,7 +239,7 @@ try {
 }
 ```
 
-Kinds include `validation`, `authentication`, `permission`, `not_found`, `conflict`, `precondition`, `rate_limit`, `server`, `network`, and `unexpected`. Only ambiguous outcomes for idempotent operations are retried automatically; tokens are never refreshed automatically. See [common integration errors](https://proxyrequest.com/docs/integration/common-errors/).
+Kinds include `validation`, `authentication`, `permission`, `not_found`, `conflict`, `precondition`, `rate_limit`, `server`, `network`, and `unexpected`. Supported writes receive bounded automatic retries for transient failures; tokens are never refreshed automatically. See [common integration errors](https://proxyrequest.com/docs/integration/common-errors/).
 
 ## Per-request controls and custom Fetch
 
@@ -293,12 +287,12 @@ import { WebhookVerifier } from "@proxyrequest/sdk";
 
 const event = await WebhookVerifier.decodeVerifiedJson(
   rawBody,
-  request.headers.get("ProxyRequest-Signature") ?? "",
+  request.headers.get("X-Signature") ?? "",
   process.env.PROXYREQUEST_WEBHOOK_SECRET!,
 );
 ```
 
-Verification supports the `t=...,v1=...` format, multiple `v1` values, Web Crypto HMAC-SHA256, and a default five-minute tolerance. See the [webhook integration guide](https://proxyrequest.com/docs/integration/webhooks/) and [event reference](https://proxyrequest.com/docs/reference/webhook-events/).
+Deliveries use standard padded Base64 HMAC-SHA256 over the raw body, without a signed timestamp. Verification accepts only this current format. It authenticates the body, but does not prevent replay: deduplicate usage events in your application. These helpers require the upcoming SDK release, not 1.0.0. See the [webhook integration guide](https://proxyrequest.com/docs/integration/webhooks/) and [event reference](https://proxyrequest.com/docs/reference/webhook-events/).
 
 ## Raw requests
 

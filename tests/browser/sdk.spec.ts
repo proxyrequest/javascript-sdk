@@ -13,26 +13,21 @@ test("the ESM package works in a real browser", async ({ page }) => {
   await expect(page.locator("#status")).toHaveText("ready");
 
   const body = '{"event":"browser.test"}';
-  const timestamp = 1_700_000_000;
   const secret = "browser-webhook-secret";
-  const digest = createHmac("sha256", secret).update(`${timestamp}.${body}`).digest("hex");
+  const base64 = createHmac("sha256", secret).update(body).digest("base64");
   const result = await page.evaluate(
-    async ({ body, digest, secret, timestamp }) => {
+    async ({ body, secret, base64 }) => {
       const sdk = globalThis.ProxyRequestSDK;
       const client = sdk.ProxyRequestClient.withBearerToken("browser-token");
       const users = await client.users.list({ limit: 5 });
-      const webhook = await sdk.WebhookVerifier.verify(
-        body,
-        `t=${timestamp},v1=${digest}`,
-        secret,
-        { now: timestamp },
-      );
-      return { users: users.results.length, webhook };
+      const webhook = await sdk.WebhookVerifier.verify(body, base64, secret);
+      const modified = await sdk.WebhookVerifier.verify(`${body} `, base64, secret);
+      return { users: users.results.length, webhook, modified };
     },
-    { body, digest, secret, timestamp },
+    { body, secret, base64 },
   );
 
-  expect(result).toEqual({ users: 0, webhook: true });
+  expect(result).toEqual({ users: 0, webhook: true, modified: false });
 });
 
 declare global {
