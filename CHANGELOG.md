@@ -8,6 +8,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Keep the exported `SDK_VERSION` synchronized with the package version and verify it in the package smoke test.
 
+## [2.1.0] - 2026-09-17
+
+- Add atomic per-package data reset with typed requests, response metadata, and idempotent retries.
+- Refresh the public API contract and document root balances versus child allocations.
+
 ## [2.0.0] - 2026-09-16
 
 ### Changed

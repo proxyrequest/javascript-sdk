@@ -382,7 +382,7 @@ export interface paths {
     put?: never;
     /**
      * Create an invoice
-     * @description Calculates package pricing and initializes the selected payment provider when required. The status defaults to `pending`. Only superusers may create an already-paid invoice by setting `status` to `paid`; other authenticated users receive a 403 response. For wallet payments, omit `status`: the invoice is created as pending and becomes paid after the balance is debited successfully.
+     * @description Calculates package pricing and initializes the selected payment provider when required. The status defaults to `pending`. Only superusers may create an already-paid invoice by setting `status` to `paid`; other authenticated users receive a 403 response. For wallet payments, omit `status`: the invoice is created as pending and becomes paid after the balance is debited successfully. For your own billing system, confirm payment on your backend before sending gateway=manual and status=paid with a superuser credential. Sending user_id also requires is_reseller; omit user_id for a purchase by the caller. Sub-users cannot create invoices themselves. A paid package purchase creates or tops up the recipient's order for that package. Repeated purchases reuse the order. Finite expiring purchases have separate data ledgers; compatible non-expiring purchases and unlimited packages may reuse a ledger. This is different from assigning a child quota with /users/{id}/data/add. An amount-only invoice tops up money, not data. Persist the invoice ID and use Idempotency-Key for retries. Before delivering access, read the paid invoice and the resulting order: fulfillment can be recovered asynchronously. Accounting webhooks do not include invoice.paid.
      */
     post: operations["invoices_create"];
     delete?: never;
@@ -744,7 +744,7 @@ export interface paths {
     };
     /**
      * List active orders
-     * @description Returns active package orders owned by the authenticated account. Filters can narrow the result by package or user.
+     * @description Returns active package orders owned by the authenticated account. Superusers can inspect other accounts, including inactive orders; filters never expand a normal caller's ownership scope. Repeated purchases of one package reuse the same user/package order. Read data_remaining and ledgers for usable purchased data, not data minus data_spent. To inspect a managed customer, use /users/{id}/orders.
      */
     get: operations["orders_list"];
     put?: never;
@@ -764,14 +764,14 @@ export interface paths {
     };
     /**
      * Get an order
-     * @description Returns one active order with package, usage, expiration, and proxy credential details.
+     * @description Returns one active order with package, usage, expiration, and proxy credential details. Virtual child data_remaining is a personal quota, not the parent's shared balance. The order's expires value is not a list of all purchased bucket deadlines; inspect each returned ledger's expires.
      */
     get: operations["orders_retrieve"];
     put?: never;
     post?: never;
     /**
      * Delete a sub-user order
-     * @description Removes an active order owned by a managed sub-user. Remaining data is returned to the reseller's matching order when possible.
+     * @description Removes an order in the caller's permitted scope. This is destructive, not a payment refund. Deleting a virtual child order does not credit its quota to the shared ledger. Independently purchased sub-user orders have a legacy parent-order data-counter adjustment; do not treat it as a guaranteed restoration of usable ledger balance.
      */
     delete: operations["orders_destroy"];
     options?: never;
@@ -1125,8 +1125,8 @@ export interface paths {
     get: operations["users_list"];
     put?: never;
     /**
-     * Create a sub-user
-     * @description Creates a user owned by the authenticated reseller and returns the new account. The caller must be allowed to manage sub-users.
+     * Create a customer account
+     * @description Creates a sub-user under the caller by default. A superuser can send is_top_level=true to create an independent customer account. A sub-user cannot create another generation of users. Omit package_id and data to create identity only, then provision the chosen accounting model separately. For shared-pool allocation, supply package_id and positive integer-byte data; the parent must already own a root order for that package. An independent paid purchase is provisioned through invoices, not a shared-pool quota.
      */
     post: operations["users_create"];
     delete?: never;
@@ -1174,9 +1174,29 @@ export interface paths {
     put?: never;
     /**
      * Add data to a sub-user order
-     * @description Adds the requested number of bytes to the selected sub-user's order for the supplied package and returns the updated order.
+     * @description Adds data integer bytes to a managed sub-user's virtual quota for package_id and returns the updated order. Both fields are required. The caller must own a root order for this package and the target sub-user. Creates the child order if absent; an existing independently purchased order cannot be converted by this operation. The allocation does not reserve or debit the parent's ledger, and may exceed its remaining data. Actual traffic needs both personal quota and a usable parent pool. Use Idempotency-Key to avoid granting the same quota twice.
      */
     post: operations["users_data_add_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/users/{id}/data/reset": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Reset a user's remaining data
+     * @description Atomically resets remaining data to zero for package_id, including zero or negative balances. Supply package_id only; data is not accepted. System administrators may reset any user; other accounts may reset only their direct children. Purchased root orders have their ledger balances cleared; virtual child orders have their quota set to usage without changing the parent's pool. Usage history and invoices are preserved. Unlimited packages are rejected. Use Idempotency-Key for safe retries so a repeated request cannot clear a subsequent top-up.
+     */
+    post: operations["users_data_reset_create"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1194,7 +1214,7 @@ export interface paths {
     put?: never;
     /**
      * Subtract data from a sub-user order
-     * @description Subtracts the requested number of bytes from the selected sub-user's order for the supplied package and returns the updated order.
+     * @description Subtracts data from the assigned quota of a managed virtual child order in integer bytes for package_id. Both fields are required. This is not a refund or a transfer back into the parent's ledger, and does not erase data_spent. The amount cannot exceed the total assigned data; reducing the quota below usage can stop the child's access. An independently purchased order is not managed through this allocation endpoint. Use Idempotency-Key for safe retries.
      */
     post: operations["users_data_subtract_create"];
     delete?: never;
@@ -1212,7 +1232,7 @@ export interface paths {
     };
     /**
      * List a sub-user's orders
-     * @description Returns active package orders allocated to the selected sub-user. This operation is available when package-based authentication is enabled.
+     * @description Returns the selected user's package orders, including inactive orders. A user may have a purchased root order with its own ledgers or a virtual child order whose quota uses its parent's pool. User ownership and order ownership are different: being a sub-user does not imply shared-pool accounting.
      */
     get: operations["users_orders_list"];
     put?: never;
@@ -1234,7 +1254,7 @@ export interface paths {
     put?: never;
     /**
      * Rotate a sub-user proxy password
-     * @description Rotates the proxy password for the selected user. When package-based authentication is enabled, send package_id to select the affected order.
+     * @description Rotates the proxy password for the selected user's package order. Send package_id to select the affected order.
      */
     post: operations["users_password_create"];
     delete?: never;
@@ -1296,8 +1316,12 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     AddDataRequest: {
+      /** @description Positive integer bytes to add to the child's assigned quota. Does not reserve parent data; may exceed the parent's remaining pool. */
       data: number;
-      /** Format: uuid */
+      /**
+       * Format: uuid
+       * @description Package for which the caller owns a root order.
+       */
       package_id: string;
     };
     Affiliate: {
@@ -1710,7 +1734,7 @@ export interface components {
       targeting?: components["schemas"]["ProxyGenerationTargetingRequest"];
       /**
        * Format: uuid
-       * @description ProxyRequest sub-user UUID that will use the generated credentials. Headless integrations must resolve this from their local customer mapping.
+       * @description ProxyRequest sub-user UUID that will use the generated credentials. Resolve it from your local customer mapping. Must be the caller's own sub-user, even for superusers. Omit to generate for the authenticated account. For an independent top-level customer, authenticate as that customer rather than sending its ID with a global key.
        */
       user_id?: string;
     };
@@ -1779,7 +1803,7 @@ export interface components {
       internal_id?: string;
       /**
        * One-Time Purchase
-       * @description Indicates whether this invoice is for a one-time purchase. Default is False, meaning it is a recurring invoice.
+       * @description Whether this pricing tier is restricted to a one-time purchase. False does not create a recurring subscription or a renewal schedule.
        */
       is_one_time?: boolean;
       /**
@@ -1812,7 +1836,7 @@ export interface components {
       provider_payment_id?: string;
       /** @description The number of proxies to assign. */
       quantity?: number;
-      /** @description After changing invoice status to PAID, the invoice will be processed and user package created in case none exists. If you need to cancel the invoice, make sure to subtract data from the user package after changing the invoice status. Changing the status from PAID to any other will not affect the user package's data or proxies. * `pending` - Pending * `paid` - Paid * `unpaid` - Unpaid * `error` - Error */
+      /** @description Payment state. A paid package invoice funds an order; a paid balance invoice credits money. Confirm the resulting order before delivering access, because fulfillment can recover asynchronously. Creating an invoice with status=paid requires a superuser. This read field is not a public status-update or refund endpoint. * `pending` - Pending * `paid` - Paid * `unpaid` - Unpaid * `error` - Error */
       status?: components["schemas"]["InvoiceStatusEnum"];
       /** @description The type of invoice, indicating the type of proxy service. Options include: RESIDENTIAL: Residential proxies. STATIC: Static proxies. * `static` - Static * `residential` - Residential * `balance` - Balance */
       type?: components["schemas"]["InvoiceTypeEnum"];
@@ -1872,7 +1896,7 @@ export interface components {
       | "paytrail"
       | (string & {});
     InvoiceCreateRequestRequest: {
-      /** @description Account balance amount to purchase, in the smallest currency unit. */
+      /** @description Account balance amount to purchase, in the smallest currency unit. Use for a wallet top-up without package_id, not for buying proxy data. */
       amount?: number;
       company_name?: string;
       company_registration_number?: string;
@@ -1881,9 +1905,9 @@ export interface components {
       country_code?: string;
       coupon_code?: string;
       crypto_currency?: string;
-      /** @description Residential proxy data to purchase, in bytes. */
+      /** @description Residential proxy data to purchase, in integer bytes (1 GiB = 1073741824). Required with package_id for a residential purchase. A paid purchase funds the recipient's order; it is not a virtual allocation from a parent pool. */
       data?: number;
-      /** @description Optional expiration as a Unix timestamp in seconds. */
+      /** @description Optional future expiration as a Unix timestamp in seconds, not milliseconds. Otherwise a positive package billing cycle determines the purchased data's expiration from the payment date; a zero cycle has no automatic expiration. A later purchase does not extend earlier finite, expiring ledgers. */
       expires?: number;
       gateway: components["schemas"]["InvoiceCreateRequestGatewayEnum"];
       /**
@@ -1902,7 +1926,7 @@ export interface components {
       status?: components["schemas"]["InvoiceCreateRequestStatusEnum"];
       /**
        * Format: uuid
-       * @description Managed sub-user that should receive the purchase.
+       * @description Account receiving the purchase. Omit for your own account. Sending user_id requires is_reseller; a reseller can target its own sub-user, while a superuser with is_reseller can target another account. Do not send your own ID.
        */
       user_id?: string;
     };
@@ -2176,6 +2200,7 @@ export interface components {
        * @description Total data allowance for this order in bytes. 1073741824 = 1 GiB 10737418240 = 10 GiB
        */
       data?: number;
+      /** @description Integer bytes. Root order: sum of usable ledger balances, not data minus data_spent. Virtual child order: max(data - data_spent, 0), a personal quota that does not guarantee the parent still has usable data. */
       readonly data_remaining: number;
       /**
        * Data Spent (bytes)
@@ -2202,6 +2227,7 @@ export interface components {
        * @description Timestamp of the most recent data top-up, set when an invoice is fulfilled.
        */
       latest_data_top_up_date?: string | null;
+      /** @description Usable, non-expired ledger balances for a purchased root order; empty for a virtual child order using its parent's pool. Not a complete history. Array position does not identify the active ledger or spending order. */
       readonly ledgers: {
         [key: string]: unknown;
       }[];
@@ -2238,6 +2264,7 @@ export interface components {
        * @description Total data allowance for this order in bytes. 1073741824 = 1 GiB 10737418240 = 10 GiB
        */
       data?: number;
+      /** @description Integer bytes. Root order: sum of usable ledger balances. Virtual child order: max(data - data_spent, 0); access also needs a usable parent pool. */
       readonly data_remaining: number;
       /**
        * Data Spent (bytes)
@@ -2274,6 +2301,7 @@ export interface components {
        * @description Timestamp of the most recent data top-up, set when an invoice is fulfilled.
        */
       latest_data_top_up_date?: string | null;
+      /** @description Usable, non-expired purchased buckets; empty for virtual child orders. Not a complete history, and array position is not spending priority. */
       readonly ledgers: {
         [key: string]: unknown;
       }[];
@@ -2913,6 +2941,13 @@ export interface components {
       /** @description Native-language name of the region as it appears in the source data. */
       original_name?: string;
     };
+    ResetDataRequest: {
+      /**
+       * Format: uuid
+       * @description Package whose remaining data is reset to zero.
+       */
+      package_id: string;
+    };
     ResetPasswordRequest: {
       /** Format: uuid */
       order_id: string;
@@ -3002,8 +3037,12 @@ export interface components {
       token: string;
     };
     SubtractDataRequest: {
+      /** @description Positive integer bytes to remove from assigned quota, not from usage. Cannot exceed total assigned data. Does not credit the parent's pool. */
       data: number;
-      /** Format: uuid */
+      /**
+       * Format: uuid
+       * @description Package of the managed virtual child order.
+       */
       package_id: string;
     };
     TargetingOptions: {
@@ -3170,7 +3209,7 @@ export interface components {
       is_superuser?: boolean;
       language?: components["schemas"]["LanguageEnum"];
       last_name?: string;
-      /** @description Present only when SITE_PACKAGE_BASED_AUTH is enabled. */
+      /** @description The user's package orders, including inactive orders. Each order contains its own data allowance, usage, ledgers, and proxy credentials. An empty list means the user has no orders. */
       readonly orders?: components["schemas"]["Order"][];
       /** @description ID of the parent user (for sub-accounts) */
       readonly parent_id: string;
@@ -3210,7 +3249,7 @@ export interface components {
       connection_limit?: number;
       /** @description User's country of residence. */
       country?: string;
-      /** @description Initial data allocation for the user (traditional auth mode only). */
+      /** @description Initial integer-byte data amount. With package_id, a normal sub-user receives a virtual quota from the caller's existing root order; is_top_level=true provisions a separate paid purchase. Omit both data and package_id to create identity without package access. */
       data?: number;
       /**
        * Format: email
@@ -3225,7 +3264,7 @@ export interface components {
        */
       is_reseller: boolean;
       /**
-       * @description Whether the user is a sub-user under the parent account.
+       * @description Superuser only: true creates an independent account with no parent. False (default) creates a sub-user under the caller.
        * @default false
        */
       is_top_level: boolean;
@@ -3237,7 +3276,7 @@ export interface components {
       };
       /**
        * Format: uuid
-       * @description ProxyRequest package UUID to assign to the user (package-based auth mode only). Headless integrations resolve it from their local product mapping.
+       * @description ProxyRequest package UUID to assign to the user. Headless integrations resolve it from their local product mapping.
        */
       package_id?: string;
       /** @description Account password. Must be 8-128 characters long. */
@@ -3252,7 +3291,7 @@ export interface components {
     UserPasswordResetRequestRequest: {
       /**
        * Format: uuid
-       * @description Package whose proxy password should be rotated. Required only when package-based authentication is enabled.
+       * @description Package whose order's proxy password should be rotated.
        */
       package_id?: string;
     };
@@ -6136,7 +6175,7 @@ export interface operations {
   };
   locations_asn_list: {
     parameters: {
-      query?: {
+      query: {
         code?: string;
         country__code?: string;
         /** @description Set to true to return only globally targetable ASNs. */
@@ -6148,8 +6187,8 @@ export interface operations {
         offset?: number;
         /** @description Which field to use when ordering the results. */
         ordering?: string;
-        /** @description Package whose targeting availability should be returned. Required when package-based authentication is enabled. */
-        package_id?: string;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
         /** @description Case-insensitive partial search across ASN fields: `code` and `name`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
         search?: string;
       };
@@ -6220,7 +6259,7 @@ export interface operations {
   };
   locations_cities_list: {
     parameters: {
-      query?: {
+      query: {
         code?: string;
         country__code?: string;
         /** @description Number of results to return per page. */
@@ -6230,8 +6269,8 @@ export interface operations {
         offset?: number;
         /** @description Which field to use when ordering the results. */
         ordering?: string;
-        /** @description Package whose targeting availability should be returned. Required when package-based authentication is enabled. */
-        package_id?: string;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
         region__code?: string;
         /** @description Case-insensitive partial search across City fields: `code` and `name`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
         search?: string;
@@ -6303,7 +6342,10 @@ export interface operations {
   };
   locations_cities_retrieve: {
     parameters: {
-      query?: never;
+      query: {
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
+      };
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
@@ -6388,7 +6430,7 @@ export interface operations {
   };
   locations_continents_list: {
     parameters: {
-      query?: {
+      query: {
         code?: string;
         /** @description Number of results to return per page. */
         limit?: number;
@@ -6397,8 +6439,8 @@ export interface operations {
         offset?: number;
         /** @description Which field to use when ordering the results. */
         ordering?: string;
-        /** @description Package whose targeting availability should be returned. Required when package-based authentication is enabled. */
-        package_id?: string;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
         /** @description Case-insensitive partial search across Continent fields: `code` and `name`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
         search?: string;
       };
@@ -6469,7 +6511,10 @@ export interface operations {
   };
   locations_continents_retrieve: {
     parameters: {
-      query?: never;
+      query: {
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
+      };
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
@@ -6554,7 +6599,7 @@ export interface operations {
   };
   locations_countries_list: {
     parameters: {
-      query?: {
+      query: {
         code?: string;
         /** @description Number of results to return per page. */
         limit?: number;
@@ -6563,8 +6608,8 @@ export interface operations {
         offset?: number;
         /** @description Which field to use when ordering the results. */
         ordering?: string;
-        /** @description Package whose targeting availability should be returned. Required when package-based authentication is enabled. */
-        package_id?: string;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
         /** @description Case-insensitive partial search across Country fields: `code` and `name`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
         search?: string;
       };
@@ -6635,7 +6680,10 @@ export interface operations {
   };
   locations_countries_retrieve: {
     parameters: {
-      query?: never;
+      query: {
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
+      };
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
@@ -6720,7 +6768,7 @@ export interface operations {
   };
   locations_isps_list: {
     parameters: {
-      query?: {
+      query: {
         code?: string;
         country__code?: string;
         /** @description Number of results to return per page. */
@@ -6730,8 +6778,8 @@ export interface operations {
         offset?: number;
         /** @description Which field to use when ordering the results. */
         ordering?: string;
-        /** @description Package whose targeting availability should be returned. Required when package-based authentication is enabled. */
-        package_id?: string;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
         /** @description Case-insensitive partial search across ISP fields: `code` and `name`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
         search?: string;
       };
@@ -6802,7 +6850,7 @@ export interface operations {
   };
   locations_regions_list: {
     parameters: {
-      query?: {
+      query: {
         code?: string;
         country__code?: string;
         /** @description Number of results to return per page. */
@@ -6812,8 +6860,8 @@ export interface operations {
         offset?: number;
         /** @description Which field to use when ordering the results. */
         ordering?: string;
-        /** @description Package whose targeting availability should be returned. Required when package-based authentication is enabled. */
-        package_id?: string;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
         /** @description Case-insensitive partial search across Region fields: `code` and `name`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
         search?: string;
       };
@@ -6884,7 +6932,10 @@ export interface operations {
   };
   locations_regions_retrieve: {
     parameters: {
-      query?: never;
+      query: {
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
+      };
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
@@ -9546,6 +9597,117 @@ export interface operations {
       };
     };
   };
+  users_data_reset_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
+        "Idempotency-Key"?: string;
+      };
+      path: {
+        /** @description A UUID string identifying this user. */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ResetDataRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["ResetDataRequest"];
+        "multipart/form-data": components["schemas"]["ResetDataRequest"];
+      };
+    };
+    responses: {
+      /** @description The request was accepted and the updated resource is returned. */
+      202: {
+        headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Order"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The idempotency key is in progress or was reused for a different request. */
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
   users_data_subtract_create: {
     parameters: {
       query?: never;
@@ -9766,7 +9928,7 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody?: {
+    requestBody: {
       content: {
         "application/json": components["schemas"]["UserPasswordResetRequestRequest"];
         "application/x-www-form-urlencoded": components["schemas"]["UserPasswordResetRequestRequest"];

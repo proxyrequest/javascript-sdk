@@ -84,8 +84,8 @@ Never embed a Static API key or webhook secret in frontend JavaScript. Browser s
 
 ## Resource API
 
-The client exposes 79 supported operations through 17 resource groups. The pinned
-public schema contains 81 operations; the disabled `sessions_list` and
+The client exposes 80 supported operations through 17 resource groups. The pinned
+public schema contains 82 operations; the disabled `sessions_list` and
 `sessions_destroy` operations are intentionally excluded from the SDK. Sticky
 session options in proxy generation remain supported.
 
@@ -351,3 +351,19 @@ The repository also has a real Chromium smoke test via `npm run test:browser`.
 ## License
 
 [MIT](LICENSE)
+
+## Reset remaining data (SDK 2.1.0+)
+
+```typescript
+const order = await client.users.resetData({
+  id: userId,
+  body: { package_id: packageId },
+  idempotencyKey: resetOperationId,
+});
+```
+
+Send only `package_id`, without `data`. A system administrator can reset any user; other accounts can reset only their direct children. The server atomically clears positive, zero, or negative remaining data for a finite package and returns the updated order. Unlimited packages are rejected. Root orders lose their remaining ledger balances; child orders lose their remaining quota without changing the parent pool. Usage history and invoices are preserved.
+
+Persist one operation ID and reuse it when retrying the same reset, including after a process restart. This prevents a repeated request from clearing a later top-up. Use subtraction when an explicit amount should be removed from a child quota. The backend must support the reset endpoint before calling it.
+
+Version 2.1 retains legacy user and invoice models from 2.0 for compatibility with older deployments. These compatibility types do not change the current public API contract.

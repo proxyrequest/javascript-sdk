@@ -1,0 +1,436 @@
+{
+  "description": "SDK 2.0 response compatibility only. The canonical public schema remains unchanged.",
+  "schemas": {
+    "InvoiceShort": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 36
+        },
+        "coupon": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/Coupon"
+            }
+          ],
+          "readOnly": true,
+          "nullable": true
+        },
+        "country": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/Country"
+            }
+          ],
+          "readOnly": true,
+          "nullable": true
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "is_one_time": {
+          "type": "boolean",
+          "title": "One-Time Purchase",
+          "description": "Indicates whether this invoice is for a one-time purchase. Default is False, meaning it is a recurring invoice."
+        },
+        "is_payout": {
+          "type": "boolean",
+          "title": "Payout",
+          "description": "Indicates whether this invoice is a payout to the marketer. Default is False."
+        },
+        "internal_id": {
+          "type": "string",
+          "description": "A unique identifier for the invoice, generated automatically.",
+          "maxLength": 25
+        },
+        "status": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/InvoiceStatusEnum"
+            }
+          ],
+          "description": "After changing invoice status to PAID, the invoice will be processed and user package created in case none exists. If you need to cancel the invoice, make sure to subtract data from the user package after changing the invoice status. Changing the status from PAID to any other will not affect the user package's data or proxies. * `pending` - Pending * `paid` - Paid * `unpaid` - Unpaid * `error` - Error"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the invoice. This field is optional and can be left blank."
+        },
+        "connection_limit": {
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": -1,
+          "description": "The maximum number of concurrent connections allowed for this package."
+        },
+        "data": {
+          "type": "integer",
+          "maximum": 1000000000000000,
+          "minimum": 0,
+          "format": "int64",
+          "title": "Data (bytes)",
+          "description": "The amount of data in bytes."
+        },
+        "balance": {
+          "type": "integer",
+          "maximum": 10000000000,
+          "minimum": 0,
+          "format": "int64",
+          "title": "Balance Top Up (cents)",
+          "description": "The balance to top up for the user. Must be zero or positive."
+        },
+        "price_total": {
+          "type": "integer",
+          "maximum": 10000000000,
+          "minimum": 1,
+          "format": "int64",
+          "title": "Price (cents)",
+          "description": "The total price of the invoice, including any discounts. Must be at least 1 cent."
+        },
+        "gateway": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/InvoiceGatewayEnum"
+            }
+          ],
+          "title": "Payment Gateway",
+          "description": "The payment gateway used for processing the payment. * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail"
+        },
+        "currency": {
+          "type": "string",
+          "title": "Billing Currency",
+          "description": "ISO 4217 currency captured when the invoice is created.",
+          "maxLength": 3
+        },
+        "provider_checkout_id": {
+          "type": "string",
+          "description": "Provider-side hosted checkout identifier used for reconciliation.",
+          "maxLength": 255
+        },
+        "provider_payment_id": {
+          "type": "string",
+          "description": "Provider-side payment or transaction identifier used for reconciliation.",
+          "maxLength": 255
+        },
+        "checkout_status": {
+          "$ref": "#/components/schemas/CheckoutStatusEnum"
+        },
+        "vat": {
+          "type": "number",
+          "format": "double",
+          "maximum": 100.0,
+          "minimum": 0.0,
+          "title": "VAT (%)",
+          "description": "The VAT percentage applied to the invoice. Must be between 0 and 100."
+        },
+        "company_name": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_address": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_city": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_postal_code": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_registration_number": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_vat_number": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "paid": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true,
+          "description": "The date and time when the invoice was paid."
+        },
+        "expires": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true,
+          "description": "The date and time when the invoice expires. If not set, the invoice does not expire."
+        }
+      },
+      "required": ["country", "coupon", "created", "updated"]
+    },
+    "InvoiceRead": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/Invoice"
+        },
+        {
+          "$ref": "#/components/schemas/InvoiceShort"
+        }
+      ],
+      "description": "Full invoice in package-based deployments; short invoice otherwise. Invoice creation always returns the full Invoice representation."
+    },
+    "User": {
+      "type": "object",
+      "description": "Customer account with contact details, security settings, package data, referral information, and managed sub-users visible to the caller.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "username": {
+          "type": "string",
+          "description": "Value must contain only letters, numbers, and underscores. It must not start or end with an underscore.",
+          "maxLength": 150
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 254
+        },
+        "is_reseller": {
+          "type": "boolean",
+          "title": "Reseller",
+          "description": "Reseller can create sub-users and manage their data."
+        },
+        "is_marketer": {
+          "type": "boolean",
+          "title": "Marketer",
+          "description": "Marketer can manage marketing campaigns and view analytics."
+        },
+        "is_superuser": {
+          "type": "boolean",
+          "title": "Superuser status",
+          "description": "Designates that this user has all permissions without explicitly assigning them."
+        },
+        "date_joined": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_joined_ts": {
+          "type": "integer",
+          "description": "Timestamp of when the user joined",
+          "readOnly": true
+        },
+        "first_name": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "last_name": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "balance": {
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": 0
+        },
+        "language": {
+          "$ref": "#/components/schemas/LanguageEnum"
+        },
+        "country": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "state": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "address": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "zip": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_name": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_address": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_city": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_postal_code": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_country": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "company_vat_number": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "allowed_ips": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of IP addresses allowed for this user",
+          "readOnly": true
+        },
+        "blocked_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of domains blocked for this user",
+          "readOnly": true
+        },
+        "connection_limit": {
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": -1,
+          "description": "The maximum number of concurrent connections allowed for this package."
+        },
+        "parent_id": {
+          "type": "string",
+          "description": "ID of the parent user (for sub-accounts)",
+          "readOnly": true
+        },
+        "sub_users": {
+          "type": "integer",
+          "description": "Number of sub-users managed by this reseller",
+          "readOnly": true
+        },
+        "referrals": {
+          "type": "integer",
+          "description": "Number of users referred by this user",
+          "readOnly": true
+        },
+        "referral_id": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "referral_code": {
+          "type": "string",
+          "readOnly": true
+        },
+        "referral_data_earned": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "referral_data_pending": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "referral_balance_pending": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "referral_balance_earned": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "currency": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Currency information for the user's transactions",
+          "readOnly": true
+        },
+        "coupons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "description": "Available coupons for this user",
+          "readOnly": true
+        },
+        "data": {
+          "type": "integer",
+          "nullable": true,
+          "description": "Present only when SITE_PACKAGE_BASED_AUTH is disabled.",
+          "readOnly": true
+        },
+        "data_spent": {
+          "type": "integer",
+          "nullable": true,
+          "description": "Present only when SITE_PACKAGE_BASED_AUTH is disabled.",
+          "readOnly": true
+        },
+        "data_updated": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true,
+          "description": "Present only when SITE_PACKAGE_BASED_AUTH is disabled.",
+          "readOnly": true
+        },
+        "proxy_password": {
+          "type": "string",
+          "nullable": true,
+          "description": "Present only when SITE_PACKAGE_BASED_AUTH is disabled.",
+          "readOnly": true
+        },
+        "proxy_password_reset": {
+          "type": "string",
+          "format": "date-time",
+          "nullable": true,
+          "description": "Present only when SITE_PACKAGE_BASED_AUTH is disabled.",
+          "readOnly": true
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Order"
+          },
+          "readOnly": true,
+          "description": "Present only when SITE_PACKAGE_BASED_AUTH is enabled."
+        }
+      },
+      "required": [
+        "allowed_ips",
+        "blocked_domains",
+        "coupons",
+        "currency",
+        "date_joined",
+        "date_joined_ts",
+        "email",
+        "id",
+        "parent_id",
+        "referral_balance_earned",
+        "referral_balance_pending",
+        "referral_code",
+        "referral_data_earned",
+        "referral_data_pending",
+        "referrals",
+        "sub_users",
+        "username"
+      ]
+    },
+    "UserPasswordResetRequestRequest": {
+      "type": "object",
+      "properties": {
+        "package_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Package whose proxy password should be rotated. Required only when package-based authentication is enabled."
+        }
+      }
+    }
+  }
+}

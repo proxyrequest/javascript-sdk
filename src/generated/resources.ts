@@ -1459,7 +1459,7 @@ export interface LocationsListAsnsOptions {
   name?: OperationParameter<operations["locations_asn_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_asn_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_asn_list"], "query", "ordering">;
-  packageId?: OperationParameter<operations["locations_asn_list"], "query", "package_id">;
+  packageId: OperationParameter<operations["locations_asn_list"], "query", "package_id">;
   search?: OperationParameter<operations["locations_asn_list"], "query", "search">;
   acceptLanguage?: OperationParameter<
     operations["locations_asn_list"],
@@ -1478,7 +1478,7 @@ export interface LocationsListCitiesOptions {
   name?: OperationParameter<operations["locations_cities_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_cities_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_cities_list"], "query", "ordering">;
-  packageId?: OperationParameter<operations["locations_cities_list"], "query", "package_id">;
+  packageId: OperationParameter<operations["locations_cities_list"], "query", "package_id">;
   regionCode?: OperationParameter<operations["locations_cities_list"], "query", "region__code">;
   search?: OperationParameter<operations["locations_cities_list"], "query", "search">;
   acceptLanguage?: OperationParameter<
@@ -1493,6 +1493,7 @@ export type LocationsListCitiesResponse = OperationResult<operations["locations_
 
 export interface LocationsGetCityOptions {
   id: OperationParameter<operations["locations_cities_retrieve"], "path", "id">;
+  packageId: OperationParameter<operations["locations_cities_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_cities_retrieve"],
     "header",
@@ -1509,7 +1510,7 @@ export interface LocationsListContinentsOptions {
   name?: OperationParameter<operations["locations_continents_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_continents_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_continents_list"], "query", "ordering">;
-  packageId?: OperationParameter<operations["locations_continents_list"], "query", "package_id">;
+  packageId: OperationParameter<operations["locations_continents_list"], "query", "package_id">;
   search?: OperationParameter<operations["locations_continents_list"], "query", "search">;
   acceptLanguage?: OperationParameter<
     operations["locations_continents_list"],
@@ -1525,6 +1526,7 @@ export type LocationsListContinentsResponse = OperationResult<
 
 export interface LocationsGetContinentOptions {
   id: OperationParameter<operations["locations_continents_retrieve"], "path", "id">;
+  packageId: OperationParameter<operations["locations_continents_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_continents_retrieve"],
     "header",
@@ -1543,7 +1545,7 @@ export interface LocationsListCountriesOptions {
   name?: OperationParameter<operations["locations_countries_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_countries_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_countries_list"], "query", "ordering">;
-  packageId?: OperationParameter<operations["locations_countries_list"], "query", "package_id">;
+  packageId: OperationParameter<operations["locations_countries_list"], "query", "package_id">;
   search?: OperationParameter<operations["locations_countries_list"], "query", "search">;
   acceptLanguage?: OperationParameter<
     operations["locations_countries_list"],
@@ -1559,6 +1561,7 @@ export type LocationsListCountriesResponse = OperationResult<
 
 export interface LocationsGetCountryOptions {
   id: OperationParameter<operations["locations_countries_retrieve"], "path", "id">;
+  packageId: OperationParameter<operations["locations_countries_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_countries_retrieve"],
     "header",
@@ -1578,7 +1581,7 @@ export interface LocationsListIspsOptions {
   name?: OperationParameter<operations["locations_isps_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_isps_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_isps_list"], "query", "ordering">;
-  packageId?: OperationParameter<operations["locations_isps_list"], "query", "package_id">;
+  packageId: OperationParameter<operations["locations_isps_list"], "query", "package_id">;
   search?: OperationParameter<operations["locations_isps_list"], "query", "search">;
   acceptLanguage?: OperationParameter<
     operations["locations_isps_list"],
@@ -1597,7 +1600,7 @@ export interface LocationsListRegionsOptions {
   name?: OperationParameter<operations["locations_regions_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_regions_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_regions_list"], "query", "ordering">;
-  packageId?: OperationParameter<operations["locations_regions_list"], "query", "package_id">;
+  packageId: OperationParameter<operations["locations_regions_list"], "query", "package_id">;
   search?: OperationParameter<operations["locations_regions_list"], "query", "search">;
   acceptLanguage?: OperationParameter<
     operations["locations_regions_list"],
@@ -1611,6 +1614,7 @@ export type LocationsListRegionsResponse = OperationResult<operations["locations
 
 export interface LocationsGetRegionOptions {
   id: OperationParameter<operations["locations_regions_retrieve"], "path", "id">;
+  packageId: OperationParameter<operations["locations_regions_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_regions_retrieve"],
     "header",
@@ -1629,13 +1633,13 @@ export class LocationsResource {
   }
 
   /** List available autonomous systems */
-  async listAsns(options: LocationsListAsnsOptions = {}): Promise<LocationsListAsnsResponse> {
+  async listAsns(options: LocationsListAsnsOptions): Promise<LocationsListAsnsResponse> {
     return (await this.listAsnsWithResponse(options)).data;
   }
 
   /** List available autonomous systems; include response metadata. */
   async listAsnsWithResponse(
-    options: LocationsListAsnsOptions = {},
+    options: LocationsListAsnsOptions,
   ): Promise<ApiResponse<LocationsListAsnsResponse>> {
     return this.#client._callWithResponse<LocationsListAsnsResponse>(
       {
@@ -1664,13 +1668,13 @@ export class LocationsResource {
   }
 
   /** List available cities */
-  async listCities(options: LocationsListCitiesOptions = {}): Promise<LocationsListCitiesResponse> {
+  async listCities(options: LocationsListCitiesOptions): Promise<LocationsListCitiesResponse> {
     return (await this.listCitiesWithResponse(options)).data;
   }
 
   /** List available cities; include response metadata. */
   async listCitiesWithResponse(
-    options: LocationsListCitiesOptions = {},
+    options: LocationsListCitiesOptions,
   ): Promise<ApiResponse<LocationsListCitiesResponse>> {
     return this.#client._callWithResponse<LocationsListCitiesResponse>(
       {
@@ -1717,6 +1721,9 @@ export class LocationsResource {
         path: {
           id: options.id,
         },
+        query: {
+          package_id: options.packageId,
+        },
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
@@ -1727,14 +1734,14 @@ export class LocationsResource {
 
   /** List available continents */
   async listContinents(
-    options: LocationsListContinentsOptions = {},
+    options: LocationsListContinentsOptions,
   ): Promise<LocationsListContinentsResponse> {
     return (await this.listContinentsWithResponse(options)).data;
   }
 
   /** List available continents; include response metadata. */
   async listContinentsWithResponse(
-    options: LocationsListContinentsOptions = {},
+    options: LocationsListContinentsOptions,
   ): Promise<ApiResponse<LocationsListContinentsResponse>> {
     return this.#client._callWithResponse<LocationsListContinentsResponse>(
       {
@@ -1781,6 +1788,9 @@ export class LocationsResource {
         path: {
           id: options.id,
         },
+        query: {
+          package_id: options.packageId,
+        },
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
@@ -1791,14 +1801,14 @@ export class LocationsResource {
 
   /** List available countries */
   async listCountries(
-    options: LocationsListCountriesOptions = {},
+    options: LocationsListCountriesOptions,
   ): Promise<LocationsListCountriesResponse> {
     return (await this.listCountriesWithResponse(options)).data;
   }
 
   /** List available countries; include response metadata. */
   async listCountriesWithResponse(
-    options: LocationsListCountriesOptions = {},
+    options: LocationsListCountriesOptions,
   ): Promise<ApiResponse<LocationsListCountriesResponse>> {
     return this.#client._callWithResponse<LocationsListCountriesResponse>(
       {
@@ -1843,6 +1853,9 @@ export class LocationsResource {
         path: {
           id: options.id,
         },
+        query: {
+          package_id: options.packageId,
+        },
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
@@ -1852,13 +1865,13 @@ export class LocationsResource {
   }
 
   /** List available internet service providers */
-  async listIsps(options: LocationsListIspsOptions = {}): Promise<LocationsListIspsResponse> {
+  async listIsps(options: LocationsListIspsOptions): Promise<LocationsListIspsResponse> {
     return (await this.listIspsWithResponse(options)).data;
   }
 
   /** List available internet service providers; include response metadata. */
   async listIspsWithResponse(
-    options: LocationsListIspsOptions = {},
+    options: LocationsListIspsOptions,
   ): Promise<ApiResponse<LocationsListIspsResponse>> {
     return this.#client._callWithResponse<LocationsListIspsResponse>(
       {
@@ -1886,15 +1899,13 @@ export class LocationsResource {
   }
 
   /** List available regions */
-  async listRegions(
-    options: LocationsListRegionsOptions = {},
-  ): Promise<LocationsListRegionsResponse> {
+  async listRegions(options: LocationsListRegionsOptions): Promise<LocationsListRegionsResponse> {
     return (await this.listRegionsWithResponse(options)).data;
   }
 
   /** List available regions; include response metadata. */
   async listRegionsWithResponse(
-    options: LocationsListRegionsOptions = {},
+    options: LocationsListRegionsOptions,
   ): Promise<ApiResponse<LocationsListRegionsResponse>> {
     return this.#client._callWithResponse<LocationsListRegionsResponse>(
       {
@@ -1939,6 +1950,9 @@ export class LocationsResource {
       {
         path: {
           id: options.id,
+        },
+        query: {
+          package_id: options.packageId,
         },
         headers: {
           "Accept-Language": options.acceptLanguage,
@@ -3064,6 +3078,24 @@ export interface UsersSubtractDataOptions {
 
 export type UsersSubtractDataResponse = OperationResult<operations["users_data_subtract_create"]>;
 
+export interface UsersResetDataOptions {
+  id: OperationParameter<operations["users_data_reset_create"], "path", "id">;
+  idempotencyKey?: OperationParameter<
+    operations["users_data_reset_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  acceptLanguage?: OperationParameter<
+    operations["users_data_reset_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["users_data_reset_create"]>;
+  request?: RequestControls;
+}
+
+export type UsersResetDataResponse = OperationResult<operations["users_data_reset_create"]>;
+
 export interface UsersListOrdersOptions {
   email?: OperationParameter<operations["users_orders_list"], "query", "email">;
   idPath: OperationParameter<operations["users_orders_list"], "path", "id">;
@@ -3085,7 +3117,7 @@ export interface UsersResetPasswordOptions {
     "header",
     "Accept-Language"
   >;
-  body?: OperationBody<operations["users_password_create"]>;
+  body: OperationBody<operations["users_password_create"]>;
   request?: RequestControls;
 }
 
@@ -3130,12 +3162,12 @@ export class UsersResource {
     );
   }
 
-  /** Create a sub-user */
+  /** Create a customer account */
   async create(options: UsersCreateOptions): Promise<UsersCreateResponse> {
     return (await this.createWithResponse(options)).data;
   }
 
-  /** Create a sub-user; include response metadata. */
+  /** Create a customer account; include response metadata. */
   async createWithResponse(options: UsersCreateOptions): Promise<ApiResponse<UsersCreateResponse>> {
     return this.#client._callWithResponse<UsersCreateResponse>(
       {
@@ -3295,6 +3327,36 @@ export class UsersResource {
     );
   }
 
+  /** Reset a user's remaining data */
+  async resetData(options: UsersResetDataOptions): Promise<UsersResetDataResponse> {
+    return (await this.resetDataWithResponse(options)).data;
+  }
+
+  /** Reset a user's remaining data; include response metadata. */
+  async resetDataWithResponse(
+    options: UsersResetDataOptions,
+  ): Promise<ApiResponse<UsersResetDataResponse>> {
+    return this.#client._callWithResponse<UsersResetDataResponse>(
+      {
+        operationId: "users_data_reset_create",
+        method: "POST",
+        path: "/users/{id}/data/reset",
+        idempotent: true,
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
   /** List a sub-user's orders */
   async listOrders(options: UsersListOrdersOptions): Promise<UsersListOrdersResponse> {
     return (await this.listOrdersWithResponse(options)).data;
@@ -3352,7 +3414,7 @@ export class UsersResource {
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
-        ...(options.body === undefined ? {} : { body: options.body }),
+        body: options.body,
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );

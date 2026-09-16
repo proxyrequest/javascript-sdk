@@ -91,6 +91,7 @@ operations:
   users_destroy: delete
   users_data_add_create: add_data
   users_data_subtract_create: subtract_data
+  users_data_reset_create: reset_data
   users_orders_list: list_orders
   users_password_create: reset_password
   webhooks_list: list

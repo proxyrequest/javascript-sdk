@@ -109,6 +109,7 @@ export type ProxyPasswordResetResponse = components["schemas"]["ProxyPasswordRes
 export type ProxyTypeEnum = components["schemas"]["ProxyTypeEnum"];
 export type RecoverPasswordRequest = components["schemas"]["RecoverPasswordRequest"];
 export type Region = components["schemas"]["Region"];
+export type ResetDataRequest = components["schemas"]["ResetDataRequest"];
 export type ResetPasswordRequest = components["schemas"]["ResetPasswordRequest"];
 export type Reward = components["schemas"]["Reward"];
 export type RewardClaimRequestRequest = components["schemas"]["RewardClaimRequestRequest"];

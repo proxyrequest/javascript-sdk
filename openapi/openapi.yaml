@@ -2208,22 +2208,22 @@ paths:
             schema:
               $ref: '#/components/schemas/APIKeyCreateRequest'
             examples:
-              example:
-                summary: Example request
+              RestrictKeyByIP:
                 value:
-                  id: 550e8400-e29b-41d4-a716-446655440001
                   allowed_ips:
                   - 198.51.100.25
+                  - 203.0.113.10
+                summary: Restrict key by IP
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/APIKeyCreateRequest'
             examples:
-              example:
-                summary: Example request
+              RestrictKeyByIP:
                 value:
-                  id: 550e8400-e29b-41d4-a716-446655440001
                   allowed_ips:
                   - 198.51.100.25
+                  - 203.0.113.10
+                summary: Restrict key by IP
       security:
       - BearerAuth: []
       - StaticAuth: []
@@ -4261,22 +4261,22 @@ paths:
             schema:
               $ref: '#/components/schemas/CouponCalculatePriceRequest'
             examples:
-              example:
-                summary: Example request
+              CalculatePackageDiscount:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
-                  coupon_code: coupon code
-                  data: 1073741824
+                  coupon_code: WELCOME20
+                  data: 10737418240
+                summary: Calculate package discount
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/CouponCalculatePriceRequest'
             examples:
-              example:
-                summary: Example request
+              CalculatePackageDiscount:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
-                  coupon_code: coupon code
-                  data: 1073741824
+                  coupon_code: WELCOME20
+                  data: 10737418240
+                summary: Calculate package discount
         required: true
       security:
       - BearerAuth: []
@@ -5293,7 +5293,19 @@ paths:
         provider when required. The status defaults to `pending`. Only superusers
         may create an already-paid invoice by setting `status` to `paid`; other authenticated
         users receive a 403 response. For wallet payments, omit `status`: the invoice
-        is created as pending and becomes paid after the balance is debited successfully.'
+        is created as pending and becomes paid after the balance is debited successfully.
+        For your own billing system, confirm payment on your backend before sending
+        gateway=manual and status=paid with a superuser credential. Sending user_id
+        also requires is_reseller; omit user_id for a purchase by the caller. Sub-users
+        cannot create invoices themselves. A paid package purchase creates or tops
+        up the recipient''s order for that package. Repeated purchases reuse the order.
+        Finite expiring purchases have separate data ledgers; compatible non-expiring
+        purchases and unlimited packages may reuse a ledger. This is different from
+        assigning a child quota with /users/{id}/data/add. An amount-only invoice
+        tops up money, not data. Persist the invoice ID and use Idempotency-Key for
+        retries. Before delivering access, read the paid invoice and the resulting
+        order: fulfillment can be recovered asynchronously. Accounting webhooks do
+        not include invoice.paid.'
       summary: Create an invoice
       tags:
       - Invoices
@@ -5317,52 +5329,75 @@ paths:
                   gateway: manual
                   status: paid
                 summary: Create an already-paid invoice (superuser only)
+              PurchaseUsingAnExistingWalletBalance:
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: wallet
+                summary: Purchase using an existing wallet balance
+              TopUpMoney,NotProxyData:
+                value:
+                  amount: 2500
+                  gateway: stripe
+                summary: Top up money, not proxy data
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/InvoiceCreateRequestRequest'
             examples:
-              example:
-                summary: Example request
+              PurchaseResidentialData:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: stripe
+                summary: Purchase residential data
+              CreateAnAlready-paidInvoice(superuserOnly):
+                value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
-                  gateway: crypto
-                  status: pending
-                  crypto_currency: crypto currency
-                  payment_currency: payment currency
-                  coupon_code: coupon code
-                  country_code: us
-                  data: 1073741824
-                  quantity: 1
-                  amount: 1073741824
-                  connection_limit: 1
-                  expires: 1
-                  company_name: company name
-                  company_registration_number: company registration number
-                  company_vat_number: company vat number
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: manual
+                  status: paid
+                summary: Create an already-paid invoice (superuser only)
+              PurchaseUsingAnExistingWalletBalance:
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: wallet
+                summary: Purchase using an existing wallet balance
+              TopUpMoney,NotProxyData:
+                value:
+                  amount: 2500
+                  gateway: stripe
+                summary: Top up money, not proxy data
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/InvoiceCreateRequestRequest'
             examples:
-              example:
-                summary: Example request
+              PurchaseResidentialData:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: stripe
+                summary: Purchase residential data
+              CreateAnAlready-paidInvoice(superuserOnly):
+                value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
-                  gateway: crypto
-                  status: pending
-                  crypto_currency: crypto currency
-                  payment_currency: payment currency
-                  coupon_code: coupon code
-                  country_code: us
-                  data: 1073741824
-                  quantity: 1
-                  amount: 1073741824
-                  connection_limit: 1
-                  expires: 1
-                  company_name: company name
-                  company_registration_number: company registration number
-                  company_vat_number: company vat number
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: manual
+                  status: paid
+                summary: Create an already-paid invoice (superuser only)
+              PurchaseUsingAnExistingWalletBalance:
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: wallet
+                summary: Purchase using an existing wallet balance
+              TopUpMoney,NotProxyData:
+                value:
+                  amount: 2500
+                  gateway: stripe
+                summary: Top up money, not proxy data
         required: true
       security:
       - BearerAuth: []
@@ -5374,92 +5409,77 @@ paths:
               schema:
                 $ref: '#/components/schemas/Invoice'
               examples:
-                example:
-                  summary: Example response
+                PendingResidentialPurchase:
                   value:
-                    id: 550e8400-e29b-41d4-a716-446655440001
+                    id: 550e8400-e29b-41d4-a716-446655440004
+                    user_id: 550e8400-e29b-41d4-a716-446655440001
                     package:
-                      id: 550e8400-e29b-41d4-a716-446655440001
-                      name: Residential 10 GB
-                      alias: residential-10gb
-                      is_unlimited_data: true
+                      id: 550e8400-e29b-41d4-a716-446655440002
+                      name: Residential 10 GiB
+                      alias: residential10
+                      is_unlimited_data: false
                       targeting_options:
                         package: package
                         split_char: '-'
                         value_char: '-'
                         continent: continent
-                        country: us
-                        region: california
-                        city: los_angeles
-                        asn: '15169'
-                        isp: comcast
-                        username: developer
-                        pool: residential
+                        country: country
+                        region: region
+                        city: city
+                        asn: asn
+                        isp: isp
+                        username: username
+                        pool: pool
                         location: location
-                        location_format: location format
-                        session: session
-                        session_mode_tag: session mode tag
-                        session_ttl: session ttl
+                        location_format: ''
+                        session: sid
+                        session_mode_tag: ''
+                        session_ttl: ttl
                         session_ttl_format: 1
                         os: os
-                        os_combined: true
-                        os_split_char: os split char
-                        os_linux: os linux
-                        os_windows: os windows
-                        os_ios: os ios
-                        os_macos: os macos
-                        os_android: os android
-                    country: us
-                    user_id: 550e8400-e29b-41d4-a716-446655440001
-                    coupon:
-                      id: 550e8400-e29b-41d4-a716-446655440001
-                      is_expired: true
-                      is_redeemed: true
-                      packages:
-                      - {}
-                      created: '2026-07-01T12:30:00Z'
-                      value: 1
-                      code: us
-                      is_multi_use: true
-                      is_available_to_one_time: true
-                      type: free_data
-                      limit: 100
-                      valid_until: '2026-07-01T12:30:00Z'
-                      marketer: 550e8400-e29b-41d4-a716-446655440001
-                      user: 550e8400-e29b-41d4-a716-446655440001
-                    payment_amount: 1
-                    payment_currency: payment currency
-                    fx_market_rate: fx market rate
-                    fx_effective_rate: fx effective rate
-                    fx_markup_percent: fx markup percent
-                    fx_quoted_at: '2026-07-01T12:30:00Z'
-                    updated: '2026-07-01T12:30:00Z'
-                    created: '2026-07-01T12:30:00Z'
-                    type: static
-                    is_one_time: true
-                    is_payout: true
-                    internal_id: 550e8400-e29b-41d4-a716-446655440001
+                        os_combined: false
+                        os_split_char: '-'
+                        os_linux: linux
+                        os_windows: windows
+                        os_ios: ios
+                        os_macos: macos
+                        os_android: android
+                    country: null
+                    coupon: null
+                    type: residential
                     status: pending
-                    description: description
-                    connection_limit: 1
-                    quantity: 1
-                    data: 1073741824
-                    balance: 1
-                    price_total: 1
-                    gateway: coinbase
-                    payment_url: https://developer.example.com/resource
+                    paid: null
+                    is_one_time: false
+                    is_payout: false
+                    data: 10737418240
+                    quantity: 0
+                    balance: 0
+                    connection_limit: 100
+                    price_total: 2500
                     currency: USD
-                    provider_checkout_id: 550e8400-e29b-41d4-a716-446655440001
-                    provider_payment_id: 550e8400-e29b-41d4-a716-446655440001
-                    checkout_status: not_required
-                    vat: 24.99
-                    company_name: company name
-                    company_address: company address
-                    company_city: company city
-                    company_postal_code: company postal code
-                    company_registration_number: company registration number
-                    company_vat_number: company vat number
-                    paid: '2026-07-01T12:30:00Z'
+                    gateway: stripe
+                    payment_amount: 2500
+                    payment_currency: USD
+                    payment_url: https://checkout.example.com/purchase-42
+                    provider_checkout_id: checkout_example_42
+                    provider_payment_id: ''
+                    checkout_status: ready
+                    internal_id: EXAMPLE-000042
+                    description: 10 GiB residential data
+                    vat: 0
+                    fx_market_rate: '1'
+                    fx_effective_rate: '1'
+                    fx_markup_percent: '0'
+                    fx_quoted_at: null
+                    created: '2030-01-01T12:00:00Z'
+                    updated: '2030-01-01T12:00:00Z'
+                    company_name: ''
+                    company_address: ''
+                    company_city: ''
+                    company_postal_code: ''
+                    company_registration_number: ''
+                    company_vat_number: ''
+                  summary: Pending residential purchase
           description: The resource or action result was created successfully.
           headers:
             Idempotency-Replayed:
@@ -6510,8 +6530,8 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Package whose targeting availability should be returned. Required
-          when package-based authentication is enabled.
+        description: Package whose targeting availability should be returned.
+        required: true
         examples:
           ResidentialPackage:
             value: 550e8400-e29b-41d4-a716-446655440002
@@ -6703,8 +6723,8 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Package whose targeting availability should be returned. Required
-          when package-based authentication is enabled.
+        description: Package whose targeting availability should be returned.
+        required: true
         examples:
           ResidentialPackage:
             value: 550e8400-e29b-41d4-a716-446655440002
@@ -6874,6 +6894,17 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: package_id
+        schema:
+          type: string
+          format: uuid
+        description: Package whose targeting availability should be returned.
+        required: true
+        examples:
+          ResidentialPackage:
+            value: 550e8400-e29b-41d4-a716-446655440002
+            summary: Residential package
       - name: Accept-Language
         in: header
         required: false
@@ -6920,6 +6951,37 @@ paths:
                     - code: '20001'
                       name: Charter Communications
           description: The operation completed successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                ValidationError:
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+                  summary: Validation error
+          description: The request is malformed or violates a business rule.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
         '401':
           content:
             application/json:
@@ -7011,37 +7073,6 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
-        '400':
-          description: The request is malformed or violates a business rule.
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Validation and API error payload. Field names may be
-                  added dynamically; field errors are returned as arrays of human-readable
-                  messages.
-                properties:
-                  detail:
-                    type: string
-                  non_field_errors:
-                    type: array
-                    items:
-                      type: string
-                additionalProperties:
-                  oneOf:
-                  - type: string
-                  - type: array
-                    items:
-                      type: string
-              examples:
-                example:
-                  summary: Validation error
-                  value:
-                    non_field_errors:
-                    - The request could not be processed.
-          headers:
-            Content-Language:
-              $ref: '#/components/headers/ContentLanguage'
   /locations/continents:
     get:
       operationId: locations_continents_list
@@ -7080,8 +7111,8 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Package whose targeting availability should be returned. Required
-          when package-based authentication is enabled.
+        description: Package whose targeting availability should be returned.
+        required: true
         examples:
           ResidentialPackage:
             value: 550e8400-e29b-41d4-a716-446655440002
@@ -7233,6 +7264,17 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: package_id
+        schema:
+          type: string
+          format: uuid
+        description: Package whose targeting availability should be returned.
+        required: true
+        examples:
+          ResidentialPackage:
+            value: 550e8400-e29b-41d4-a716-446655440002
+            summary: Residential package
       - name: Accept-Language
         in: header
         required: false
@@ -7265,6 +7307,37 @@ paths:
                     code: na
                     name: North America
           description: The operation completed successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                ValidationError:
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+                  summary: Validation error
+          description: The request is malformed or violates a business rule.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
         '401':
           content:
             application/json:
@@ -7356,37 +7429,6 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
-        '400':
-          description: The request is malformed or violates a business rule.
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Validation and API error payload. Field names may be
-                  added dynamically; field errors are returned as arrays of human-readable
-                  messages.
-                properties:
-                  detail:
-                    type: string
-                  non_field_errors:
-                    type: array
-                    items:
-                      type: string
-                additionalProperties:
-                  oneOf:
-                  - type: string
-                  - type: array
-                    items:
-                      type: string
-              examples:
-                example:
-                  summary: Validation error
-                  value:
-                    non_field_errors:
-                    - The request could not be processed.
-          headers:
-            Content-Language:
-              $ref: '#/components/headers/ContentLanguage'
   /locations/countries:
     get:
       operationId: locations_countries_list
@@ -7425,8 +7467,8 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Package whose targeting availability should be returned. Required
-          when package-based authentication is enabled.
+        description: Package whose targeting availability should be returned.
+        required: true
         examples:
           ResidentialPackage:
             value: 550e8400-e29b-41d4-a716-446655440002
@@ -7585,6 +7627,17 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: package_id
+        schema:
+          type: string
+          format: uuid
+        description: Package whose targeting availability should be returned.
+        required: true
+        examples:
+          ResidentialPackage:
+            value: 550e8400-e29b-41d4-a716-446655440002
+            summary: Residential package
       - name: Accept-Language
         in: header
         required: false
@@ -7624,6 +7677,37 @@ paths:
                     - code: '7922'
                       name: Comcast Cable Communications
           description: The operation completed successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                ValidationError:
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+                  summary: Validation error
+          description: The request is malformed or violates a business rule.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
         '401':
           content:
             application/json:
@@ -7715,37 +7799,6 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
-        '400':
-          description: The request is malformed or violates a business rule.
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Validation and API error payload. Field names may be
-                  added dynamically; field errors are returned as arrays of human-readable
-                  messages.
-                properties:
-                  detail:
-                    type: string
-                  non_field_errors:
-                    type: array
-                    items:
-                      type: string
-                additionalProperties:
-                  oneOf:
-                  - type: string
-                  - type: array
-                    items:
-                      type: string
-              examples:
-                example:
-                  summary: Validation error
-                  value:
-                    non_field_errors:
-                    - The request could not be processed.
-          headers:
-            Content-Language:
-              $ref: '#/components/headers/ContentLanguage'
   /locations/isps:
     get:
       operationId: locations_isps_list
@@ -7788,8 +7841,8 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Package whose targeting availability should be returned. Required
-          when package-based authentication is enabled.
+        description: Package whose targeting availability should be returned.
+        required: true
         examples:
           ResidentialPackage:
             value: 550e8400-e29b-41d4-a716-446655440002
@@ -7971,8 +8024,8 @@ paths:
         schema:
           type: string
           format: uuid
-        description: Package whose targeting availability should be returned. Required
-          when package-based authentication is enabled.
+        description: Package whose targeting availability should be returned.
+        required: true
         examples:
           ResidentialPackage:
             value: 550e8400-e29b-41d4-a716-446655440002
@@ -8136,6 +8189,17 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: package_id
+        schema:
+          type: string
+          format: uuid
+        description: Package whose targeting availability should be returned.
+        required: true
+        examples:
+          ResidentialPackage:
+            value: 550e8400-e29b-41d4-a716-446655440002
+            summary: Residential package
       - name: Accept-Language
         in: header
         required: false
@@ -8180,6 +8244,37 @@ paths:
                     - code: '7922'
                       name: Comcast Cable Communications
           description: The operation completed successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                ValidationError:
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+                  summary: Validation error
+          description: The request is malformed or violates a business rule.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
         '401':
           content:
             application/json:
@@ -8271,37 +8366,6 @@ paths:
           headers:
             Content-Language:
               $ref: '#/components/headers/ContentLanguage'
-        '400':
-          description: The request is malformed or violates a business rule.
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Validation and API error payload. Field names may be
-                  added dynamically; field errors are returned as arrays of human-readable
-                  messages.
-                properties:
-                  detail:
-                    type: string
-                  non_field_errors:
-                    type: array
-                    items:
-                      type: string
-                additionalProperties:
-                  oneOf:
-                  - type: string
-                  - type: array
-                    items:
-                      type: string
-              examples:
-                example:
-                  summary: Validation error
-                  value:
-                    non_field_errors:
-                    - The request could not be processed.
-          headers:
-            Content-Language:
-              $ref: '#/components/headers/ContentLanguage'
   /login:
     post:
       operationId: login_create
@@ -8325,22 +8389,20 @@ paths:
             schema:
               $ref: '#/components/schemas/LoginRequestRequest'
             examples:
-              example:
-                summary: Example request
+              SignInWithEmail:
                 value:
                   email: developer@example.com
-                  username: developer
                   password: Correct-Horse-Battery-Staple-42
+                summary: Sign in with email
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/LoginRequestRequest'
             examples:
-              example:
-                summary: Example request
+              SignInWithEmail:
                 value:
                   email: developer@example.com
-                  username: developer
                   password: Correct-Horse-Battery-Staple-42
+                summary: Sign in with email
         required: true
       security:
       - {}
@@ -8438,26 +8500,18 @@ paths:
             schema:
               $ref: '#/components/schemas/GoogleAuthRequest'
             examples:
-              example:
-                summary: Example request
+              GoogleCredential:
                 value:
-                  credential: credential
-                  client_id: 550e8400-e29b-41d4-a716-446655440001
-                  select_by: select by
-                  affiliate_code: affiliate code
-                  referral_code: referral code
+                  credential: google-id-token
+                summary: Google credential
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/GoogleAuthRequest'
             examples:
-              example:
-                summary: Example request
+              GoogleCredential:
                 value:
-                  credential: credential
-                  client_id: 550e8400-e29b-41d4-a716-446655440001
-                  select_by: select by
-                  affiliate_code: affiliate code
-                  referral_code: referral code
+                  credential: google-id-token
+                summary: Google credential
         required: true
       security:
       - {}
@@ -8828,7 +8882,11 @@ paths:
     get:
       operationId: orders_list
       description: Returns active package orders owned by the authenticated account.
-        Filters can narrow the result by package or user.
+        Superusers can inspect other accounts, including inactive orders; filters
+        never expand a normal caller's ownership scope. Repeated purchases of one
+        package reuse the same user/package order. Read data_remaining and ledgers
+        for usable purchased data, not data minus data_spent. To inspect a managed
+        customer, use /users/{id}/orders.
       summary: List active orders
       parameters:
       - name: limit
@@ -9030,7 +9088,9 @@ paths:
     get:
       operationId: orders_retrieve
       description: Returns one active order with package, usage, expiration, and proxy
-        credential details.
+        credential details. Virtual child data_remaining is a personal quota, not
+        the parent's shared balance. The order's expires value is not a list of all
+        purchased bucket deadlines; inspect each returned ledger's expires.
       summary: Get an order
       parameters:
       - in: path
@@ -9501,8 +9561,11 @@ paths:
                       type: string
     delete:
       operationId: orders_destroy
-      description: Removes an active order owned by a managed sub-user. Remaining
-        data is returned to the reseller's matching order when possible.
+      description: Removes an order in the caller's permitted scope. This is destructive,
+        not a payment refund. Deleting a virtual child order does not credit its quota
+        to the shared ledger. Independently purchased sub-user orders have a legacy
+        parent-order data-counter adjustment; do not treat it as a guaranteed restoration
+        of usable ledger balance.
       summary: Delete a sub-user order
       parameters:
       - in: path
@@ -10162,9 +10225,8 @@ paths:
                     username: developer
                     first_name: Dana
                     last_name: Morgan
-                    is_active: true
                     is_reseller: false
-                    otp_enabled: true
+                    orders: []
                   summary: Current profile
           description: The operation completed successfully.
           headers:
@@ -10300,56 +10362,20 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedProfileUpdateRequest'
             examples:
-              example:
-                summary: Example request
+              UpdateProfile:
                 value:
-                  email: developer@example.com
                   first_name: Dana
                   last_name: Morgan
-                  country: us
-                  state: state
-                  city: los_angeles
-                  address: address
-                  zip: zip
-                  company_name: company name
-                  company_country: company country
-                  company_city: company city
-                  company_address: company address
-                  company_postal_code: company postal code
-                  company_vat_number: company vat number
-                  blocked_domains:
-                  - blocked.example
-                  allowed_ips:
-                  - 198.51.100.25
-                  new_password: New-Secure-Password-43
-                  old_password: Previous-Password-42
+                summary: Update profile
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/PatchedProfileUpdateRequest'
             examples:
-              example:
-                summary: Example request
+              UpdateProfile:
                 value:
-                  email: developer@example.com
                   first_name: Dana
                   last_name: Morgan
-                  country: us
-                  state: state
-                  city: los_angeles
-                  address: address
-                  zip: zip
-                  company_name: company name
-                  company_country: company country
-                  company_city: company city
-                  company_address: company address
-                  company_postal_code: company postal code
-                  company_vat_number: company vat number
-                  blocked_domains:
-                  - blocked.example
-                  allowed_ips:
-                  - 198.51.100.25
-                  new_password: New-Secure-Password-43
-                  old_password: Previous-Password-42
+                summary: Update profile
       security:
       - BearerAuth: []
       - StaticAuth: []
@@ -10367,9 +10393,8 @@ paths:
                     username: developer
                     first_name: Dana
                     last_name: Morgan
-                    is_active: true
                     is_reseller: false
-                    otp_enabled: true
+                    orders: []
                   summary: Updated profile
           description: The request was accepted and the updated resource is returned.
           headers:
@@ -11339,22 +11364,22 @@ paths:
             schema:
               $ref: '#/components/schemas/ChangePasswordRequest'
             examples:
-              example:
-                summary: Example request
+              ChangePassword:
                 value:
                   old_password: Previous-Password-42
                   new_password1: New-Secure-Password-43
                   new_password2: New-Secure-Password-43
+                summary: Change password
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/ChangePasswordRequest'
             examples:
-              example:
-                summary: Example request
+              ChangePassword:
                 value:
                   old_password: Previous-Password-42
                   new_password1: New-Secure-Password-43
                   new_password2: New-Secure-Password-43
+                summary: Change password
         required: true
       security:
       - BearerAuth: []
@@ -11511,54 +11536,40 @@ paths:
             schema:
               $ref: '#/components/schemas/GenerateProxyRequest'
             examples:
-              example:
-                summary: Example request
+              GenerateHTTPProxiesForACountry:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
-                  user_id: 550e8400-e29b-41d4-a716-446655440001
-                  quantity: 1
+                  quantity: 2
                   targeting:
-                    continent: continent
                     country: us
                     region: california
                     city: los_angeles
-                    pool: residential
-                    asn: '15169'
                     isp: comcast
-                    os: os
                   connection:
                     protocol: http
-                    host: proxy.example.net
-                    port: 8000
-                    format: '{protocol}://{username}:{password}@{host}:{port}'
+                    format: '{host}:{port}:{username}:{password}'
                   session:
-                    ttl: 3600
+                    ttl: 60
+                summary: Generate HTTP proxies for a country
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/GenerateProxyRequest'
             examples:
-              example:
-                summary: Example request
+              GenerateHTTPProxiesForACountry:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
-                  user_id: 550e8400-e29b-41d4-a716-446655440001
-                  quantity: 1
+                  quantity: 2
                   targeting:
-                    continent: continent
                     country: us
                     region: california
                     city: los_angeles
-                    pool: residential
-                    asn: '15169'
                     isp: comcast
-                    os: os
                   connection:
                     protocol: http
-                    host: proxy.example.net
-                    port: 8000
-                    format: '{protocol}://{username}:{password}@{host}:{port}'
+                    format: '{host}:{port}:{username}:{password}'
                   session:
-                    ttl: 3600
+                    ttl: 60
+                summary: Generate HTTP proxies for a country
         required: true
       security:
       - BearerAuth: []
@@ -11742,20 +11753,20 @@ paths:
             schema:
               $ref: '#/components/schemas/RecoverPasswordRequest'
             examples:
-              example:
-                summary: Example request
+              RecoverAccount:
                 value:
                   email: developer@example.com
-                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwidXNlcl9pZCI6IjU1MGU4NDAwLWUyOWItNDFkNC1hNzE2LTQ0NjY1NTQ0MDAwMSJ9.example-signature
+                  token: turnstile-response-token
+                summary: Recover account
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/RecoverPasswordRequest'
             examples:
-              example:
-                summary: Example request
+              RecoverAccount:
                 value:
                   email: developer@example.com
-                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwidXNlcl9pZCI6IjU1MGU4NDAwLWUyOWItNDFkNC1hNzE2LTQ0NjY1NTQ0MDAwMSJ9.example-signature
+                  token: turnstile-response-token
+                summary: Recover account
         required: true
       security:
       - {}
@@ -11840,18 +11851,18 @@ paths:
             schema:
               $ref: '#/components/schemas/TokenRefreshRequestRequest'
             examples:
-              example:
-                summary: Example request
+              RefreshToken:
                 value:
                   refresh: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsInVzZXJfaWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDEifQ.example-signature
+                summary: Refresh token
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/TokenRefreshRequestRequest'
             examples:
-              example:
-                summary: Example request
+              RefreshToken:
                 value:
                   refresh: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsInVzZXJfaWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDEifQ.example-signature
+                summary: Refresh token
         required: true
       responses:
         '200':
@@ -11964,18 +11975,18 @@ paths:
             schema:
               $ref: '#/components/schemas/ResetPasswordRequest'
             examples:
-              example:
-                summary: Example request
+              ResetOrderPassword:
                 value:
                   order_id: 550e8400-e29b-41d4-a716-446655440003
+                summary: Reset order password
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/ResetPasswordRequest'
             examples:
-              example:
-                summary: Example request
+              ResetOrderPassword:
                 value:
                   order_id: 550e8400-e29b-41d4-a716-446655440003
+                summary: Reset order password
         required: true
       security:
       - {}
@@ -12270,20 +12281,20 @@ paths:
             schema:
               $ref: '#/components/schemas/RewardClaimRequestRequest'
             examples:
-              example:
-                summary: Example request
+              ClaimDataReward:
                 value:
-                  type: type
-                  description: description
+                  type: data
+                  description: Transfer referral data reward
+                summary: Claim data reward
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/RewardClaimRequestRequest'
             examples:
-              example:
-                summary: Example request
+              ClaimDataReward:
                 value:
-                  type: type
-                  description: description
+                  type: data
+                  description: Transfer referral data reward
+                summary: Claim data reward
         required: true
       security:
       - BearerAuth: []
@@ -12896,26 +12907,26 @@ paths:
             schema:
               $ref: '#/components/schemas/SignUpRequest'
             examples:
-              example:
-                summary: Example request
+              CreateAccount:
                 value:
                   email: developer@example.com
                   password: Correct-Horse-Battery-Staple-42
-                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwidXNlcl9pZCI6IjU1MGU4NDAwLWUyOWItNDFkNC1hNzE2LTQ0NjY1NTQ0MDAwMSJ9.example-signature
-                  affiliate_code: affiliate code
-                  referral_code: referral code
+                  token: turnstile-response-token
+                  referral_code: FRIEND2026
+                  affiliate_code: DEVCOMMUNITY
+                summary: Create account
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/SignUpRequest'
             examples:
-              example:
-                summary: Example request
+              CreateAccount:
                 value:
                   email: developer@example.com
                   password: Correct-Horse-Battery-Staple-42
-                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwidXNlcl9pZCI6IjU1MGU4NDAwLWUyOWItNDFkNC1hNzE2LTQ0NjY1NTQ0MDAwMSJ9.example-signature
-                  affiliate_code: affiliate code
-                  referral_code: referral code
+                  token: turnstile-response-token
+                  referral_code: FRIEND2026
+                  affiliate_code: DEVCOMMUNITY
+                summary: Create account
         required: true
       security:
       - {}
@@ -13140,11 +13151,6 @@ paths:
                       currency: USD
                       coupons:
                       - {}
-                      data: 1073741824
-                      data_spent: 1073741824
-                      data_updated: '2026-07-01T12:30:00Z'
-                      proxy_password: p9W4rT2xK7mQ
-                      proxy_password_reset: '2026-07-01T12:30:00Z'
                       orders:
                       - id: 550e8400-e29b-41d4-a716-446655440001
                         is_auto_renewal: true
@@ -13259,9 +13265,14 @@ paths:
               $ref: '#/components/headers/ContentLanguage'
     post:
       operationId: users_create
-      description: Creates a user owned by the authenticated reseller and returns
-        the new account. The caller must be allowed to manage sub-users.
-      summary: Create a sub-user
+      description: Creates a sub-user under the caller by default. A superuser can
+        send is_top_level=true to create an independent customer account. A sub-user
+        cannot create another generation of users. Omit package_id and data to create
+        identity only, then provision the chosen accounting model separately. For
+        shared-pool allocation, supply package_id and positive integer-byte data;
+        the parent must already own a root order for that package. An independent
+        paid purchase is provisioned through invoices, not a shared-pool quota.
+      summary: Create a customer account
       tags:
       - Users
       requestBody:
@@ -13365,9 +13376,8 @@ paths:
                     username: developer
                     first_name: Dana
                     last_name: Morgan
-                    is_active: true
                     is_reseller: false
-                    otp_enabled: true
+                    orders: []
                   summary: Created user
           description: The resource or action result was created successfully.
           headers:
@@ -13568,9 +13578,8 @@ paths:
                     username: developer
                     first_name: Dana
                     last_name: Morgan
-                    is_active: true
                     is_reseller: false
-                    otp_enabled: true
+                    orders: []
                   summary: User details
           description: The operation completed successfully.
           headers:
@@ -13841,9 +13850,8 @@ paths:
                     username: developer
                     first_name: Dana
                     last_name: Morgan
-                    is_active: true
                     is_reseller: false
-                    otp_enabled: true
+                    orders: []
                   summary: Updated user
           description: The request was accepted and the updated resource is returned.
           headers:
@@ -14238,8 +14246,14 @@ paths:
   /users/{id}/data/add:
     post:
       operationId: users_data_add_create
-      description: Adds the requested number of bytes to the selected sub-user's order
-        for the supplied package and returns the updated order.
+      description: Adds data integer bytes to a managed sub-user's virtual quota for
+        package_id and returns the updated order. Both fields are required. The caller
+        must own a root order for this package and the target sub-user. Creates the
+        child order if absent; an existing independently purchased order cannot be
+        converted by this operation. The allocation does not reserve or debit the
+        parent's ledger, and may exceed its remaining data. Actual traffic needs both
+        personal quota and a usable parent pool. Use Idempotency-Key to avoid granting
+        the same quota twice.
       summary: Add data to a sub-user order
       parameters:
       - in: path
@@ -14289,20 +14303,280 @@ paths:
             schema:
               $ref: '#/components/schemas/AddDataRequest'
             examples:
-              example:
-                summary: Example request
+              AddDataRequest:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   data: 1073741824
+                summary: Add data request
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/AddDataRequest'
             examples:
-              example:
-                summary: Example request
+              AddDataRequest:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   data: 1073741824
+                summary: Add data request
+        required: true
+      security:
+      - BearerAuth: []
+      - StaticAuth: []
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              examples:
+                example:
+                  summary: Example response
+                  value:
+                    id: 550e8400-e29b-41d4-a716-446655440001
+                    is_auto_renewal: true
+                    auto_renewal_percentage: 1
+                    auto_renewal_data: 1
+                    package: {}
+                    proxy_password: p9W4rT2xK7mQ
+                    proxy_password_reset: '2026-07-01T12:30:00Z'
+                    pools:
+                    - residential
+                    data: 1073741824
+                    data_remaining: 1
+                    data_spent: 1073741824
+                    ledgers:
+                    - {}
+                    latest_data_top_up: 1
+                    latest_data_top_up_date: '2026-07-01T12:30:00Z'
+                    data_updated: '2026-07-01T12:30:00Z'
+                    updated: '2026-07-01T12:30:00Z'
+                    created: '2026-07-01T12:30:00Z'
+          description: The request was accepted and the updated resource is returned.
+          headers:
+            Idempotency-Replayed:
+              description: True when the response was replayed from a prior request.
+              schema:
+                type: string
+                enum:
+                - 'true'
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                ValidationError:
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+                  summary: Validation error
+          description: The request is malformed or violates a business rule.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '401':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                AuthenticationRequired:
+                  value:
+                    detail: Authentication credentials were not provided.
+                  summary: Authentication required
+          description: Authentication credentials are missing, expired, or invalid.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    detail: You do not have permission to perform this action.
+                  summary: Permission denied
+          description: The authenticated account cannot perform this operation.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                ResourceNotFound:
+                  value:
+                    detail: Not found.
+                  summary: Resource not found
+          description: The requested resource does not exist in the current account
+            scope.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '409':
+          description: The idempotency key is in progress or was reused for a different
+            request.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+  /users/{id}/data/reset:
+    post:
+      operationId: users_data_reset_create
+      description: Atomically resets remaining data to zero for package_id, including
+        zero or negative balances. Supply package_id only; data is not accepted. System
+        administrators may reset any user; other accounts may reset only their direct
+        children. Purchased root orders have their ledger balances cleared; virtual
+        child orders have their quota set to usage without changing the parent's pool.
+        Usage history and invoices are preserved. Unlimited packages are rejected.
+        Use Idempotency-Key for safe retries so a repeated request cannot clear a
+        subsequent top-up.
+      summary: Reset a user's remaining data
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      - name: Idempotency-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+        description: Stable key for one logical mutation. Successful responses are
+          replayable for 24 hours; reusing a key with a different request returns
+          409.
+      - name: Accept-Language
+        in: header
+        required: false
+        schema:
+          type: string
+          default: en
+        description: 'Preferred language for human-readable API errors. Supported
+          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
+          and quality weights are accepted; unsupported or omitted values use English.'
+        examples:
+          German:
+            value: de
+          Weighted:
+            value: fr-CA, fr;q=0.9, en;q=0.5
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetDataRequest'
+            examples:
+              ResetDataRequest:
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                summary: Reset data request
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetDataRequest'
+            examples:
+              ResetDataRequest:
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                summary: Reset data request
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetDataRequest'
+            examples:
+              ResetDataRequest:
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                summary: Reset data request
         required: true
       security:
       - BearerAuth: []
@@ -14495,8 +14769,12 @@ paths:
   /users/{id}/data/subtract:
     post:
       operationId: users_data_subtract_create
-      description: Subtracts the requested number of bytes from the selected sub-user's
-        order for the supplied package and returns the updated order.
+      description: Subtracts data from the assigned quota of a managed virtual child
+        order in integer bytes for package_id. Both fields are required. This is not
+        a refund or a transfer back into the parent's ledger, and does not erase data_spent.
+        The amount cannot exceed the total assigned data; reducing the quota below
+        usage can stop the child's access. An independently purchased order is not
+        managed through this allocation endpoint. Use Idempotency-Key for safe retries.
       summary: Subtract data from a sub-user order
       parameters:
       - in: path
@@ -14546,20 +14824,20 @@ paths:
             schema:
               $ref: '#/components/schemas/SubtractDataRequest'
             examples:
-              example:
-                summary: Example request
+              SubtractDataRequest:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   data: 1073741824
+                summary: Subtract data request
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/SubtractDataRequest'
             examples:
-              example:
-                summary: Example request
+              SubtractDataRequest:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   data: 1073741824
+                summary: Subtract data request
         required: true
       security:
       - BearerAuth: []
@@ -14752,8 +15030,10 @@ paths:
   /users/{id}/orders:
     get:
       operationId: users_orders_list
-      description: Returns active package orders allocated to the selected sub-user.
-        This operation is available when package-based authentication is enabled.
+      description: 'Returns the selected user''s package orders, including inactive
+        orders. A user may have a purchased root order with its own ledgers or a virtual
+        child order whose quota uses its parent''s pool. User ownership and order
+        ownership are different: being a sub-user does not imply shared-pool accounting.'
       summary: List a sub-user's orders
       parameters:
       - in: query
@@ -14972,8 +15252,8 @@ paths:
   /users/{id}/password:
     post:
       operationId: users_password_create
-      description: Rotates the proxy password for the selected user. When package-based
-        authentication is enabled, send package_id to select the affected order.
+      description: Rotates the proxy password for the selected user's package order.
+        Send package_id to select the affected order.
       summary: Rotate a sub-user proxy password
       parameters:
       - in: path
@@ -15013,18 +15293,19 @@ paths:
             schema:
               $ref: '#/components/schemas/UserPasswordResetRequestRequest'
             examples:
-              example:
-                summary: Example request
+              RotatePackagePassword:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
+                summary: Rotate package password
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/UserPasswordResetRequestRequest'
             examples:
-              example:
-                summary: Example request
+              RotatePackagePassword:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
+                summary: Rotate package password
+        required: true
       security:
       - BearerAuth: []
       - StaticAuth: []
@@ -15042,9 +15323,8 @@ paths:
                     username: developer
                     first_name: Dana
                     last_name: Morgan
-                    is_active: true
                     is_reseller: false
-                    otp_enabled: true
+                    orders: []
                   summary: Updated user
           description: The request was accepted and the updated resource is returned.
         '400':
@@ -15347,8 +15627,7 @@ paths:
             schema:
               $ref: '#/components/schemas/WebhookCreateRequest'
             examples:
-              example:
-                summary: Example request
+              CreateDeliveryEndpoint:
                 value:
                   type: user
                   endpoint: https://developer.example.com/webhooks/proxy-events
@@ -15356,12 +15635,12 @@ paths:
                   write_timeout: 5
                   retries: 3
                   retry_timeout: 10
+                summary: Create delivery endpoint
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/WebhookCreateRequest'
             examples:
-              example:
-                summary: Example request
+              CreateDeliveryEndpoint:
                 value:
                   type: user
                   endpoint: https://developer.example.com/webhooks/proxy-events
@@ -15369,6 +15648,7 @@ paths:
                   write_timeout: 5
                   retries: 3
                   retry_timeout: 10
+                summary: Create delivery endpoint
         required: true
       security:
       - BearerAuth: []
@@ -16041,9 +16321,12 @@ components:
         package_id:
           type: string
           format: uuid
+          description: Package for which the caller owns a root order.
         data:
           type: integer
           minimum: 1
+          description: Positive integer bytes to add to the child's assigned quota.
+            Does not reserve parent data; may exceed the parent's remaining pool.
       required:
       - data
       - package_id
@@ -16807,7 +17090,10 @@ components:
           type: string
           format: uuid
           description: ProxyRequest sub-user UUID that will use the generated credentials.
-            Headless integrations must resolve this from their local customer mapping.
+            Resolve it from your local customer mapping. Must be the caller's own
+            sub-user, even for superusers. Omit to generate for the authenticated
+            account. For an independent top-level customer, authenticate as that customer
+            rather than sending its ID with a global key.
         quantity:
           type: integer
           description: Number of proxies to generate
@@ -16963,8 +17249,8 @@ components:
         is_one_time:
           type: boolean
           title: One-Time Purchase
-          description: Indicates whether this invoice is for a one-time purchase.
-            Default is False, meaning it is a recurring invoice.
+          description: Whether this pricing tier is restricted to a one-time purchase.
+            False does not create a recurring subscription or a renewal schedule.
         is_payout:
           type: boolean
           title: Payout
@@ -16977,12 +17263,12 @@ components:
         status:
           allOf:
           - $ref: '#/components/schemas/InvoiceStatusEnum'
-          description: After changing invoice status to PAID, the invoice will be
-            processed and user package created in case none exists. If you need to
-            cancel the invoice, make sure to subtract data from the user package after
-            changing the invoice status. Changing the status from PAID to any other
-            will not affect the user package's data or proxies. * `pending` - Pending
-            * `paid` - Paid * `unpaid` - Unpaid * `error` - Error
+          description: Payment state. A paid package invoice funds an order; a paid
+            balance invoice credits money. Confirm the resulting order before delivering
+            access, because fulfillment can recover asynchronously. Creating an invoice
+            with status=paid requires a superuser. This read field is not a public
+            status-update or refund endpoint. * `pending` - Pending * `paid` - Paid
+            * `unpaid` - Unpaid * `error` - Error
         description:
           type: string
           description: A description of the invoice. This field is optional and can
@@ -17165,7 +17451,10 @@ components:
         user_id:
           type: string
           format: uuid
-          description: Managed sub-user that should receive the purchase.
+          description: Account receiving the purchase. Omit for your own account.
+            Sending user_id requires is_reseller; a reseller can target its own sub-user,
+            while a superuser with is_reseller can target another account. Do not
+            send your own ID.
         gateway:
           $ref: '#/components/schemas/InvoiceCreateRequestGatewayEnum'
         status:
@@ -17191,20 +17480,28 @@ components:
           maxLength: 2
         data:
           type: integer
-          description: Residential proxy data to purchase, in bytes.
+          description: Residential proxy data to purchase, in integer bytes (1 GiB
+            = 1073741824). Required with package_id for a residential purchase. A
+            paid purchase funds the recipient's order; it is not a virtual allocation
+            from a parent pool.
         quantity:
           type: integer
           description: Number of static proxies to purchase.
         amount:
           type: integer
           description: Account balance amount to purchase, in the smallest currency
-            unit.
+            unit. Use for a wallet top-up without package_id, not for buying proxy
+            data.
         connection_limit:
           type: integer
           minimum: -1
         expires:
           type: integer
-          description: Optional expiration as a Unix timestamp in seconds.
+          description: Optional future expiration as a Unix timestamp in seconds,
+            not milliseconds. Otherwise a positive package billing cycle determines
+            the purchased data's expiration from the payment date; a zero cycle has
+            no automatic expiration. A later purchase does not extend earlier finite,
+            expiring ledgers.
         company_name:
           type: string
           minLength: 1
@@ -17273,164 +17570,10 @@ components:
         - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay`
         - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail'
     InvoiceRead:
-      anyOf:
+      allOf:
       - $ref: '#/components/schemas/Invoice'
-      - $ref: '#/components/schemas/InvoiceShort'
-      description: Full invoice in package-based deployments; short invoice otherwise.
-        Invoice creation always returns the full Invoice representation.
-    InvoiceShort:
-      type: object
-      properties:
-        id:
-          type: string
-          maxLength: 36
-        coupon:
-          allOf:
-          - $ref: '#/components/schemas/Coupon'
-          readOnly: true
-          nullable: true
-        country:
-          allOf:
-          - $ref: '#/components/schemas/Country'
-          readOnly: true
-          nullable: true
-        updated:
-          type: string
-          format: date-time
-          readOnly: true
-        created:
-          type: string
-          format: date-time
-          readOnly: true
-        is_one_time:
-          type: boolean
-          title: One-Time Purchase
-          description: Indicates whether this invoice is for a one-time purchase.
-            Default is False, meaning it is a recurring invoice.
-        is_payout:
-          type: boolean
-          title: Payout
-          description: Indicates whether this invoice is a payout to the marketer.
-            Default is False.
-        internal_id:
-          type: string
-          description: A unique identifier for the invoice, generated automatically.
-          maxLength: 25
-        status:
-          allOf:
-          - $ref: '#/components/schemas/InvoiceStatusEnum'
-          description: After changing invoice status to PAID, the invoice will be
-            processed and user package created in case none exists. If you need to
-            cancel the invoice, make sure to subtract data from the user package after
-            changing the invoice status. Changing the status from PAID to any other
-            will not affect the user package's data or proxies. * `pending` - Pending
-            * `paid` - Paid * `unpaid` - Unpaid * `error` - Error
-        description:
-          type: string
-          description: A description of the invoice. This field is optional and can
-            be left blank.
-        connection_limit:
-          type: integer
-          maximum: 2147483647
-          minimum: -1
-          description: The maximum number of concurrent connections allowed for this
-            package.
-        data:
-          type: integer
-          maximum: 1000000000000000
-          minimum: 0
-          format: int64
-          title: Data (bytes)
-          description: The amount of data in bytes.
-        balance:
-          type: integer
-          maximum: 10000000000
-          minimum: 0
-          format: int64
-          title: Balance Top Up (cents)
-          description: The balance to top up for the user. Must be zero or positive.
-        price_total:
-          type: integer
-          maximum: 10000000000
-          minimum: 1
-          format: int64
-          title: Price (cents)
-          description: The total price of the invoice, including any discounts. Must
-            be at least 1 cent.
-        gateway:
-          allOf:
-          - $ref: '#/components/schemas/InvoiceGatewayEnum'
-          title: Payment Gateway
-          description: The payment gateway used for processing the payment. * `coinbase`
-            - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate`
-            - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay
-            * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance
-            Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom`
-            - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server
-            * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay
-            * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay
-            * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate *
-            `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` -
-            Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay
-            * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay`
-            - Vipps MobilePay * `paytrail` - Paytrail
-        currency:
-          type: string
-          title: Billing Currency
-          description: ISO 4217 currency captured when the invoice is created.
-          maxLength: 3
-        provider_checkout_id:
-          type: string
-          description: Provider-side hosted checkout identifier used for reconciliation.
-          maxLength: 255
-        provider_payment_id:
-          type: string
-          description: Provider-side payment or transaction identifier used for reconciliation.
-          maxLength: 255
-        checkout_status:
-          $ref: '#/components/schemas/CheckoutStatusEnum'
-        vat:
-          type: number
-          format: double
-          maximum: 100.0
-          minimum: 0.0
-          title: VAT (%)
-          description: The VAT percentage applied to the invoice. Must be between
-            0 and 100.
-        company_name:
-          type: string
-          maxLength: 255
-        company_address:
-          type: string
-          maxLength: 255
-        company_city:
-          type: string
-          maxLength: 255
-        company_postal_code:
-          type: string
-          maxLength: 255
-        company_registration_number:
-          type: string
-          maxLength: 255
-        company_vat_number:
-          type: string
-          maxLength: 255
-        paid:
-          type: string
-          format: date-time
-          nullable: true
-          description: The date and time when the invoice was paid.
-        expires:
-          type: string
-          format: date-time
-          nullable: true
-          description: The date and time when the invoice expires. If not set, the
-            invoice does not expire.
-      required:
-      - country
-      - coupon
-      - created
-      - updated
+      description: Invoice details. Creation, list, and detail responses use the same
+        Invoice representation.
     InvoiceStatusEnum:
       enum:
       - pending
@@ -17746,6 +17889,10 @@ components:
         data_remaining:
           type: integer
           readOnly: true
+          description: 'Integer bytes. Root order: sum of usable ledger balances,
+            not data minus data_spent. Virtual child order: max(data - data_spent,
+            0), a personal quota that does not guarantee the parent still has usable
+            data.'
         data_spent:
           type: integer
           maximum: 9223372036854775807
@@ -17760,6 +17907,10 @@ components:
             type: object
             additionalProperties: {}
           readOnly: true
+          description: Usable, non-expired ledger balances for a purchased root order;
+            empty for a virtual child order using its parent's pool. Not a complete
+            history. Array position does not identify the active ledger or spending
+            order.
         latest_data_top_up:
           type: integer
           maximum: 9223372036854775807
@@ -17861,6 +18012,9 @@ components:
         data_remaining:
           type: integer
           readOnly: true
+          description: 'Integer bytes. Root order: sum of usable ledger balances.
+            Virtual child order: max(data - data_spent, 0); access also needs a usable
+            parent pool.'
         data_spent:
           type: integer
           maximum: 9223372036854775807
@@ -17875,6 +18029,8 @@ components:
             type: object
             additionalProperties: {}
           readOnly: true
+          description: Usable, non-expired purchased buckets; empty for virtual child
+            orders. Not a complete history, and array position is not spending priority.
         latest_data_top_up:
           type: integer
           maximum: 9223372036854775807
@@ -19017,6 +19173,15 @@ components:
       - country
       - isps
       - name
+    ResetDataRequest:
+      type: object
+      properties:
+        package_id:
+          type: string
+          format: uuid
+          description: Package whose remaining data is reset to zero.
+      required:
+      - package_id
     ResetPasswordRequest:
       type: object
       properties:
@@ -19231,9 +19396,13 @@ components:
         package_id:
           type: string
           format: uuid
+          description: Package of the managed virtual child order.
         data:
           type: integer
           minimum: 1
+          description: Positive integer bytes to remove from assigned quota, not from
+            usage. Cannot exceed total assigned data. Does not credit the parent's
+            pool.
       required:
       - data
       - package_id
@@ -19656,39 +19825,14 @@ components:
             additionalProperties: {}
           description: Available coupons for this user
           readOnly: true
-        data:
-          type: integer
-          nullable: true
-          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
-          readOnly: true
-        data_spent:
-          type: integer
-          nullable: true
-          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
-          readOnly: true
-        data_updated:
-          type: string
-          format: date-time
-          nullable: true
-          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
-          readOnly: true
-        proxy_password:
-          type: string
-          nullable: true
-          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
-          readOnly: true
-        proxy_password_reset:
-          type: string
-          format: date-time
-          nullable: true
-          description: Present only when SITE_PACKAGE_BASED_AUTH is disabled.
-          readOnly: true
         orders:
           type: array
           items:
             $ref: '#/components/schemas/Order'
           readOnly: true
-          description: Present only when SITE_PACKAGE_BASED_AUTH is enabled.
+          description: The user's package orders, including inactive orders. Each
+            order contains its own data allowance, usage, ledgers, and proxy credentials.
+            An empty list means the user has no orders.
       required:
       - allowed_ips
       - blocked_domains
@@ -19698,6 +19842,7 @@ components:
       - date_joined_ts
       - email
       - id
+      - orders
       - parent_id
       - referral_balance_earned
       - referral_balance_pending
@@ -19783,18 +19928,20 @@ components:
         is_top_level:
           type: boolean
           default: false
-          description: Whether the user is a sub-user under the parent account.
+          description: 'Superuser only: true creates an independent account with no
+            parent. False (default) creates a sub-user under the caller.'
         data:
           type: integer
           minimum: 0
-          description: Initial data allocation for the user (traditional auth mode
-            only).
+          description: Initial integer-byte data amount. With package_id, a normal
+            sub-user receives a virtual quota from the caller's existing root order;
+            is_top_level=true provisions a separate paid purchase. Omit both data
+            and package_id to create identity without package access.
         package_id:
           type: string
           format: uuid
-          description: ProxyRequest package UUID to assign to the user (package-based
-            auth mode only). Headless integrations resolve it from their local product
-            mapping.
+          description: ProxyRequest package UUID to assign to the user. Headless integrations
+            resolve it from their local product mapping.
         meta:
           type: object
           additionalProperties: {}
@@ -19808,8 +19955,9 @@ components:
         package_id:
           type: string
           format: uuid
-          description: Package whose proxy password should be rotated. Required only
-            when package-based authentication is enabled.
+          description: Package whose order's proxy password should be rotated.
+      required:
+      - package_id
     VerifyOTPRequest:
       type: object
       properties:
@@ -20038,7 +20186,8 @@ tags:
 - name: Telegram dashboard
   description: Connect and configure the Telegram client dashboard.
 - name: Sessions
-  description: Inspect and revoke active sticky proxy sessions.
+  description: Legacy session management is currently unavailable (403). Sticky proxy
+    generation remains supported separately.
 - name: Settings
   description: Read gateway addresses, usage totals, and account-wide configuration.
 - name: News

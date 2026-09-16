@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { OpenAPI3 } from "openapi-typescript";
 import { parse } from "yaml";
@@ -24,6 +25,27 @@ export function sdkSchema(source: OpenAPI3): OpenAPI3 {
     if (!methods.some((method) => item[method])) delete document.paths?.[path];
   }
   if (document.tags) document.tags = document.tags.filter((tag) => tag.name !== "Sessions");
+  const compatibility = JSON.parse(
+    readFileSync(new URL("../openapi/compatibility.json", import.meta.url), "utf8"),
+  ) as NonNullable<OpenAPI3["components"]>;
+  const schemas = document.components?.schemas;
+  for (const [name, legacy] of Object.entries(compatibility.schemas ?? {})) {
+    if (!schemas) break;
+    const current = schemas[name];
+    if (!current || name === "InvoiceRead") {
+      schemas[name] = structuredClone(legacy);
+    } else if (
+      !("$ref" in current) &&
+      !("$ref" in legacy) &&
+      current.type === "object" &&
+      legacy.type === "object"
+    ) {
+      current.properties = { ...legacy.properties, ...current.properties };
+      current.required = (current.required ?? []).filter((field) =>
+        legacy.required?.includes(field),
+      );
+    }
+  }
   for (const name of Object.keys(document.components?.schemas ?? {})) {
     if (/^Sessions?(List|Delete|Destroy)/u.test(name)) delete document.components?.schemas?.[name];
   }
