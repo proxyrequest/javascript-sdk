@@ -1,6 +1,6 @@
 # Webhook verification
 
-ProxyRequest sends `X-Signature`: standard padded Base64 of HMAC-SHA256 over the exact raw body. Parsing and re-serializing JSON before verification changes the signed bytes and invalidates the signature. Use the upcoming SDK release; version 1.0.0 does not support the current delivery format.
+ProxyRequest sends `X-Signature`: standard padded Base64 of HMAC-SHA256 over the exact raw body. Parsing and re-serializing JSON before verification changes the signed bytes and invalidates the signature. Use SDK 2.0.0 or newer; version 1.0.0 does not support the current delivery format.
 
 ```ts
 const valid = await WebhookVerifier.verify(rawBody, signature, webhookSecret);

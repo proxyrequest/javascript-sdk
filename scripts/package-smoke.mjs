@@ -45,7 +45,7 @@ try {
   });
   await writeFile(
     resolve(workspace, "esm.mjs"),
-    'import { ProxyRequestClient } from "@proxyrequest/sdk"; if (!ProxyRequestClient) process.exit(1);\n',
+    `import { ProxyRequestClient, SDK_VERSION } from "@proxyrequest/sdk"; if (!ProxyRequestClient || SDK_VERSION !== ${JSON.stringify(manifest.version)}) process.exit(1);\n`,
   );
   await writeFile(
     resolve(workspace, "cjs.cjs"),

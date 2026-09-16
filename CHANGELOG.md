@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Fixed
+
+- Keep the exported `SDK_VERSION` synchronized with the package version and verify it in the package smoke test.
+
 ## [2.0.0] - 2026-09-16
 
 ### Changed
