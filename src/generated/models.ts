@@ -38,6 +38,8 @@ export type Invoice = components["schemas"]["Invoice"];
 export type InvoiceCreateRequestGatewayEnum =
   components["schemas"]["InvoiceCreateRequestGatewayEnum"];
 export type InvoiceCreateRequestRequest = components["schemas"]["InvoiceCreateRequestRequest"];
+export type InvoiceCreateRequestStatusEnum =
+  components["schemas"]["InvoiceCreateRequestStatusEnum"];
 export type InvoiceGatewayEnum = components["schemas"]["InvoiceGatewayEnum"];
 export type InvoiceRead = components["schemas"]["InvoiceRead"];
 export type InvoiceShort = components["schemas"]["InvoiceShort"];

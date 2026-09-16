@@ -6,7 +6,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Changed
 
-- Regenerated from the public backend contract (81 operations, 129 schemas).
+- Regenerated from the public backend contract (81 operations, 130 schemas).
+- Added the optional `pending`/`paid` status to invoice creation requests.
 - Removed the disabled sessions-management resource; 79 supported operations remain.
 - Corrected OTP login unions, MFA request bodies, payment fields, nullable invoices,
   and configuration-dependent user/invoice responses.

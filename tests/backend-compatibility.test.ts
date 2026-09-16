@@ -79,6 +79,7 @@ describe("backend compatibility", () => {
       gateway: "whitepay",
       amount: 500,
       payment_currency: "UAH",
+      status: "paid",
     };
     const created = await client.invoices.create({ body });
     expect(created.package).toBeNull();

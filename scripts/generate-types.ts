@@ -5,6 +5,18 @@ import { loadSdkSchema } from "./sdk-schema.js";
 
 const ast = await openapiTS(await loadSdkSchema(), {
   alphabetize: true,
+  transformProperty(property, _schema, { path }) {
+    if (path === "#/components/schemas/InvoiceCreateRequestRequest/status") {
+      return ts.factory.updatePropertySignature(
+        property,
+        property.modifiers,
+        property.name,
+        ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+        property.type,
+      );
+    }
+    return undefined;
+  },
   transform(schema, { path }) {
     if (
       schema.enum &&

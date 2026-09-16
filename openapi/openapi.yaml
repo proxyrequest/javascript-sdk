@@ -5289,8 +5289,11 @@ paths:
               $ref: '#/components/headers/ContentLanguage'
     post:
       operationId: invoices_create
-      description: Calculates package pricing, creates a pending invoice, and initializes
-        the selected payment provider when required.
+      description: 'Calculates package pricing and initializes the selected payment
+        provider when required. The status defaults to `pending`. Only superusers
+        may create an already-paid invoice by setting `status` to `paid`; other authenticated
+        users receive a 403 response. For wallet payments, omit `status`: the invoice
+        is created as pending and becomes paid after the balance is debited successfully.'
       summary: Create an invoice
       tags:
       - Invoices
@@ -5306,6 +5309,14 @@ paths:
                   data: 10737418240
                   gateway: stripe
                 summary: Purchase residential data
+              CreateAnAlready-paidInvoice(superuserOnly):
+                value:
+                  user_id: 550e8400-e29b-41d4-a716-446655440001
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  gateway: manual
+                  status: paid
+                summary: Create an already-paid invoice (superuser only)
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/InvoiceCreateRequestRequest'
@@ -5316,6 +5327,7 @@ paths:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   user_id: 550e8400-e29b-41d4-a716-446655440001
                   gateway: crypto
+                  status: pending
                   crypto_currency: crypto currency
                   payment_currency: payment currency
                   coupon_code: coupon code
@@ -5338,6 +5350,7 @@ paths:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   user_id: 550e8400-e29b-41d4-a716-446655440001
                   gateway: crypto
+                  status: pending
                   crypto_currency: crypto currency
                   payment_currency: payment currency
                   coupon_code: coupon code
@@ -17155,6 +17168,13 @@ components:
           description: Managed sub-user that should receive the purchase.
         gateway:
           $ref: '#/components/schemas/InvoiceCreateRequestGatewayEnum'
+        status:
+          allOf:
+          - $ref: '#/components/schemas/InvoiceCreateRequestStatusEnum'
+          default: pending
+          description: Initial invoice status. Defaults to pending. Only superusers
+            may set paid; other authenticated users receive a 403 response. * `pending`
+            - pending * `paid` - paid
         crypto_currency:
           type: string
           minLength: 1
@@ -17196,6 +17216,12 @@ components:
           minLength: 1
       required:
       - gateway
+    InvoiceCreateRequestStatusEnum:
+      enum:
+      - pending
+      - paid
+      type: string
+      description: '* `pending` - pending * `paid` - paid'
     InvoiceGatewayEnum:
       enum:
       - coinbase

@@ -382,7 +382,7 @@ export interface paths {
     put?: never;
     /**
      * Create an invoice
-     * @description Calculates package pricing, creates a pending invoice, and initializes the selected payment provider when required.
+     * @description Calculates package pricing and initializes the selected payment provider when required. The status defaults to `pending`. Only superusers may create an already-paid invoice by setting `status` to `paid`; other authenticated users receive a 403 response. For wallet payments, omit `status`: the invoice is created as pending and becomes paid after the balance is debited successfully.
      */
     post: operations["invoices_create"];
     delete?: never;
@@ -1896,11 +1896,21 @@ export interface components {
       /** @description Number of static proxies to purchase. */
       quantity?: number;
       /**
+       * @description Initial invoice status. Defaults to pending. Only superusers may set paid; other authenticated users receive a 403 response. * `pending` - pending * `paid` - paid
+       * @default pending
+       */
+      status?: components["schemas"]["InvoiceCreateRequestStatusEnum"];
+      /**
        * Format: uuid
        * @description Managed sub-user that should receive the purchase.
        */
       user_id?: string;
     };
+    /**
+     * @description * `pending` - pending * `paid` - paid
+     * @enum {string}
+     */
+    InvoiceCreateRequestStatusEnum: "pending" | "paid";
     /**
      * @description * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail
      * @enum {string}
