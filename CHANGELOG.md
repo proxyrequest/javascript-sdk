@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-16
+
 ### Changed
 
 - Replace the incorrect webhook verifier with the actual `X-Signature`
@@ -33,4 +35,6 @@ All notable changes to this project are documented here. The format follows [Kee
 - Normalized errors, lazy pagination, invoice downloads, raw requests, and webhook verification.
 - Reproducible OpenAPI generation, package validation, Node/browser tests, CI, and npm provenance workflow.
 
+[Unreleased]: https://github.com/proxyrequest/javascript-sdk/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/proxyrequest/javascript-sdk/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/proxyrequest/javascript-sdk/releases/tag/v1.0.0

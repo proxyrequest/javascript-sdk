@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
+const manifest = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
 const packed = JSON.parse(
   execFileSync("npm", ["pack", "--json", "--ignore-scripts"], {
     cwd: root,
@@ -55,7 +56,7 @@ try {
   const installed = JSON.parse(
     await readFile(resolve(workspace, "node_modules/@proxyrequest/sdk/package.json"), "utf8"),
   );
-  if (installed.version !== "1.0.0")
+  if (installed.version !== manifest.version)
     throw new Error("Installed package has an unexpected version.");
 } finally {
   await rm(workspace, { recursive: true, force: true });

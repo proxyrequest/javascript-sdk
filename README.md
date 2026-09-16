@@ -292,7 +292,7 @@ const event = await WebhookVerifier.decodeVerifiedJson(
 );
 ```
 
-Deliveries use standard padded Base64 HMAC-SHA256 over the raw body, without a signed timestamp. Verification accepts only this current format. It authenticates the body, but does not prevent replay: deduplicate usage events in your application. These helpers require the upcoming SDK release, not 1.0.0. See the [webhook integration guide](https://proxyrequest.com/docs/integration/webhooks/) and [event reference](https://proxyrequest.com/docs/reference/webhook-events/).
+Deliveries use standard padded Base64 HMAC-SHA256 over the raw body, without a signed timestamp. Verification accepts only this current format. It authenticates the body, but does not prevent replay: deduplicate usage events in your application. These helpers require SDK 2.0.0 or newer; version 1.0.0 does not support the current delivery format. See the [webhook integration guide](https://proxyrequest.com/docs/integration/webhooks/) and [event reference](https://proxyrequest.com/docs/reference/webhook-events/).
 
 ## Raw requests
 
