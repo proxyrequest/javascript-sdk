@@ -2969,7 +2969,36 @@ paths:
                       is_expired: true
                       is_redeemed: true
                       packages:
-                      - {}
+                      - id: 550e8400-e29b-41d4-a716-446655440001
+                        name: Residential 10 GB
+                        alias: residential-10gb
+                        is_unlimited_data: true
+                        targeting_options:
+                          package: package
+                          split_char: '-'
+                          value_char: '-'
+                          continent: continent
+                          country: us
+                          region: california
+                          city: los_angeles
+                          asn: '15169'
+                          isp: comcast
+                          username: developer
+                          pool: residential
+                          location: location
+                          location_format: location format
+                          session: session
+                          session_mode_tag: session mode tag
+                          session_ttl: session ttl
+                          session_ttl_format: 1
+                          os: os
+                          os_combined: true
+                          os_split_char: os split char
+                          os_linux: os linux
+                          os_windows: os windows
+                          os_ios: os ios
+                          os_macos: os macos
+                          os_android: os android
                       created: '2026-07-01T12:30:00Z'
                       value: 1
                       code: us
@@ -3180,7 +3209,12 @@ paths:
                         os_ios: os ios
                         os_macos: os macos
                         os_android: os android
-                    stats: {}
+                    stats:
+                      total_redeems: 1
+                      unique_users: 1
+                      total_revenue: 1
+                      total_discount_given: 1
+                      total_data_given: 1
                     created: '2026-07-01T12:30:00Z'
                     value: 1
                     code: us
@@ -3389,7 +3423,36 @@ paths:
                     is_expired: true
                     is_redeemed: true
                     packages:
-                    - {}
+                    - id: 550e8400-e29b-41d4-a716-446655440001
+                      name: Residential 10 GB
+                      alias: residential-10gb
+                      is_unlimited_data: true
+                      targeting_options:
+                        package: package
+                        split_char: '-'
+                        value_char: '-'
+                        continent: continent
+                        country: us
+                        region: california
+                        city: los_angeles
+                        asn: '15169'
+                        isp: comcast
+                        username: developer
+                        pool: residential
+                        location: location
+                        location_format: location format
+                        session: session
+                        session_mode_tag: session mode tag
+                        session_ttl: session ttl
+                        session_ttl_format: 1
+                        os: os
+                        os_combined: true
+                        os_split_char: os split char
+                        os_linux: os linux
+                        os_windows: os windows
+                        os_ios: os ios
+                        os_macos: os macos
+                        os_android: os android
                     created: '2026-07-01T12:30:00Z'
                     value: 1
                     code: us
@@ -3663,7 +3726,12 @@ paths:
                         os_ios: os ios
                         os_macos: os macos
                         os_android: os android
-                    stats: {}
+                    stats:
+                      total_redeems: 1
+                      unique_users: 1
+                      total_revenue: 1
+                      total_discount_given: 1
+                      total_data_given: 1
                     created: '2026-07-01T12:30:00Z'
                     value: 1
                     code: us
@@ -3965,7 +4033,12 @@ paths:
                         os_ios: os ios
                         os_macos: os macos
                         os_android: os android
-                    stats: {}
+                    stats:
+                      total_redeems: 1
+                      unique_users: 1
+                      total_revenue: 1
+                      total_discount_given: 1
+                      total_data_given: 1
                     created: '2026-07-01T12:30:00Z'
                     value: 1
                     code: us
@@ -5486,7 +5559,36 @@ paths:
                         is_expired: true
                         is_redeemed: true
                         packages:
-                        - {}
+                        - id: 550e8400-e29b-41d4-a716-446655440001
+                          name: Residential 10 GB
+                          alias: residential-10gb
+                          is_unlimited_data: true
+                          targeting_options:
+                            package: package
+                            split_char: '-'
+                            value_char: '-'
+                            continent: continent
+                            country: us
+                            region: california
+                            city: los_angeles
+                            asn: '15169'
+                            isp: comcast
+                            username: developer
+                            pool: residential
+                            location: location
+                            location_format: location format
+                            session: session
+                            session_mode_tag: session mode tag
+                            session_ttl: session ttl
+                            session_ttl_format: 1
+                            os: os
+                            os_combined: true
+                            os_split_char: os split char
+                            os_linux: os linux
+                            os_windows: os windows
+                            os_ios: os ios
+                            os_macos: os macos
+                            os_android: os android
                         created: '2026-07-01T12:30:00Z'
                         value: 1
                         code: us
@@ -5625,22 +5727,24 @@ paths:
     post:
       operationId: invoices_create
       description: 'Calculates package pricing and initializes the selected payment
-        provider when required. The status defaults to `pending`. Only superusers
-        may create an already-paid invoice by setting `status` to `paid`; other authenticated
-        users receive a 403 response. For wallet payments, omit `status`: the invoice
-        is created as pending and becomes paid after the balance is debited successfully.
-        For your own billing system, confirm payment on your backend before sending
-        gateway=manual and status=paid with a superuser credential. Sending user_id
-        also requires is_reseller; omit user_id for a purchase by the caller. Sub-users
-        cannot create invoices themselves. A paid package purchase creates or tops
-        up the recipient''s order for that package. Repeated purchases reuse the order.
-        Finite expiring purchases have separate data ledgers; compatible non-expiring
-        purchases and unlimited packages may reuse a ledger. This is different from
-        assigning a child quota with /users/{id}/data/add. An amount-only invoice
-        tops up money, not data. Persist the invoice ID and use Idempotency-Key for
-        retries. Before delivering access, read the paid invoice and the resulting
-        order: fulfillment can be recovered asynchronously. Accounting webhooks do
-        not include invoice.paid.'
+        provider when required. The status defaults to `pending`. Creating an already-paid
+        invoice by setting `status` to `paid` requires a superuser or an active superuser''s
+        API key (Static or Bearer), including requests using `X-Impersonate-User`.
+        Other authenticated users receive a 403 response. During API-key impersonation,
+        the invoice recipient and user_id access rules are still determined by the
+        impersonated user. For wallet payments, omit `status`: the invoice is created
+        as pending and becomes paid after the balance is debited successfully. For
+        your own billing system, confirm payment on your backend before sending gateway=manual
+        and status=paid with a superuser credential. Sending user_id also requires
+        is_reseller; omit user_id for a purchase by the caller. Sub-users cannot create
+        invoices themselves. A paid package purchase creates or tops up the recipient''s
+        order for that package. Repeated purchases reuse the order. Finite expiring
+        purchases have separate data ledgers; compatible non-expiring purchases and
+        unlimited packages may reuse a ledger. This is different from assigning a
+        child quota with /users/{id}/data/add. An amount-only invoice tops up money,
+        not data. Persist the invoice ID and use Idempotency-Key for retries. Before
+        delivering access, read the paid invoice and the resulting order: fulfillment
+        can be recovered asynchronously. Accounting webhooks do not include invoice.paid.'
       summary: Create an invoice
       tags:
       - Invoices
@@ -5656,14 +5760,15 @@ paths:
                   data: 10737418240
                   gateway: stripe
                 summary: Purchase residential data
-              CreateAnAlready-paidInvoice(superuserOnly):
+              CreateAnAlready-paidInvoice(superuserOrSuperuserAPIKey):
                 value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   data: 10737418240
                   gateway: manual
                   status: paid
-                summary: Create an already-paid invoice (superuser only)
+                summary: Create an already-paid invoice (superuser or superuser API
+                  key)
               PurchaseUsingAnExistingWalletBalance:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
@@ -5685,14 +5790,15 @@ paths:
                   data: 10737418240
                   gateway: stripe
                 summary: Purchase residential data
-              CreateAnAlready-paidInvoice(superuserOnly):
+              CreateAnAlready-paidInvoice(superuserOrSuperuserAPIKey):
                 value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   data: 10737418240
                   gateway: manual
                   status: paid
-                summary: Create an already-paid invoice (superuser only)
+                summary: Create an already-paid invoice (superuser or superuser API
+                  key)
               PurchaseUsingAnExistingWalletBalance:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
@@ -5714,14 +5820,15 @@ paths:
                   data: 10737418240
                   gateway: stripe
                 summary: Purchase residential data
-              CreateAnAlready-paidInvoice(superuserOnly):
+              CreateAnAlready-paidInvoice(superuserOrSuperuserAPIKey):
                 value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
                   package_id: 550e8400-e29b-41d4-a716-446655440002
                   data: 10737418240
                   gateway: manual
                   status: paid
-                summary: Create an already-paid invoice (superuser only)
+                summary: Create an already-paid invoice (superuser or superuser API
+                  key)
               PurchaseUsingAnExistingWalletBalance:
                 value:
                   package_id: 550e8400-e29b-41d4-a716-446655440002
@@ -6085,7 +6192,36 @@ paths:
                       is_expired: true
                       is_redeemed: true
                       packages:
-                      - {}
+                      - id: 550e8400-e29b-41d4-a716-446655440001
+                        name: Residential 10 GB
+                        alias: residential-10gb
+                        is_unlimited_data: true
+                        targeting_options:
+                          package: package
+                          split_char: '-'
+                          value_char: '-'
+                          continent: continent
+                          country: us
+                          region: california
+                          city: los_angeles
+                          asn: '15169'
+                          isp: comcast
+                          username: developer
+                          pool: residential
+                          location: location
+                          location_format: location format
+                          session: session
+                          session_mode_tag: session mode tag
+                          session_ttl: session ttl
+                          session_ttl_format: 1
+                          os: os
+                          os_combined: true
+                          os_split_char: os split char
+                          os_linux: os linux
+                          os_windows: os windows
+                          os_ios: os ios
+                          os_macos: os macos
+                          os_android: os android
                       created: '2026-07-01T12:30:00Z'
                       value: 1
                       code: us
@@ -9312,7 +9448,37 @@ paths:
                       is_auto_renewal: true
                       auto_renewal_percentage: 1
                       auto_renewal_data: 1
-                      package: {}
+                      package:
+                        id: 550e8400-e29b-41d4-a716-446655440001
+                        name: Residential 10 GB
+                        alias: residential-10gb
+                        is_unlimited_data: true
+                        targeting_options:
+                          package: package
+                          split_char: '-'
+                          value_char: '-'
+                          continent: continent
+                          country: us
+                          region: california
+                          city: los_angeles
+                          asn: '15169'
+                          isp: comcast
+                          username: developer
+                          pool: residential
+                          location: location
+                          location_format: location format
+                          session: session
+                          session_mode_tag: session mode tag
+                          session_ttl: session ttl
+                          session_ttl_format: 1
+                          os: os
+                          os_combined: true
+                          os_split_char: os split char
+                          os_linux: os linux
+                          os_windows: os windows
+                          os_ios: os ios
+                          os_macos: os macos
+                          os_android: os android
                       proxy_password: p9W4rT2xK7mQ
                       proxy_password_reset: '2026-07-01T12:30:00Z'
                       pools:
@@ -9321,7 +9487,12 @@ paths:
                       data_remaining: 1
                       data_spent: 1073741824
                       ledgers:
-                      - {}
+                      - id: 550e8400-e29b-41d4-a716-446655440001
+                        data: 1073741824
+                        data_remaining: 1
+                        expires: '2026-07-01T12:30:00Z'
+                        updated: '2026-07-01T12:30:00Z'
+                        created: '2026-07-01T12:30:00Z'
                       latest_data_top_up: 1
                       latest_data_top_up_date: '2026-07-01T12:30:00Z'
                       data_updated: '2026-07-01T12:30:00Z'
@@ -9508,7 +9679,12 @@ paths:
                     data_remaining: 1
                     data_spent: 1073741824
                     ledgers:
-                    - {}
+                    - id: 550e8400-e29b-41d4-a716-446655440001
+                      data: 1073741824
+                      data_remaining: 1
+                      expires: '2026-07-01T12:30:00Z'
+                      updated: '2026-07-01T12:30:00Z'
+                      created: '2026-07-01T12:30:00Z'
                     latest_data_top_up: 1
                     latest_data_top_up_date: '2026-07-01T12:30:00Z'
                     data_updated: '2026-07-01T12:30:00Z'
@@ -9722,7 +9898,37 @@ paths:
                     is_auto_renewal: true
                     auto_renewal_percentage: 1
                     auto_renewal_data: 1
-                    package: {}
+                    package:
+                      id: 550e8400-e29b-41d4-a716-446655440001
+                      name: Residential 10 GB
+                      alias: residential-10gb
+                      is_unlimited_data: true
+                      targeting_options:
+                        package: package
+                        split_char: '-'
+                        value_char: '-'
+                        continent: continent
+                        country: us
+                        region: california
+                        city: los_angeles
+                        asn: '15169'
+                        isp: comcast
+                        username: developer
+                        pool: residential
+                        location: location
+                        location_format: location format
+                        session: session
+                        session_mode_tag: session mode tag
+                        session_ttl: session ttl
+                        session_ttl_format: 1
+                        os: os
+                        os_combined: true
+                        os_split_char: os split char
+                        os_linux: os linux
+                        os_windows: os windows
+                        os_ios: os ios
+                        os_macos: os macos
+                        os_android: os android
                     proxy_password: p9W4rT2xK7mQ
                     proxy_password_reset: '2026-07-01T12:30:00Z'
                     pools:
@@ -9731,7 +9937,12 @@ paths:
                     data_remaining: 1
                     data_spent: 1073741824
                     ledgers:
-                    - {}
+                    - id: 550e8400-e29b-41d4-a716-446655440001
+                      data: 1073741824
+                      data_remaining: 1
+                      expires: '2026-07-01T12:30:00Z'
+                      updated: '2026-07-01T12:30:00Z'
+                      created: '2026-07-01T12:30:00Z'
                     latest_data_top_up: 1
                     latest_data_top_up_date: '2026-07-01T12:30:00Z'
                     data_updated: '2026-07-01T12:30:00Z'
@@ -13488,13 +13699,86 @@ paths:
                       referral_balance_earned: 1
                       currency: USD
                       coupons:
-                      - {}
+                      - id: 550e8400-e29b-41d4-a716-446655440001
+                        is_expired: true
+                        is_redeemed: true
+                        packages:
+                        - id: 550e8400-e29b-41d4-a716-446655440001
+                          name: Residential 10 GB
+                          alias: residential-10gb
+                          is_unlimited_data: true
+                          targeting_options:
+                            package: package
+                            split_char: '-'
+                            value_char: '-'
+                            continent: continent
+                            country: us
+                            region: california
+                            city: los_angeles
+                            asn: '15169'
+                            isp: comcast
+                            username: developer
+                            pool: residential
+                            location: location
+                            location_format: location format
+                            session: session
+                            session_mode_tag: session mode tag
+                            session_ttl: session ttl
+                            session_ttl_format: 1
+                            os: os
+                            os_combined: true
+                            os_split_char: os split char
+                            os_linux: os linux
+                            os_windows: os windows
+                            os_ios: os ios
+                            os_macos: os macos
+                            os_android: os android
+                        created: '2026-07-01T12:30:00Z'
+                        value: 1
+                        code: us
+                        is_multi_use: true
+                        is_available_to_one_time: true
+                        type: free_data
+                        limit: 100
+                        valid_until: '2026-07-01T12:30:00Z'
+                        marketer: 550e8400-e29b-41d4-a716-446655440001
+                        user: 550e8400-e29b-41d4-a716-446655440001
                       orders:
                       - id: 550e8400-e29b-41d4-a716-446655440001
                         is_auto_renewal: true
                         auto_renewal_percentage: 1
                         auto_renewal_data: 1
-                        package: {}
+                        package:
+                          id: 550e8400-e29b-41d4-a716-446655440001
+                          name: Residential 10 GB
+                          alias: residential-10gb
+                          is_unlimited_data: true
+                          targeting_options:
+                            package: package
+                            split_char: '-'
+                            value_char: '-'
+                            continent: continent
+                            country: us
+                            region: california
+                            city: los_angeles
+                            asn: '15169'
+                            isp: comcast
+                            username: developer
+                            pool: residential
+                            location: location
+                            location_format: location format
+                            session: session
+                            session_mode_tag: session mode tag
+                            session_ttl: session ttl
+                            session_ttl_format: 1
+                            os: os
+                            os_combined: true
+                            os_split_char: os split char
+                            os_linux: os linux
+                            os_windows: os windows
+                            os_ios: os ios
+                            os_macos: os macos
+                            os_android: os android
                         proxy_password: p9W4rT2xK7mQ
                         proxy_password_reset: '2026-07-01T12:30:00Z'
                         pools:
@@ -13503,7 +13787,12 @@ paths:
                         data_remaining: 1
                         data_spent: 1073741824
                         ledgers:
-                        - {}
+                        - id: 550e8400-e29b-41d4-a716-446655440001
+                          data: 1073741824
+                          data_remaining: 1
+                          expires: '2026-07-01T12:30:00Z'
+                          updated: '2026-07-01T12:30:00Z'
+                          created: '2026-07-01T12:30:00Z'
                         latest_data_top_up: 1
                         latest_data_top_up_date: '2026-07-01T12:30:00Z'
                         data_updated: '2026-07-01T12:30:00Z'
@@ -14673,7 +14962,37 @@ paths:
                     is_auto_renewal: true
                     auto_renewal_percentage: 1
                     auto_renewal_data: 1
-                    package: {}
+                    package:
+                      id: 550e8400-e29b-41d4-a716-446655440001
+                      name: Residential 10 GB
+                      alias: residential-10gb
+                      is_unlimited_data: true
+                      targeting_options:
+                        package: package
+                        split_char: '-'
+                        value_char: '-'
+                        continent: continent
+                        country: us
+                        region: california
+                        city: los_angeles
+                        asn: '15169'
+                        isp: comcast
+                        username: developer
+                        pool: residential
+                        location: location
+                        location_format: location format
+                        session: session
+                        session_mode_tag: session mode tag
+                        session_ttl: session ttl
+                        session_ttl_format: 1
+                        os: os
+                        os_combined: true
+                        os_split_char: os split char
+                        os_linux: os linux
+                        os_windows: os windows
+                        os_ios: os ios
+                        os_macos: os macos
+                        os_android: os android
                     proxy_password: p9W4rT2xK7mQ
                     proxy_password_reset: '2026-07-01T12:30:00Z'
                     pools:
@@ -14682,7 +15001,12 @@ paths:
                     data_remaining: 1
                     data_spent: 1073741824
                     ledgers:
-                    - {}
+                    - id: 550e8400-e29b-41d4-a716-446655440001
+                      data: 1073741824
+                      data_remaining: 1
+                      expires: '2026-07-01T12:30:00Z'
+                      updated: '2026-07-01T12:30:00Z'
+                      created: '2026-07-01T12:30:00Z'
                     latest_data_top_up: 1
                     latest_data_top_up_date: '2026-07-01T12:30:00Z'
                     data_updated: '2026-07-01T12:30:00Z'
@@ -14933,7 +15257,37 @@ paths:
                     is_auto_renewal: true
                     auto_renewal_percentage: 1
                     auto_renewal_data: 1
-                    package: {}
+                    package:
+                      id: 550e8400-e29b-41d4-a716-446655440001
+                      name: Residential 10 GB
+                      alias: residential-10gb
+                      is_unlimited_data: true
+                      targeting_options:
+                        package: package
+                        split_char: '-'
+                        value_char: '-'
+                        continent: continent
+                        country: us
+                        region: california
+                        city: los_angeles
+                        asn: '15169'
+                        isp: comcast
+                        username: developer
+                        pool: residential
+                        location: location
+                        location_format: location format
+                        session: session
+                        session_mode_tag: session mode tag
+                        session_ttl: session ttl
+                        session_ttl_format: 1
+                        os: os
+                        os_combined: true
+                        os_split_char: os split char
+                        os_linux: os linux
+                        os_windows: os windows
+                        os_ios: os ios
+                        os_macos: os macos
+                        os_android: os android
                     proxy_password: p9W4rT2xK7mQ
                     proxy_password_reset: '2026-07-01T12:30:00Z'
                     pools:
@@ -14942,7 +15296,12 @@ paths:
                     data_remaining: 1
                     data_spent: 1073741824
                     ledgers:
-                    - {}
+                    - id: 550e8400-e29b-41d4-a716-446655440001
+                      data: 1073741824
+                      data_remaining: 1
+                      expires: '2026-07-01T12:30:00Z'
+                      updated: '2026-07-01T12:30:00Z'
+                      created: '2026-07-01T12:30:00Z'
                     latest_data_top_up: 1
                     latest_data_top_up_date: '2026-07-01T12:30:00Z'
                     data_updated: '2026-07-01T12:30:00Z'
@@ -15194,7 +15553,37 @@ paths:
                     is_auto_renewal: true
                     auto_renewal_percentage: 1
                     auto_renewal_data: 1
-                    package: {}
+                    package:
+                      id: 550e8400-e29b-41d4-a716-446655440001
+                      name: Residential 10 GB
+                      alias: residential-10gb
+                      is_unlimited_data: true
+                      targeting_options:
+                        package: package
+                        split_char: '-'
+                        value_char: '-'
+                        continent: continent
+                        country: us
+                        region: california
+                        city: los_angeles
+                        asn: '15169'
+                        isp: comcast
+                        username: developer
+                        pool: residential
+                        location: location
+                        location_format: location format
+                        session: session
+                        session_mode_tag: session mode tag
+                        session_ttl: session ttl
+                        session_ttl_format: 1
+                        os: os
+                        os_combined: true
+                        os_split_char: os split char
+                        os_linux: os linux
+                        os_windows: os windows
+                        os_ios: os ios
+                        os_macos: os macos
+                        os_android: os android
                     proxy_password: p9W4rT2xK7mQ
                     proxy_password_reset: '2026-07-01T12:30:00Z'
                     pools:
@@ -15203,7 +15592,12 @@ paths:
                     data_remaining: 1
                     data_spent: 1073741824
                     ledgers:
-                    - {}
+                    - id: 550e8400-e29b-41d4-a716-446655440001
+                      data: 1073741824
+                      data_remaining: 1
+                      expires: '2026-07-01T12:30:00Z'
+                      updated: '2026-07-01T12:30:00Z'
+                      created: '2026-07-01T12:30:00Z'
                     latest_data_top_up: 1
                     latest_data_top_up_date: '2026-07-01T12:30:00Z'
                     data_updated: '2026-07-01T12:30:00Z'
@@ -15449,7 +15843,37 @@ paths:
                       is_auto_renewal: true
                       auto_renewal_percentage: 1
                       auto_renewal_data: 1
-                      package: {}
+                      package:
+                        id: 550e8400-e29b-41d4-a716-446655440001
+                        name: Residential 10 GB
+                        alias: residential-10gb
+                        is_unlimited_data: true
+                        targeting_options:
+                          package: package
+                          split_char: '-'
+                          value_char: '-'
+                          continent: continent
+                          country: us
+                          region: california
+                          city: los_angeles
+                          asn: '15169'
+                          isp: comcast
+                          username: developer
+                          pool: residential
+                          location: location
+                          location_format: location format
+                          session: session
+                          session_mode_tag: session mode tag
+                          session_ttl: session ttl
+                          session_ttl_format: 1
+                          os: os
+                          os_combined: true
+                          os_split_char: os split char
+                          os_linux: os linux
+                          os_windows: os windows
+                          os_ios: os ios
+                          os_macos: os macos
+                          os_android: os android
                       proxy_password: p9W4rT2xK7mQ
                       proxy_password_reset: '2026-07-01T12:30:00Z'
                       pools:
@@ -15458,7 +15882,12 @@ paths:
                       data_remaining: 1
                       data_spent: 1073741824
                       ledgers:
-                      - {}
+                      - id: 550e8400-e29b-41d4-a716-446655440001
+                        data: 1073741824
+                        data_remaining: 1
+                        expires: '2026-07-01T12:30:00Z'
+                        updated: '2026-07-01T12:30:00Z'
+                        created: '2026-07-01T12:30:00Z'
                       latest_data_top_up: 1
                       latest_data_top_up_date: '2026-07-01T12:30:00Z'
                       data_updated: '2026-07-01T12:30:00Z'
@@ -16954,8 +17383,8 @@ components:
             $ref: '#/components/schemas/PackageShort'
           readOnly: true
         stats:
-          type: object
-          additionalProperties: {}
+          allOf:
+          - $ref: '#/components/schemas/CouponStats'
           nullable: true
           readOnly: true
         created:
@@ -17148,8 +17577,7 @@ components:
         packages:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/PackageShort'
           readOnly: true
         created:
           type: string
@@ -17206,6 +17634,25 @@ components:
       - type
       - user
       - value
+    CouponStats:
+      type: object
+      properties:
+        total_redeems:
+          type: integer
+        unique_users:
+          type: integer
+        total_revenue:
+          type: integer
+        total_discount_given:
+          type: integer
+        total_data_given:
+          type: integer
+      required:
+      - total_data_given
+      - total_discount_given
+      - total_redeems
+      - total_revenue
+      - unique_users
     CouponTypeEnum:
       enum:
       - free_data
@@ -17266,6 +17713,51 @@ components:
       required:
       - type
       - value
+    DataLedger:
+      type: object
+      description: A purchased data bucket, not a complete transaction history. Finite
+        purchases with an expiration have separate buckets. Compatible non-expiring
+        top-ups and unlimited packages may reuse an existing bucket.
+      properties:
+        id:
+          type: string
+          readOnly: true
+        data:
+          type: integer
+          readOnly: true
+          title: Data Amount (bytes)
+          description: Total data allocated to this ledger entry in bytes. 1073741824
+            = 1 GiB 10737418240 = 10 GiB
+        data_remaining:
+          type: integer
+          readOnly: true
+          title: Remaining Data (bytes)
+          description: Bytes still available for consumption from this ledger entry.
+            Decremented in FIFO order as the customer uses the proxy. When this reaches
+            zero the entry is exhausted.
+        expires:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Expiration Date
+          description: Date and time when this ledger entry expires and any remaining
+            data is forfeited. Leave blank for entries that do not expire.
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created
+      - data
+      - data_remaining
+      - expires
+      - id
+      - updated
     DomainRecord:
       type: object
       properties:
@@ -17799,9 +18291,10 @@ components:
           allOf:
           - $ref: '#/components/schemas/InvoiceCreateRequestStatusEnum'
           default: pending
-          description: Initial invoice status. Defaults to pending. Only superusers
-            may set paid; other authenticated users receive a 403 response. * `pending`
-            - pending * `paid` - paid
+          description: Initial invoice status. Defaults to pending. Setting paid requires
+            a superuser or an active superuser's API key, including requests using
+            X-Impersonate-User. Other authenticated users receive a 403 response.
+            * `pending` - pending * `paid` - paid
         crypto_currency:
           type: string
           minLength: 1
@@ -18193,8 +18686,8 @@ components:
           description: Amount of data in GB to add when auto-renewal is triggered.
             Set to 0 to use the package default.
         package:
-          type: object
-          additionalProperties: {}
+          allOf:
+          - $ref: '#/components/schemas/PackageShort'
           readOnly: true
         proxy_password:
           type: string
@@ -18242,8 +18735,7 @@ components:
         ledgers:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/DataLedger'
           readOnly: true
           description: Usable, non-expired ledger balances for a purchased root order;
             empty for a virtual child order using its parent's pool. Not a complete
@@ -18364,8 +18856,7 @@ components:
         ledgers:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/DataLedger'
           readOnly: true
           description: Usable, non-expired purchased buckets; empty for virtual child
             orders. Not a complete history, and array position is not spending priority.
@@ -20155,18 +20646,16 @@ components:
           type: integer
           readOnly: true
         currency:
-          type: object
-          additionalProperties:
-            type: string
-          description: Currency information for the user's transactions
+          allOf:
+          - $ref: '#/components/schemas/UserCurrency'
           readOnly: true
+          description: Currency information for the user's transactions
         coupons:
           type: array
           items:
-            type: object
-            additionalProperties: {}
-          description: Available coupons for this user
+            $ref: '#/components/schemas/CouponShort'
           readOnly: true
+          description: Available coupons for this user
         orders:
           type: array
           items:
@@ -20291,6 +20780,16 @@ components:
       required:
       - password
       - username
+    UserCurrency:
+      type: object
+      properties:
+        code:
+          type: string
+        symbol:
+          type: string
+      required:
+      - code
+      - symbol
     UserPasswordResetRequestRequest:
       type: object
       properties:

@@ -382,7 +382,7 @@ export interface paths {
     put?: never;
     /**
      * Create an invoice
-     * @description Calculates package pricing and initializes the selected payment provider when required. The status defaults to `pending`. Only superusers may create an already-paid invoice by setting `status` to `paid`; other authenticated users receive a 403 response. For wallet payments, omit `status`: the invoice is created as pending and becomes paid after the balance is debited successfully. For your own billing system, confirm payment on your backend before sending gateway=manual and status=paid with a superuser credential. Sending user_id also requires is_reseller; omit user_id for a purchase by the caller. Sub-users cannot create invoices themselves. A paid package purchase creates or tops up the recipient's order for that package. Repeated purchases reuse the order. Finite expiring purchases have separate data ledgers; compatible non-expiring purchases and unlimited packages may reuse a ledger. This is different from assigning a child quota with /users/{id}/data/add. An amount-only invoice tops up money, not data. Persist the invoice ID and use Idempotency-Key for retries. Before delivering access, read the paid invoice and the resulting order: fulfillment can be recovered asynchronously. Accounting webhooks do not include invoice.paid.
+     * @description Calculates package pricing and initializes the selected payment provider when required. The status defaults to `pending`. Creating an already-paid invoice by setting `status` to `paid` requires a superuser or an active superuser's API key (Static or Bearer), including requests using `X-Impersonate-User`. Other authenticated users receive a 403 response. During API-key impersonation, the invoice recipient and user_id access rules are still determined by the impersonated user. For wallet payments, omit `status`: the invoice is created as pending and becomes paid after the balance is debited successfully. For your own billing system, confirm payment on your backend before sending gateway=manual and status=paid with a superuser credential. Sending user_id also requires is_reseller; omit user_id for a purchase by the caller. Sub-users cannot create invoices themselves. A paid package purchase creates or tops up the recipient's order for that package. Repeated purchases reuse the order. Finite expiring purchases have separate data ledgers; compatible non-expiring purchases and unlimited packages may reuse a ledger. This is different from assigning a child quota with /users/{id}/data/add. An amount-only invoice tops up money, not data. Persist the invoice ID and use Idempotency-Key for retries. Before delivering access, read the paid invoice and the resulting order: fulfillment can be recovered asynchronously. Accounting webhooks do not include invoice.paid.
      */
     post: operations["invoices_create"];
     delete?: never;
@@ -1484,9 +1484,7 @@ export interface components {
       marketer?: string | null;
       readonly packages: components["schemas"]["PackageShort"][];
       readonly redeemed_count: number;
-      readonly stats: {
-        [key: string]: unknown;
-      } | null;
+      readonly stats: components["schemas"]["CouponStats"] | null;
       type: components["schemas"]["CouponTypeEnum"];
       /**
        * Format: uuid
@@ -1594,9 +1592,7 @@ export interface components {
        * @description The marketer who owns this coupon. Required if is_marketer is true.
        */
       marketer?: string | null;
-      readonly packages: {
-        [key: string]: unknown;
-      }[];
+      readonly packages: components["schemas"]["PackageShort"][];
       type: components["schemas"]["CouponTypeEnum"];
       /**
        * Format: uuid
@@ -1613,6 +1609,13 @@ export interface components {
        * @description Arbitrary coupon value
        */
       value: number;
+    };
+    CouponStats: {
+      total_data_given: number;
+      total_discount_given: number;
+      total_redeems: number;
+      total_revenue: number;
+      unique_users: number;
     };
     /**
      * @description * `free_data` - Free Data * `monetary` - Money * `percentage` - Percentage
@@ -1655,6 +1658,30 @@ export interface components {
        * @description Arbitrary coupon value
        */
       value: number;
+    };
+    /** @description A purchased data bucket, not a complete transaction history. Finite purchases with an expiration have separate buckets. Compatible non-expiring top-ups and unlimited packages may reuse an existing bucket. */
+    DataLedger: {
+      /** Format: date-time */
+      readonly created: string;
+      /**
+       * Data Amount (bytes)
+       * @description Total data allocated to this ledger entry in bytes. 1073741824 = 1 GiB 10737418240 = 10 GiB
+       */
+      readonly data: number;
+      /**
+       * Remaining Data (bytes)
+       * @description Bytes still available for consumption from this ledger entry. Decremented in FIFO order as the customer uses the proxy. When this reaches zero the entry is exhausted.
+       */
+      readonly data_remaining: number;
+      /**
+       * Expiration Date
+       * Format: date-time
+       * @description Date and time when this ledger entry expires and any remaining data is forfeited. Leave blank for entries that do not expire.
+       */
+      readonly expires: string | null;
+      readonly id: string;
+      /** Format: date-time */
+      readonly updated: string;
     };
     DomainRecord: {
       data: number;
@@ -1921,7 +1948,7 @@ export interface components {
       /** @description Number of static proxies to purchase. */
       quantity?: number;
       /**
-       * @description Initial invoice status. Defaults to pending. Only superusers may set paid; other authenticated users receive a 403 response. * `pending` - pending * `paid` - paid
+       * @description Initial invoice status. Defaults to pending. Setting paid requires a superuser or an active superuser's API key, including requests using X-Impersonate-User. Other authenticated users receive a 403 response. * `pending` - pending * `paid` - paid
        * @default pending
        */
       status?: components["schemas"]["InvoiceCreateRequestStatusEnum"];
@@ -2229,12 +2256,8 @@ export interface components {
        */
       latest_data_top_up_date?: string | null;
       /** @description Usable, non-expired ledger balances for a purchased root order; empty for a virtual child order using its parent's pool. Not a complete history. Array position does not identify the active ledger or spending order. */
-      readonly ledgers: {
-        [key: string]: unknown;
-      }[];
-      readonly package: {
-        [key: string]: unknown;
-      };
+      readonly ledgers: components["schemas"]["DataLedger"][];
+      readonly package: components["schemas"]["PackageShort"];
       /** @description Private proxy pools assigned to this order. Pools restrict which proxy IPs are available to this customer. Leave blank to use the full provider pool. */
       pools?: string[];
       /** @description Password used by the customer to authenticate proxy connections. Auto-generated by default — change only if a custom value is needed. Must be between 4 and 64 characters. */
@@ -2303,9 +2326,7 @@ export interface components {
        */
       latest_data_top_up_date?: string | null;
       /** @description Usable, non-expired purchased buckets; empty for virtual child orders. Not a complete history, and array position is not spending priority. */
-      readonly ledgers: {
-        [key: string]: unknown;
-      }[];
+      readonly ledgers: components["schemas"]["DataLedger"][];
       package: components["schemas"]["PackageShort"];
       /** @description Private proxy pools assigned to this order. Pools restrict which proxy IPs are available to this customer. Leave blank to use the full provider pool. */
       pools?: string[];
@@ -3170,13 +3191,9 @@ export interface components {
       connection_limit?: number;
       country?: string;
       /** @description Available coupons for this user */
-      readonly coupons: {
-        [key: string]: unknown;
-      }[];
+      readonly coupons: components["schemas"]["CouponShort"][];
       /** @description Currency information for the user's transactions */
-      readonly currency: {
-        [key: string]: string;
-      };
+      readonly currency: components["schemas"]["UserCurrency"];
       /** @description Present only when SITE_PACKAGE_BASED_AUTH is disabled. */
       readonly data?: number | null;
       /** @description Present only when SITE_PACKAGE_BASED_AUTH is disabled. */
@@ -3290,6 +3307,10 @@ export interface components {
       username: string;
       /** @description User's postal/ZIP code. */
       zip?: string;
+    };
+    UserCurrency: {
+      code: string;
+      symbol: string;
     };
     UserPasswordResetRequestRequest: {
       /**
