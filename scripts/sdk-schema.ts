@@ -9,6 +9,39 @@ const methods = ["get", "post", "put", "patch", "delete", "head", "options", "tr
 /** Keep the upstream snapshot intact; exclusions affect generated SDKs only. */
 export function sdkSchema(source: OpenAPI3): OpenAPI3 {
   const document = structuredClone(source);
+  for (const [path, item] of Object.entries(document.paths ?? {})) {
+    if (!path.startsWith("/analytics/") || "$ref" in item || !item.get || "$ref" in item.get)
+      continue;
+    const parameters = item.get.parameters ?? [];
+    for (const parameter of parameters) {
+      if (
+        !("$ref" in parameter) &&
+        parameter.in === "query" &&
+        (parameter.name === "start" || parameter.name === "end")
+      ) {
+        parameter.schema = { type: ["string", "number"] };
+      }
+    }
+    if (item.get.operationId === "analytics_logs_retrieve") {
+      parameters.push({
+        in: "query",
+        name: "hostname",
+        schema: { type: "string" },
+        deprecated: true,
+        description: "Compatibility parameter; ignored by the server.",
+      });
+      parameters.sort((a, b) =>
+        ("name" in a ? a.name : "").localeCompare("name" in b ? b.name : ""),
+      );
+    }
+  }
+  const feed = document.components?.schemas?.FeedRecord;
+  if (!feed || "$ref" in feed || feed.type !== "object" || !feed.properties?.id)
+    throw new Error("Missing FeedRecord.id");
+  feed.properties.id = {
+    type: "string",
+    description: "Exact decimal UInt64 identifier, normalized from the API's JSON number.",
+  };
   const seen = new Set<string>();
   for (const [path, item] of Object.entries(document.paths ?? {})) {
     if ("$ref" in item) throw new Error(`Unsupported path reference: ${path}`);

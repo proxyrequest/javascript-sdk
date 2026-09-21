@@ -14,6 +14,9 @@ import type {
 const fixtures = JSON.parse(
   await readFile(new URL("./fixtures/backend-responses.json", import.meta.url), "utf8"),
 );
+const analytics = JSON.parse(
+  await readFile(new URL("./fixtures/analytics-responses.json", import.meta.url), "utf8"),
+);
 const challenge = { status: "otp_required", challenge: "synthetic-challenge", expires_in: 300 };
 const tokens = { token: "synthetic-access", refresh: "synthetic-refresh" };
 
@@ -31,6 +34,56 @@ function mocked(responses: Response[]) {
 }
 
 describe("backend compatibility", () => {
+  it.each(["feed", "domains"] as const)(
+    "decodes backend analytics/%s responses",
+    async (endpoint) => {
+      for (const variant of ["first", "last", "empty"]) {
+        const payload = analytics[`${endpoint}_${variant}`];
+        const { client, requests } = mocked([Response.json(payload)]);
+        const page = await (endpoint === "feed"
+          ? client.analytics.listFeed({ limit: 1 })
+          : client.analytics.listDomains({ limit: 1 }));
+        expect(page).toEqual(
+          endpoint === "feed"
+            ? {
+                ...payload,
+                results: payload.results.map((row: { id: number }) => ({
+                  ...row,
+                  id: String(row.id),
+                })),
+              }
+            : payload,
+        );
+        expect(page.start).toBe("2026-09-20T12:00:00+03:00");
+        if (endpoint === "domains") expect(page).not.toHaveProperty("count");
+        expect(new URL(requests[0]?.url ?? "").pathname).toBe(`/api/v1/analytics/${endpoint}`);
+      }
+    },
+  );
+
+  it.each(["feed", "domains"] as const)(
+    "paginates backend analytics/%s responses",
+    async (endpoint) => {
+      const payloads = [analytics[`${endpoint}_first`], analytics[`${endpoint}_last`]];
+      const { client, requests } = mocked(payloads.map((payload) => Response.json(payload)));
+      const pages =
+        endpoint === "feed"
+          ? client.paginate((params) => client.analytics.listFeed(params), { limit: 1 })
+          : client.paginate((params) => client.analytics.listDomains(params), { limit: 1 });
+      const records = [];
+      for await (const item of pages) records.push(item);
+      expect(records).toEqual(
+        payloads
+          .flatMap((page) => page.results)
+          .map((row) => (endpoint === "feed" ? { ...row, id: String(row.id) } : row)),
+      );
+      expect(requests.map((request) => new URL(request.url).searchParams.get("offset"))).toEqual([
+        "0",
+        "1",
+      ]);
+    },
+  );
+
   it.each([false, true])("completes OTP login (Google: %s)", async (google) => {
     const { client, requests } = mocked([
       Response.json(challenge, { status: 202 }),

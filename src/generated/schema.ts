@@ -962,7 +962,7 @@ export interface paths {
     put?: never;
     /**
      * Generate proxy credentials
-     * @description Creates ready-to-use proxy credentials for a purchased package. Use targeting to choose a location or provider scope, connection to choose protocol and output format, and session to control sticky session lifetime.
+     * @description Creates ready-to-use proxy credentials for a purchased package. Use targeting to choose a location or provider scope, connection to choose protocol and output format, and session to control sticky session lifetime. Omit connection.host to choose one random eligible gateway for the entire request. The default port comes from that gateway's cluster. Targeting location does not select the entry gateway's region. Explicit host and port remain supported for custom endpoints.
      */
     post: operations["proxies_generate_create"];
     delete?: never;
@@ -1683,7 +1683,8 @@ export interface components {
       data: number;
       established_connections: number;
       hostname: string;
-      id: number;
+      /** @description Exact decimal UInt64 identifier, normalized from the API's JSON number. */
+      id: string;
       is_session: boolean;
       ledger_id: string;
       method: string;
@@ -2870,7 +2871,7 @@ export interface components {
        * @default {protocol}://{username}:{password}@{host}:{port}
        */
       format: string;
-      /** @description Gateway host. Leave empty to use the default gateway. */
+      /** @description Gateway host. Leave empty to choose one available gateway for the entire request. */
       host?: string;
       /** @description Gateway port. Leave empty to use the port for the selected protocol. */
       port?: number;
@@ -2986,7 +2987,9 @@ export interface components {
       currencies: string[];
     };
     SettingsGateway: {
+      /** @description Cluster gateway domain, or a server IP when no domain is configured. */
       hostname: string;
+      /** @description The cluster domain, or unique server IPs when no domain is configured. */
       hostnames: string[];
       /** Format: uuid */
       id: string;
@@ -3611,8 +3614,8 @@ export interface operations {
   analytics_transactions_retrieve: {
     parameters: {
       query?: {
-        /** @description Exclusive end of the reporting window. */
-        end?: string;
+        /** @description Exclusive end of the reporting window. Defaults to the current time. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        end?: string | number;
         /** @description Maximum records returned on this page. */
         limit?: number;
         /** @description Zero-based number of matching records to skip. */
@@ -3621,9 +3624,9 @@ export interface operations {
         recipient_id?: string;
         /** @description Restrict transactions to this sender account. */
         sender_id?: string;
-        /** @description Inclusive start of the reporting window. Defaults to a recent window. */
-        start?: string;
-        /** @description IANA timezone used for bucket boundaries. Defaults to UTC. */
+        /** @description Inclusive start of the reporting window. Defaults to a recent window. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        start?: string | number;
+        /** @description IANA timezone used for bucket boundaries and datetime strings without an offset. Missing, empty or unknown names use the deployment timezone (UTC by default). */
         timezone?: string;
         /** @description Transaction type identifier. Defaults to data transactions. */
         type?: number;
@@ -3821,11 +3824,11 @@ export interface operations {
   analytics_domains_retrieve: {
     parameters: {
       query?: {
-        /** @description Exclusive end of the reporting window. */
-        end?: string;
-        /** @description Comma-separated hostnames to include. */
+        /** @description Exclusive end of the reporting window. Defaults to the current time. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        end?: string | number;
+        /** @description Comma-separated domains, IPv4/IPv6 addresses or HTTP(S) URLs to include. Surrounding whitespace is ignored. URLs and host:port values are normalized to their hostname; schemes, ports, paths and IPv6 brackets are removed. Use brackets around IPv6 addresses when specifying a port. */
         hostname?: string;
-        /** @description Aggregate the selected user's data with all of their sub-users. Superusers can apply this to any selected user; resellers can apply it to their own account. Ignored for regular users. Defaults to false. */
+        /** @description Aggregate the selected user's data with all of their sub-users. Superusers can apply this to any selected user; resellers can apply it to their own account. Ignored for regular users. Use true or false. Defaults to false. */
         include_sub_users?: boolean;
         /** @description Restrict results to one data ledger when supported. */
         ledger_id?: string;
@@ -3839,9 +3842,9 @@ export interface operations {
         package_id?: string;
         /** @description Case-insensitive partial match against the listed field: `hostname`. */
         search?: string;
-        /** @description Inclusive start of the reporting window. Defaults to a recent window. */
-        start?: string;
-        /** @description IANA timezone used for bucket boundaries. Defaults to UTC. */
+        /** @description Inclusive start of the reporting window. Defaults to a recent window. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        start?: string | number;
+        /** @description IANA timezone used for bucket boundaries and datetime strings without an offset. Missing, empty or unknown names use the deployment timezone (UTC by default). */
         timezone?: string;
         /** @description Restrict results to the current account or an accessible sub-user. */
         user_id?: string;
@@ -3933,9 +3936,9 @@ export interface operations {
         city?: string;
         /** @description Lowercase ISO 3166-1 alpha-2 country code. */
         country?: string;
-        /** @description Exclusive end of the reporting window. */
-        end?: string;
-        /** @description Comma-separated hostnames to include. */
+        /** @description Exclusive end of the reporting window. Defaults to the current time. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        end?: string | number;
+        /** @description Comma-separated domains, IPv4/IPv6 addresses or HTTP(S) URLs to include. Surrounding whitespace is ignored. URLs and host:port values are normalized to their hostname; schemes, ports, paths and IPv6 brackets are removed. Use brackets around IPv6 addresses when specifying a port. */
         hostname?: string;
         /** @description Restrict results to one data ledger when supported. */
         ledger_id?: string;
@@ -3951,9 +3954,9 @@ export interface operations {
         region?: string;
         /** @description Case-insensitive partial match against the listed field: `hostname`. */
         search?: string;
-        /** @description Inclusive start of the reporting window. Defaults to a recent window. */
-        start?: string;
-        /** @description IANA timezone used for bucket boundaries. Defaults to UTC. */
+        /** @description Inclusive start of the reporting window. Defaults to a recent window. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        start?: string | number;
+        /** @description IANA timezone used for bucket boundaries and datetime strings without an offset. Missing, empty or unknown names use the deployment timezone (UTC by default). */
         timezone?: string;
         /** @description Restrict results to the current account or an accessible sub-user. */
         user_id?: string;
@@ -4045,11 +4048,14 @@ export interface operations {
         city?: string;
         /** @description Lowercase ISO 3166-1 alpha-2 country code. */
         country?: string;
-        /** @description Exclusive end of the reporting window. */
-        end?: string;
+        /** @description Exclusive end of the reporting window. Defaults to the current time. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        end?: string | number;
         /** @description Restrict results to one non-negative proxy error code. */
         error_code?: number;
-        /** @description Comma-separated hostnames to include. */
+        /**
+         * @deprecated
+         * @description Compatibility parameter; ignored by the server.
+         */
         hostname?: string;
         /** @description Restrict results to one data ledger when supported. */
         ledger_id?: string;
@@ -4063,9 +4069,9 @@ export interface operations {
         protocol?: "http" | "socks5";
         /** @description Normalized region targeting code. country is required. */
         region?: string;
-        /** @description Inclusive start of the reporting window. Defaults to a recent window. */
-        start?: string;
-        /** @description IANA timezone used for bucket boundaries. Defaults to UTC. */
+        /** @description Inclusive start of the reporting window. Defaults to a recent window. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        start?: string | number;
+        /** @description IANA timezone used for bucket boundaries and datetime strings without an offset. Missing, empty or unknown names use the deployment timezone (UTC by default). */
         timezone?: string;
         /** @description Restrict results to the current account or an accessible sub-user. */
         user_id?: string;
@@ -4153,9 +4159,9 @@ export interface operations {
   analytics_overall_retrieve: {
     parameters: {
       query?: {
-        /** @description Exclusive end of the reporting window. */
-        end?: string;
-        /** @description Aggregate the selected user's data with all of their sub-users. Superusers can apply this to any selected user; resellers can apply it to their own account. Ignored for regular users. Defaults to false. */
+        /** @description Exclusive end of the reporting window. Defaults to the current time. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        end?: string | number;
+        /** @description Aggregate the selected user's data with all of their sub-users. Superusers can apply this to any selected user; resellers can apply it to their own account. Ignored for regular users. Use true or false. Defaults to false. */
         include_sub_users?: boolean;
         /** @description Maximum records returned on this page. */
         limit?: number;
@@ -4163,9 +4169,9 @@ export interface operations {
         offset?: number;
         /** @description Restrict results to one purchased package. */
         package_id?: string;
-        /** @description Inclusive start of the reporting window. Defaults to a recent window. */
-        start?: string;
-        /** @description IANA timezone used for bucket boundaries. Defaults to UTC. */
+        /** @description Inclusive start of the reporting window. Defaults to a recent window. Accepts ISO 8601 datetime strings with or without a timezone offset (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS, YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional seconds, not milliseconds). Datetime strings without an offset and date-only strings use the requested timezone; explicit offsets are converted to that timezone. Date-only values start at midnight. Seconds and fractional seconds are discarded, rounding the reporting boundary down to the minute. Prefer ISO 8601 with an explicit offset for unambiguous timezone handling. */
+        start?: string | number;
+        /** @description IANA timezone used for bucket boundaries and datetime strings without an offset. Missing, empty or unknown names use the deployment timezone (UTC by default). */
         timezone?: string;
         /** @description Restrict results to the current account or an accessible sub-user. */
         user_id?: string;

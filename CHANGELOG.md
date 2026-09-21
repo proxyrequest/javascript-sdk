@@ -4,9 +4,15 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
-### Fixed
+## [3.0.0] - 2026-09-21
 
 - Keep the exported `SDK_VERSION` synchronized with the package version and verify it in the package smoke test.
+
+- Synchronize the public OpenAPI contract from backend commit `2c4505a`.
+- Accept Unix seconds and all documented date strings while preserving existing date inputs.
+- Keep the legacy logs hostname argument and existing response contracts.
+- Cover feed/domains pagination, nullable feed timestamps, and UInt64 IDs with regression tests.
+- **Breaking:** return every feed ID as an exact decimal string; see [migration notes](docs/analytics.md).
 
 ## [2.1.0] - 2026-09-17
 

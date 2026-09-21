@@ -360,6 +360,11 @@ export interface AnalyticsListFeedOptions {
 export type AnalyticsListFeedResponse = OperationResult<operations["analytics_feed_retrieve"]>;
 
 export interface AnalyticsListLogsOptions {
+  acceptLanguage?: OperationParameter<
+    operations["analytics_logs_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
   city?: OperationParameter<operations["analytics_logs_retrieve"], "query", "city">;
   country?: OperationParameter<operations["analytics_logs_retrieve"], "query", "country">;
   end?: OperationParameter<operations["analytics_logs_retrieve"], "query", "end">;
@@ -374,11 +379,6 @@ export interface AnalyticsListLogsOptions {
   start?: OperationParameter<operations["analytics_logs_retrieve"], "query", "start">;
   timezone?: OperationParameter<operations["analytics_logs_retrieve"], "query", "timezone">;
   userId?: OperationParameter<operations["analytics_logs_retrieve"], "query", "user_id">;
-  acceptLanguage?: OperationParameter<
-    operations["analytics_logs_retrieve"],
-    "header",
-    "Accept-Language"
-  >;
   request?: RequestControls;
 }
 

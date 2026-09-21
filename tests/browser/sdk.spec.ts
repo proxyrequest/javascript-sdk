@@ -1,4 +1,5 @@
 import { createHmac } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 
 test("the ESM package works in a real browser", async ({ page }) => {
@@ -33,3 +34,23 @@ test("the ESM package works in a real browser", async ({ page }) => {
 declare global {
   var ProxyRequestSDK: typeof import("../../src/index.js");
 }
+
+test("feed IDs remain exact in the browser package", async ({ page }) => {
+  const body = await readFile(
+    new URL("../fixtures/analytics-large-ids.json", import.meta.url),
+    "utf8",
+  );
+  await page.route("https://api.proxyrequest.com/api/v1/analytics/feed**", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body });
+  });
+  await page.goto("/");
+  await expect(page.locator("#status")).toHaveText("ready");
+  const result = await page.evaluate(async () => {
+    const client = globalThis.ProxyRequestSDK.ProxyRequestClient.anonymous();
+    const response = await client.analytics.listFeed({ start: 1782864000.5 });
+    return { ids: response.results.map((row) => row.id), serialized: JSON.stringify(response) };
+  });
+  expect(result.ids[2]).toBe("11786186255824559223");
+  expect(result.ids.at(-1)).toBe("18446744073709551615");
+  expect(JSON.parse(result.serialized).results[2].id).toBe("11786186255824559223");
+});

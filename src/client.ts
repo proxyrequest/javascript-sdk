@@ -1,4 +1,5 @@
 import createClient, { type Middleware, type Client as OpenApiClient } from "openapi-fetch";
+import { parseFeedResponse } from "./analytics.js";
 import { ApiError } from "./errors.js";
 import { FileDownload } from "./files.js";
 import { createResourceCollection, type ResourceCollection } from "./generated/resources.js";
@@ -18,7 +19,7 @@ import {
 } from "./pagination.js";
 
 export const DEFAULT_BASE_URL = "https://api.proxyrequest.com/api/v1";
-export const SDK_VERSION = "2.1.0";
+export const SDK_VERSION = "3.0.0";
 
 export interface ClientCommonOptions {
   baseUrl?: string;
@@ -177,7 +178,11 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
           ...(data.body === undefined ? {} : { body: data.body }),
           ...([...controlHeaders].length === 0 ? {} : { headers: controlHeaders }),
           signal: timeout.signal,
-          ...(spec.binary ? { parseAs: "arrayBuffer" as const } : {}),
+          ...(spec.binary
+            ? { parseAs: "arrayBuffer" as const }
+            : spec.operationId === "analytics_feed_retrieve"
+              ? { parseAs: "text" as const }
+              : {}),
         });
         if (result.error !== undefined) {
           throw ApiError.unexpected(
@@ -187,7 +192,9 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
         }
         const dataValue = spec.binary
           ? binaryResult<Result>(spec, result.data, result.response.headers)
-          : (result.data as Result);
+          : spec.operationId === "analytics_feed_retrieve"
+            ? (parseFeedResponse(result.data as string) as Result)
+            : (result.data as Result);
         const headers = headersToRecord(result.response.headers);
         const etag = headers.etag;
         return {

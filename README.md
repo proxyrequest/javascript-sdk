@@ -7,6 +7,9 @@
 
 The official TypeScript SDK for the [ProxyRequest public API](https://proxyrequest.com/docs/api/). It provides a typed, promise-based client for Node.js 22+ and modern browsers, with both ESM and CommonJS builds.
 
+See [analytics formats and compatibility](docs/analytics.md) for Unix timestamps,
+reporting windows, and feed identifiers.
+
 ## What is ProxyRequest?
 
 [ProxyRequest](https://proxyrequest.com/) is the control plane for operating a white-label proxy platform. It connects the commercial and operational pieces that a proxy provider or reseller would otherwise have to build separately:

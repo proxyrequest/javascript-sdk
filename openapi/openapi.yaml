@@ -481,12 +481,43 @@ paths:
         name: end
         schema:
           type: string
-          format: date-time
-        description: Exclusive end of the reporting window.
+        description: Exclusive end of the reporting window. Defaults to the current
+          time. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          EndTime:
-            value: '2026-07-02T00:00:00Z'
-            summary: End time
+          ISOUTC:
+            value: '2026-07-01T00:00:00Z'
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: path
         name: id
         schema:
@@ -520,18 +551,50 @@ paths:
         name: start
         schema:
           type: string
-          format: date-time
         description: Inclusive start of the reporting window. Defaults to a recent
-          window.
+          window. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          StartTime:
+          ISOUTC:
             value: '2026-07-01T00:00:00Z'
-            summary: Start time
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: timezone
         schema:
           type: string
-        description: IANA timezone used for bucket boundaries. Defaults to UTC.
+        description: IANA timezone used for bucket boundaries and datetime strings
+          without an offset. Missing, empty or unknown names use the deployment timezone
+          (UTC by default).
         examples:
           UTC:
             value: UTC
@@ -944,20 +1007,57 @@ paths:
         name: end
         schema:
           type: string
-          format: date-time
-        description: Exclusive end of the reporting window.
+        description: Exclusive end of the reporting window. Defaults to the current
+          time. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          EndTime:
-            value: '2026-07-02T00:00:00Z'
-            summary: End time
+          ISOUTC:
+            value: '2026-07-01T00:00:00Z'
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: hostname
         schema:
           type: string
-        description: Comma-separated hostnames to include.
+        description: Comma-separated domains, IPv4/IPv6 addresses or HTTP(S) URLs
+          to include. Surrounding whitespace is ignored. URLs and host:port values
+          are normalized to their hostname; schemes, ports, paths and IPv6 brackets
+          are removed. Use brackets around IPv6 addresses when specifying a port.
         examples:
           Hostnames:
             value: example.com,api.example.com
+          MixedDestinations:
+            value: https://example.com:443/path,192.0.2.1,[2001:db8::1]:8080
+            summary: Mixed destinations
       - in: query
         name: include_sub_users
         schema:
@@ -965,7 +1065,15 @@ paths:
           default: false
         description: Aggregate the selected user's data with all of their sub-users.
           Superusers can apply this to any selected user; resellers can apply it to
-          their own account. Ignored for regular users. Defaults to false.
+          their own account. Ignored for regular users. Use true or false. Defaults
+          to false.
+        examples:
+          IncludeSub-users:
+            value: true
+            summary: Include sub-users
+          SelectedUserOnly:
+            value: false
+            summary: Selected user only
       - in: query
         name: ledger_id
         schema:
@@ -1014,18 +1122,50 @@ paths:
         name: start
         schema:
           type: string
-          format: date-time
         description: Inclusive start of the reporting window. Defaults to a recent
-          window.
+          window. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          StartTime:
+          ISOUTC:
             value: '2026-07-01T00:00:00Z'
-            summary: Start time
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: timezone
         schema:
           type: string
-        description: IANA timezone used for bucket boundaries. Defaults to UTC.
+        description: IANA timezone used for bucket boundaries and datetime strings
+          without an offset. Missing, empty or unknown names use the deployment timezone
+          (UTC by default).
         examples:
           UTC:
             value: UTC
@@ -1228,20 +1368,57 @@ paths:
         name: end
         schema:
           type: string
-          format: date-time
-        description: Exclusive end of the reporting window.
+        description: Exclusive end of the reporting window. Defaults to the current
+          time. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          EndTime:
-            value: '2026-07-02T00:00:00Z'
-            summary: End time
+          ISOUTC:
+            value: '2026-07-01T00:00:00Z'
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: hostname
         schema:
           type: string
-        description: Comma-separated hostnames to include.
+        description: Comma-separated domains, IPv4/IPv6 addresses or HTTP(S) URLs
+          to include. Surrounding whitespace is ignored. URLs and host:port values
+          are normalized to their hostname; schemes, ports, paths and IPv6 brackets
+          are removed. Use brackets around IPv6 addresses when specifying a port.
         examples:
           Hostnames:
             value: example.com,api.example.com
+          MixedDestinations:
+            value: https://example.com:443/path,192.0.2.1,[2001:db8::1]:8080
+            summary: Mixed destinations
       - in: query
         name: ledger_id
         schema:
@@ -1295,18 +1472,50 @@ paths:
         name: start
         schema:
           type: string
-          format: date-time
         description: Inclusive start of the reporting window. Defaults to a recent
-          window.
+          window. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          StartTime:
+          ISOUTC:
             value: '2026-07-01T00:00:00Z'
-            summary: Start time
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: timezone
         schema:
           type: string
-        description: IANA timezone used for bucket boundaries. Defaults to UTC.
+        description: IANA timezone used for bucket boundaries and datetime strings
+          without an offset. Missing, empty or unknown names use the deployment timezone
+          (UTC by default).
         examples:
           UTC:
             value: UTC
@@ -1527,25 +1736,48 @@ paths:
         name: end
         schema:
           type: string
-          format: date-time
-        description: Exclusive end of the reporting window.
+        description: Exclusive end of the reporting window. Defaults to the current
+          time. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          EndTime:
-            value: '2026-07-02T00:00:00Z'
-            summary: End time
+          ISOUTC:
+            value: '2026-07-01T00:00:00Z'
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: error_code
         schema:
           type: integer
         description: Restrict results to one non-negative proxy error code.
-      - in: query
-        name: hostname
-        schema:
-          type: string
-        description: Comma-separated hostnames to include.
-        examples:
-          Hostnames:
-            value: example.com,api.example.com
       - in: query
         name: ledger_id
         schema:
@@ -1594,18 +1826,50 @@ paths:
         name: start
         schema:
           type: string
-          format: date-time
         description: Inclusive start of the reporting window. Defaults to a recent
-          window.
+          window. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          StartTime:
+          ISOUTC:
             value: '2026-07-01T00:00:00Z'
-            summary: Start time
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: timezone
         schema:
           type: string
-        description: IANA timezone used for bucket boundaries. Defaults to UTC.
+        description: IANA timezone used for bucket boundaries and datetime strings
+          without an offset. Missing, empty or unknown names use the deployment timezone
+          (UTC by default).
         examples:
           UTC:
             value: UTC
@@ -1810,12 +2074,43 @@ paths:
         name: end
         schema:
           type: string
-          format: date-time
-        description: Exclusive end of the reporting window.
+        description: Exclusive end of the reporting window. Defaults to the current
+          time. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          EndTime:
-            value: '2026-07-02T00:00:00Z'
-            summary: End time
+          ISOUTC:
+            value: '2026-07-01T00:00:00Z'
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: include_sub_users
         schema:
@@ -1823,7 +2118,15 @@ paths:
           default: false
         description: Aggregate the selected user's data with all of their sub-users.
           Superusers can apply this to any selected user; resellers can apply it to
-          their own account. Ignored for regular users. Defaults to false.
+          their own account. Ignored for regular users. Use true or false. Defaults
+          to false.
+        examples:
+          IncludeSub-users:
+            value: true
+            summary: Include sub-users
+          SelectedUserOnly:
+            value: false
+            summary: Selected user only
       - in: query
         name: limit
         schema:
@@ -1847,18 +2150,50 @@ paths:
         name: start
         schema:
           type: string
-          format: date-time
         description: Inclusive start of the reporting window. Defaults to a recent
-          window.
+          window. Accepts ISO 8601 datetime strings with or without a timezone offset
+          (including Z and fractional seconds), YYYY-MM-DD HH:MM:SS, DD-MM-YYYY HH:MM:SS,
+          YYYY-MM-DD, DD-MM-YYYY, or a Unix timestamp in seconds (including fractional
+          seconds, not milliseconds). Datetime strings without an offset and date-only
+          strings use the requested timezone; explicit offsets are converted to that
+          timezone. Date-only values start at midnight. Seconds and fractional seconds
+          are discarded, rounding the reporting boundary down to the minute. Prefer
+          ISO 8601 with an explicit offset for unambiguous timezone handling.
         examples:
-          StartTime:
+          ISOUTC:
             value: '2026-07-01T00:00:00Z'
-            summary: Start time
+            summary: ISO UTC
+          ISOOffset:
+            value: '2026-07-01T03:00:00.123+03:00'
+            summary: ISO offset
+          ISOLocalDatetime:
+            value: '2026-07-01T00:00:00'
+            summary: ISO local datetime
+          LocalDatetime:
+            value: '2026-07-01 00:00:00'
+            summary: Local datetime
+          Day-firstDatetime:
+            value: 01-07-2026 00:00:00
+            summary: Day-first datetime
+          ISODate:
+            value: '2026-07-01'
+            summary: ISO date
+          Day-firstDate:
+            value: 01-07-2026
+            summary: Day-first date
+          UnixSeconds:
+            value: '1782864000'
+            summary: Unix seconds
+          FractionalUnixSeconds:
+            value: '1782864000.5'
+            summary: Fractional Unix seconds
       - in: query
         name: timezone
         schema:
           type: string
-        description: IANA timezone used for bucket boundaries. Defaults to UTC.
+        description: IANA timezone used for bucket boundaries and datetime strings
+          without an offset. Missing, empty or unknown names use the deployment timezone
+          (UTC by default).
         examples:
           UTC:
             value: UTC
@@ -11508,6 +11843,10 @@ paths:
       description: Creates ready-to-use proxy credentials for a purchased package.
         Use targeting to choose a location or provider scope, connection to choose
         protocol and output format, and session to control sticky session lifetime.
+        Omit connection.host to choose one random eligible gateway for the entire
+        request. The default port comes from that gateway's cluster. Targeting location
+        does not select the entry gateway's region. Explicit host and port remain
+        supported for custom endpoints.
       summary: Generate proxy credentials
       tags:
       - Proxies
@@ -12702,10 +13041,9 @@ paths:
                     - id: 550e8400-e29b-41d4-a716-446655440020
                       name: US East
                       region: us-east
-                      hostname: proxy.thepremiumports.com
+                      hostname: us-east-1.proxy.thepremiumports.com
                       hostnames:
                       - us-east-1.proxy.thepremiumports.com
-                      - us-east-2.proxy.thepremiumports.com
                       port_http: 8000
                       port_socks5: 1080
                       port_auto: 9000
@@ -19033,7 +19371,8 @@ components:
             - auto
         host:
           type: string
-          description: Gateway host. Leave empty to use the default gateway.
+          description: Gateway host. Leave empty to choose one available gateway for
+            the entire request.
           maxLength: 255
         port:
           type: integer
@@ -19274,10 +19613,13 @@ components:
           type: string
         hostname:
           type: string
+          description: Cluster gateway domain, or a server IP when no domain is configured.
         hostnames:
           type: array
           items:
             type: string
+          description: The cluster domain, or unique server IPs when no domain is
+            configured.
         port_http:
           type: integer
         port_socks5:

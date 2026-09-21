@@ -18,6 +18,7 @@ export default defineConfig({
   treeshake: true,
   minify: false,
   deps: {
+    alwaysBundle: ["lossless-json"],
     neverBundle: ["openapi-fetch"],
   },
 });

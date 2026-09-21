@@ -1,6 +1,6 @@
 {
   "name": "@proxyrequest/sdk",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Official TypeScript SDK for the ProxyRequest public API.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -111,6 +111,7 @@
     "prepack": "npm run build"
   },
   "dependencies": {
+    "lossless-json": "4.3.1",
     "openapi-fetch": "0.17.0"
   },
   "devDependencies": {
