@@ -45,11 +45,22 @@ try {
   });
   await writeFile(
     resolve(workspace, "esm.mjs"),
-    `import { ProxyRequestClient, SDK_VERSION } from "@proxyrequest/sdk"; if (!ProxyRequestClient || SDK_VERSION !== ${JSON.stringify(manifest.version)}) process.exit(1);\n`,
+    `import { ProxyRequestClient, SDK_VERSION } from "@proxyrequest/sdk";
+if (SDK_VERSION !== ${JSON.stringify(manifest.version)}) throw new Error("Wrong SDK version");
+const client = ProxyRequestClient.anonymous({fetch: async () => new Response('{"results":[{"id":18446744073709551615}]}')});
+const page = await client.analytics.listFeed({start: 1782864000.5});
+if (page.results[0].id !== "18446744073709551615") throw new Error("Feed ID lost precision");
+`,
   );
   await writeFile(
     resolve(workspace, "cjs.cjs"),
-    'const { ProxyRequestClient } = require("@proxyrequest/sdk"); if (!ProxyRequestClient) process.exit(1);\n',
+    `const { ProxyRequestClient, SDK_VERSION } = require("@proxyrequest/sdk");
+if (SDK_VERSION !== ${JSON.stringify(manifest.version)}) throw new Error("Wrong SDK version");
+const client = ProxyRequestClient.anonymous({fetch: async () => new Response('{"results":[{"id":18446744073709551615}]}')});
+client.analytics.listFeed({start: 1782864000.5}).then(page => {
+  if (page.results[0].id !== "18446744073709551615") throw new Error("Feed ID lost precision");
+}).catch(error => { console.error(error); process.exitCode = 1; });
+`,
   );
   execFileSync(process.execPath, ["esm.mjs"], { cwd: workspace, stdio: "pipe" });
   execFileSync(process.execPath, ["cjs.cjs"], { cwd: workspace, stdio: "pipe" });

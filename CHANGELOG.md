@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-09-21
+
+- Bundle openapi-fetch to fix client construction in CommonJS builds.
+- Verify actual feed requests and exact IDs in installed ESM and CommonJS packages.
+- Supersede the GitHub-only 3.0.0 build; npm publication of 3.0.0 was blocked by registry authorization.
+
 ## [3.0.0] - 2026-09-21
 
 - Keep the exported `SDK_VERSION` synchronized with the package version and verify it in the package smoke test.

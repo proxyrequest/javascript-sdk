@@ -19,7 +19,7 @@ import {
 } from "./pagination.js";
 
 export const DEFAULT_BASE_URL = "https://api.proxyrequest.com/api/v1";
-export const SDK_VERSION = "3.0.0";
+export const SDK_VERSION = "3.0.1";
 
 export interface ClientCommonOptions {
   baseUrl?: string;
