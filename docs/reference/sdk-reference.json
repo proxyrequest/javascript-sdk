@@ -4,7 +4,7 @@
     "id": "javascript",
     "label": "JavaScript / TypeScript",
     "language": "TypeScript",
-    "version": "3.0.1",
+    "version": "4.0.0",
     "package": "@proxyrequest/sdk",
     "runtime": "Node.js 22 or later",
     "install": "npm install @proxyrequest/sdk",

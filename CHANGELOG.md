@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-09-22
+
+- **Breaking:** replace generic nested response objects with the concrete public models used by the API contract.
+- Type order packages as `PackageShort`, order ledgers as `DataLedger[]`, coupon packages and stats as `PackageShort[]` and `CouponStats`, and user coupons and currency as `CouponShort[]` and `UserCurrency`.
+- Regenerate the SDK Reference from backend contract commit `a2d7245`, including expandable nested model fields.
+- Start the synchronized JavaScript, Python, and PHP SDK release train at version 4.0.0.
+
 ## [3.0.1] - 2026-09-21
 
 - Bundle openapi-fetch to fix client construction in CommonJS builds.
@@ -56,6 +63,10 @@ All notable changes to this project are documented here. The format follows [Kee
 - Normalized errors, lazy pagination, invoice downloads, raw requests, and webhook verification.
 - Reproducible OpenAPI generation, package validation, Node/browser tests, CI, and npm provenance workflow.
 
-[Unreleased]: https://github.com/proxyrequest/javascript-sdk/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/proxyrequest/javascript-sdk/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/proxyrequest/javascript-sdk/compare/v3.0.1...v4.0.0
+[3.0.1]: https://github.com/proxyrequest/javascript-sdk/compare/v3.0.0...v3.0.1
+[3.0.0]: https://github.com/proxyrequest/javascript-sdk/compare/v2.1.0...v3.0.0
+[2.1.0]: https://github.com/proxyrequest/javascript-sdk/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/proxyrequest/javascript-sdk/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/proxyrequest/javascript-sdk/releases/tag/v1.0.0
