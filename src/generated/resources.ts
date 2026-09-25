@@ -1474,6 +1474,7 @@ export type LocationsListAsnsResponse = OperationResult<operations["locations_as
 export interface LocationsListCitiesOptions {
   code?: OperationParameter<operations["locations_cities_list"], "query", "code">;
   countryCode?: OperationParameter<operations["locations_cities_list"], "query", "country__code">;
+  includeAsns?: OperationParameter<operations["locations_cities_list"], "query", "include_asns">;
   limit?: OperationParameter<operations["locations_cities_list"], "query", "limit">;
   name?: OperationParameter<operations["locations_cities_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_cities_list"], "query", "offset">;
@@ -1493,6 +1494,11 @@ export type LocationsListCitiesResponse = OperationResult<operations["locations_
 
 export interface LocationsGetCityOptions {
   id: OperationParameter<operations["locations_cities_retrieve"], "path", "id">;
+  includeAsns?: OperationParameter<
+    operations["locations_cities_retrieve"],
+    "query",
+    "include_asns"
+  >;
   packageId: OperationParameter<operations["locations_cities_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_cities_retrieve"],
@@ -1541,6 +1547,7 @@ export type LocationsGetContinentResponse = OperationResult<
 
 export interface LocationsListCountriesOptions {
   code?: OperationParameter<operations["locations_countries_list"], "query", "code">;
+  includeAsns?: OperationParameter<operations["locations_countries_list"], "query", "include_asns">;
   limit?: OperationParameter<operations["locations_countries_list"], "query", "limit">;
   name?: OperationParameter<operations["locations_countries_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_countries_list"], "query", "offset">;
@@ -1561,6 +1568,11 @@ export type LocationsListCountriesResponse = OperationResult<
 
 export interface LocationsGetCountryOptions {
   id: OperationParameter<operations["locations_countries_retrieve"], "path", "id">;
+  includeAsns?: OperationParameter<
+    operations["locations_countries_retrieve"],
+    "query",
+    "include_asns"
+  >;
   packageId: OperationParameter<operations["locations_countries_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_countries_retrieve"],
@@ -1596,6 +1608,7 @@ export type LocationsListIspsResponse = OperationResult<operations["locations_is
 export interface LocationsListRegionsOptions {
   code?: OperationParameter<operations["locations_regions_list"], "query", "code">;
   countryCode?: OperationParameter<operations["locations_regions_list"], "query", "country__code">;
+  includeAsns?: OperationParameter<operations["locations_regions_list"], "query", "include_asns">;
   limit?: OperationParameter<operations["locations_regions_list"], "query", "limit">;
   name?: OperationParameter<operations["locations_regions_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_regions_list"], "query", "offset">;
@@ -1614,6 +1627,11 @@ export type LocationsListRegionsResponse = OperationResult<operations["locations
 
 export interface LocationsGetRegionOptions {
   id: OperationParameter<operations["locations_regions_retrieve"], "path", "id">;
+  includeAsns?: OperationParameter<
+    operations["locations_regions_retrieve"],
+    "query",
+    "include_asns"
+  >;
   packageId: OperationParameter<operations["locations_regions_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_regions_retrieve"],
@@ -1686,6 +1704,7 @@ export class LocationsResource {
         query: {
           code: options.code,
           country__code: options.countryCode,
+          include_asns: options.includeAsns,
           limit: options.limit,
           name: options.name,
           offset: options.offset,
@@ -1722,6 +1741,7 @@ export class LocationsResource {
           id: options.id,
         },
         query: {
+          include_asns: options.includeAsns,
           package_id: options.packageId,
         },
         headers: {
@@ -1819,6 +1839,7 @@ export class LocationsResource {
       {
         query: {
           code: options.code,
+          include_asns: options.includeAsns,
           limit: options.limit,
           name: options.name,
           offset: options.offset,
@@ -1854,6 +1875,7 @@ export class LocationsResource {
           id: options.id,
         },
         query: {
+          include_asns: options.includeAsns,
           package_id: options.packageId,
         },
         headers: {
@@ -1917,6 +1939,7 @@ export class LocationsResource {
         query: {
           code: options.code,
           country__code: options.countryCode,
+          include_asns: options.includeAsns,
           limit: options.limit,
           name: options.name,
           offset: options.offset,
@@ -1952,6 +1975,7 @@ export class LocationsResource {
           id: options.id,
         },
         query: {
+          include_asns: options.includeAsns,
           package_id: options.packageId,
         },
         headers: {
@@ -2640,6 +2664,59 @@ export class ProfileResource {
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+}
+
+export interface ProvidersListDataBalancesOptions {
+  limit?: OperationParameter<operations["providers_data_balances_list"], "query", "limit">;
+  offset?: OperationParameter<operations["providers_data_balances_list"], "query", "offset">;
+  acceptLanguage?: OperationParameter<
+    operations["providers_data_balances_list"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type ProvidersListDataBalancesResponse = OperationResult<
+  operations["providers_data_balances_list"]
+>;
+
+export class ProvidersResource {
+  readonly #client: ResourceClient;
+
+  constructor(client: ResourceClient) {
+    this.#client = client;
+  }
+
+  /** List provider data balances */
+  async listDataBalances(
+    options: ProvidersListDataBalancesOptions = {},
+  ): Promise<ProvidersListDataBalancesResponse> {
+    return (await this.listDataBalancesWithResponse(options)).data;
+  }
+
+  /** List provider data balances; include response metadata. */
+  async listDataBalancesWithResponse(
+    options: ProvidersListDataBalancesOptions = {},
+  ): Promise<ApiResponse<ProvidersListDataBalancesResponse>> {
+    return this.#client._callWithResponse<ProvidersListDataBalancesResponse>(
+      {
+        operationId: "providers_data_balances_list",
+        method: "GET",
+        path: "/providers/data-balances",
+      },
+      {
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );
@@ -3587,6 +3664,7 @@ export interface ResourceCollection {
   readonly orders: OrdersResource;
   readonly packages: PackagesResource;
   readonly profile: ProfileResource;
+  readonly providers: ProvidersResource;
   readonly proxies: ProxiesResource;
   readonly rewards: RewardsResource;
   readonly settings: SettingsResource;
@@ -3608,6 +3686,7 @@ export function createResourceCollection(client: ResourceClient): ResourceCollec
     orders: new OrdersResource(client),
     packages: new PackagesResource(client),
     profile: new ProfileResource(client),
+    providers: new ProvidersResource(client),
     proxies: new ProxiesResource(client),
     rewards: new RewardsResource(client),
     settings: new SettingsResource(client),

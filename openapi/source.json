@@ -1,9 +1,9 @@
 {
-  "commit": "a2d72455d3b91a7d6be962f0e056f7d04fbd7f05",
+  "commit": "09dab1ad6f5ab4e879120074e55f817e58856a6f",
   "excludedOperations": ["sessions_destroy", "sessions_list"],
-  "operations": 82,
+  "operations": 83,
   "repository": "papaproxy/api",
-  "schemas": 133,
-  "sha256": "9a20a33711a9291dcba57046b1d2b4cf14b3eec506383a3986b0ac7a15f14c6e",
+  "schemas": 139,
+  "sha256": "b9106a09b1fadc44722b22afec3b37fe1f9839298e3878ac366268627ce78741",
   "source": "openapi.yml"
 }

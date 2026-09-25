@@ -19,7 +19,7 @@ import {
 } from "./pagination.js";
 
 export const DEFAULT_BASE_URL = "https://api.proxyrequest.com/api/v1";
-export const SDK_VERSION = "4.0.0";
+export const SDK_VERSION = "4.1.0";
 
 export interface ClientCommonOptions {
   baseUrl?: string;
@@ -55,6 +55,7 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
   readonly orders: ResourceCollection["orders"];
   readonly packages: ResourceCollection["packages"];
   readonly profile: ResourceCollection["profile"];
+  readonly providers: ResourceCollection["providers"];
   readonly proxies: ResourceCollection["proxies"];
   readonly rewards: ResourceCollection["rewards"];
   readonly settings: ResourceCollection["settings"];
@@ -118,6 +119,7 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
     this.orders = resources.orders;
     this.packages = resources.packages;
     this.profile = resources.profile;
+    this.providers = resources.providers;
     this.proxies = resources.proxies;
     this.rewards = resources.rewards;
     this.settings = resources.settings;

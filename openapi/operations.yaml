@@ -10,6 +10,7 @@ resources:
   Orders: {attribute: orders, class_name: OrdersResource}
   Packages: {attribute: packages, class_name: PackagesResource}
   Profile: {attribute: profile, class_name: ProfileResource}
+  Providers: {attribute: providers, class_name: ProvidersResource}
   Proxies: {attribute: proxies, class_name: ProxiesResource}
   Rewards: {attribute: rewards, class_name: RewardsResource}
   Settings: {attribute: settings, class_name: SettingsResource}
@@ -76,6 +77,7 @@ operations:
   profile_2fa_setup_create: setup_two_factor
   profile_2fa_status_retrieve: get_two_factor_status
   profile_change_password_create: change_password
+  providers_data_balances_list: list_data_balances
   proxies_generate_create: generate
   recover_password_create: recover_password
   refresh_create: refresh

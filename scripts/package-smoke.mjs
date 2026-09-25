@@ -48,6 +48,7 @@ try {
     `import { ProxyRequestClient, SDK_VERSION } from "@proxyrequest/sdk";
 if (SDK_VERSION !== ${JSON.stringify(manifest.version)}) throw new Error("Wrong SDK version");
 const client = ProxyRequestClient.anonymous({fetch: async () => new Response('{"results":[{"id":18446744073709551615}]}')});
+if (typeof client.providers.listDataBalances !== "function") throw new Error("Missing providers resource");
 const page = await client.analytics.listFeed({start: 1782864000.5});
 if (page.results[0].id !== "18446744073709551615") throw new Error("Feed ID lost precision");
 `,
@@ -57,6 +58,7 @@ if (page.results[0].id !== "18446744073709551615") throw new Error("Feed ID lost
     `const { ProxyRequestClient, SDK_VERSION } = require("@proxyrequest/sdk");
 if (SDK_VERSION !== ${JSON.stringify(manifest.version)}) throw new Error("Wrong SDK version");
 const client = ProxyRequestClient.anonymous({fetch: async () => new Response('{"results":[{"id":18446744073709551615}]}')});
+if (typeof client.providers.listDataBalances !== "function") throw new Error("Missing providers resource");
 client.analytics.listFeed({start: 1782864000.5}).then(page => {
   if (page.results[0].id !== "18446744073709551615") throw new Error("Feed ID lost precision");
 }).catch(error => { console.error(error); process.exitCode = 1; });

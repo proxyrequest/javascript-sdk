@@ -1,0 +1,119 @@
+{
+  "fresh": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "checkpoint_id": "00000000-0000-4000-8000-000000000001",
+        "provider_id": "provider-one",
+        "provider_name": "Example Provider",
+        "observed_at": "2026-09-25T08:00:00+00:00",
+        "available_bytes": "18446744073709551615",
+        "used_bytes": "9223372036854775808",
+        "remaining_bytes": "9223372036854775807",
+        "remaining_percent": 50.0,
+        "severity": null,
+        "freshness": "fresh",
+        "error": "",
+        "calculated_at": "2026-09-25T08:05:00+00:00",
+        "history": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "available_bytes": "18446744073709551615",
+            "observed_at": "2026-09-25T08:00:00+00:00",
+            "created": "2026-09-25T08:01:00+00:00",
+            "created_by": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "available_bytes": "9007199254740993",
+            "observed_at": "2026-09-24T08:00:00+00:00",
+            "created": "2026-09-24T08:01:00+00:00",
+            "created_by": "operator"
+          }
+        ]
+      }
+    ]
+  },
+  "stale": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "checkpoint_id": "00000000-0000-4000-8000-000000000001",
+        "provider_id": "provider-one",
+        "provider_name": "Example Provider",
+        "observed_at": "2026-09-25T08:00:00+00:00",
+        "available_bytes": "18446744073709551615",
+        "used_bytes": "9223372036854775808",
+        "remaining_bytes": "9223372036854775807",
+        "remaining_percent": 50.0,
+        "severity": "danger",
+        "freshness": "stale",
+        "error": "Calculation unavailable",
+        "calculated_at": "2026-09-25T08:05:00+00:00",
+        "history": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "available_bytes": "18446744073709551615",
+            "observed_at": "2026-09-25T08:00:00+00:00",
+            "created": "2026-09-25T08:01:00+00:00",
+            "created_by": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "available_bytes": "9007199254740993",
+            "observed_at": "2026-09-24T08:00:00+00:00",
+            "created": "2026-09-24T08:01:00+00:00",
+            "created_by": "operator"
+          }
+        ]
+      }
+    ]
+  },
+  "unavailable": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "checkpoint_id": "00000000-0000-4000-8000-000000000001",
+        "provider_id": "provider-one",
+        "provider_name": "Example Provider",
+        "observed_at": "2026-09-25T08:00:00+00:00",
+        "available_bytes": "18446744073709551615",
+        "used_bytes": null,
+        "remaining_bytes": null,
+        "remaining_percent": null,
+        "severity": null,
+        "freshness": "unavailable",
+        "error": "No calculation yet",
+        "calculated_at": null,
+        "history": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "available_bytes": "18446744073709551615",
+            "observed_at": "2026-09-25T08:00:00+00:00",
+            "created": "2026-09-25T08:01:00+00:00",
+            "created_by": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "available_bytes": "9007199254740993",
+            "observed_at": "2026-09-24T08:00:00+00:00",
+            "created": "2026-09-24T08:01:00+00:00",
+            "created_by": "operator"
+          }
+        ]
+      }
+    ]
+  },
+  "empty": {
+    "count": 0,
+    "next": null,
+    "previous": null,
+    "results": []
+  }
+}

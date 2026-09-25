@@ -92,7 +92,9 @@ function placeholder(name: string, value: any): any {
   if (value?.format === "email" || lower.includes("email")) return "developer@example.com";
   if (lower.includes("password")) return "Correct-Horse-Battery-Staple-42";
   if (lower.includes("language")) return "en";
-  if (lower === "data" || lower.endsWith("_bytes")) return 1073741824;
+  if (lower === "data" || lower.endsWith("_bytes")) {
+    return value.type === "string" ? "1073741824" : 1073741824;
+  }
   if (value?.type === "integer" || value?.type === "number") return value.minimum ?? 1;
   if (value?.type === "boolean") return false;
   if (value?.type === "array") return [];

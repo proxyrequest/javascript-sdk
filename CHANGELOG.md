@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 4.1.0 (2026-09-25)
+
+- Add provider data balances with typed pagination, byte strings, calculation status, and checkpoint history. Access requires a superuser JWT or a superuser-owned API key.
+- Add optional `include_asns` to country, region, and city methods. Request `true` to include nested ASNs; the current API returns empty nested ASN arrays by default.
+- Preserve existing public methods and argument compatibility, and regenerate SDK reference documentation from the latest public API contract.
+
 ## [Unreleased]
 
 ## [4.0.0] - 2026-09-22

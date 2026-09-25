@@ -7156,7 +7156,10 @@ paths:
     get:
       operationId: locations_cities_list
       description: Returns cities supported by the selected package, country, and
-        region, including targetable ISPs and autonomous system numbers.
+        region, including targetable ISPs. The asns field is always present and defaults
+        to an empty array. Pass include_asns=true to include available autonomous
+        system numbers. This option does not affect the standalone /locations/asn
+        endpoint or the compact proxy-node response format.
       summary: List available cities
       parameters:
       - in: query
@@ -7167,6 +7170,19 @@ paths:
         name: country__code
         schema:
           type: string
+      - in: query
+        name: include_asns
+        schema:
+          type: boolean
+          default: false
+        description: The asns field is always present and defaults to an empty array.
+          Pass include_asns=true to include available autonomous system numbers. This
+          option does not affect the standalone /locations/asn endpoint or the compact
+          proxy-node response format.
+        examples:
+          IncludeASNs:
+            value: true
+            summary: Include ASNs
       - name: limit
         required: false
         in: query
@@ -7258,9 +7274,7 @@ paths:
                       isps:
                       - code: spectrum
                         name: Spectrum
-                      asns:
-                      - code: '20001'
-                        name: Charter Communications
+                      asns: []
                   summary: Available cities
           description: The operation completed successfully.
         '400':
@@ -7357,7 +7371,11 @@ paths:
   /locations/cities/{id}:
     get:
       operationId: locations_cities_retrieve
-      description: Returns one city and its available network targeting options.
+      description: Returns one city and its available network targeting options. The
+        asns field is always present and defaults to an empty array. Pass include_asns=true
+        to include available autonomous system numbers. This option does not affect
+        the standalone /locations/asn endpoint or the compact proxy-node response
+        format.
       summary: Get a city
       parameters:
       - in: path
@@ -7365,6 +7383,19 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: include_asns
+        schema:
+          type: boolean
+          default: false
+        description: The asns field is always present and defaults to an empty array.
+          Pass include_asns=true to include available autonomous system numbers. This
+          option does not affect the standalone /locations/asn endpoint or the compact
+          proxy-node response format.
+        examples:
+          IncludeASNs:
+            value: true
+            summary: Include ASNs
       - in: query
         name: package_id
         schema:
@@ -7418,9 +7449,7 @@ paths:
                     isps:
                     - code: spectrum
                       name: Spectrum
-                    asns:
-                    - code: '20001'
-                      name: Charter Communications
+                    asns: []
           description: The operation completed successfully.
         '400':
           content:
@@ -7904,13 +7933,29 @@ paths:
     get:
       operationId: locations_countries_list
       description: Returns countries supported by the selected package, including
-        targetable ISPs and autonomous system numbers when available.
+        targetable ISPs. The asns field is always present and defaults to an empty
+        array. Pass include_asns=true to include available autonomous system numbers.
+        This option does not affect the standalone /locations/asn endpoint or the
+        compact proxy-node response format.
       summary: List available countries
       parameters:
       - in: query
         name: code
         schema:
           type: string
+      - in: query
+        name: include_asns
+        schema:
+          type: boolean
+          default: false
+        description: The asns field is always present and defaults to an empty array.
+          Pass include_asns=true to include available autonomous system numbers. This
+          option does not affect the standalone /locations/asn endpoint or the compact
+          proxy-node response format.
+        examples:
+          IncludeASNs:
+            value: true
+            summary: Include ASNs
       - name: limit
         required: false
         in: query
@@ -7991,9 +8036,7 @@ paths:
                       isps:
                       - code: comcast
                         name: Comcast Cable
-                      asns:
-                      - code: '7922'
-                        name: Comcast Cable Communications
+                      asns: []
                   summary: Available countries
           description: The operation completed successfully.
         '400':
@@ -8091,6 +8134,10 @@ paths:
     get:
       operationId: locations_countries_retrieve
       description: Returns one country and its available network targeting options.
+        The asns field is always present and defaults to an empty array. Pass include_asns=true
+        to include available autonomous system numbers. This option does not affect
+        the standalone /locations/asn endpoint or the compact proxy-node response
+        format.
       summary: Get a country
       parameters:
       - in: path
@@ -8098,6 +8145,19 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: include_asns
+        schema:
+          type: boolean
+          default: false
+        description: The asns field is always present and defaults to an empty array.
+          Pass include_asns=true to include available autonomous system numbers. This
+          option does not affect the standalone /locations/asn endpoint or the compact
+          proxy-node response format.
+        examples:
+          IncludeASNs:
+            value: true
+            summary: Include ASNs
       - in: query
         name: package_id
         schema:
@@ -8144,9 +8204,7 @@ paths:
                     isps:
                     - code: comcast
                       name: Comcast Cable
-                    asns:
-                    - code: '7922'
-                      name: Comcast Cable Communications
+                    asns: []
           description: The operation completed successfully.
         '400':
           content:
@@ -8457,7 +8515,10 @@ paths:
     get:
       operationId: locations_regions_list
       description: Returns regions supported by the selected package and country,
-        including targetable ISPs and autonomous system numbers.
+        including targetable ISPs. The asns field is always present and defaults to
+        an empty array. Pass include_asns=true to include available autonomous system
+        numbers. This option does not affect the standalone /locations/asn endpoint
+        or the compact proxy-node response format.
       summary: List available regions
       parameters:
       - in: query
@@ -8468,6 +8529,19 @@ paths:
         name: country__code
         schema:
           type: string
+      - in: query
+        name: include_asns
+        schema:
+          type: boolean
+          default: false
+        description: The asns field is always present and defaults to an empty array.
+          Pass include_asns=true to include available autonomous system numbers. This
+          option does not affect the standalone /locations/asn endpoint or the compact
+          proxy-node response format.
+        examples:
+          IncludeASNs:
+            value: true
+            summary: Include ASNs
       - name: limit
         required: false
         in: query
@@ -8553,9 +8627,7 @@ paths:
                       isps:
                       - code: comcast
                         name: Comcast Cable
-                      asns:
-                      - code: '7922'
-                        name: Comcast Cable Communications
+                      asns: []
                   summary: Available regions
           description: The operation completed successfully.
         '400':
@@ -8653,6 +8725,10 @@ paths:
     get:
       operationId: locations_regions_retrieve
       description: Returns one region and its available network targeting options.
+        The asns field is always present and defaults to an empty array. Pass include_asns=true
+        to include available autonomous system numbers. This option does not affect
+        the standalone /locations/asn endpoint or the compact proxy-node response
+        format.
       summary: Get a region
       parameters:
       - in: path
@@ -8660,6 +8736,19 @@ paths:
         schema:
           type: string
         required: true
+      - in: query
+        name: include_asns
+        schema:
+          type: boolean
+          default: false
+        description: The asns field is always present and defaults to an empty array.
+          Pass include_asns=true to include available autonomous system numbers. This
+          option does not affect the standalone /locations/asn endpoint or the compact
+          proxy-node response format.
+        examples:
+          IncludeASNs:
+            value: true
+            summary: Include ASNs
       - in: query
         name: package_id
         schema:
@@ -8711,9 +8800,7 @@ paths:
                     isps:
                     - code: comcast
                       name: Comcast Cable
-                    asns:
-                    - code: '7922'
-                      name: Comcast Cable Communications
+                    asns: []
           description: The operation completed successfully.
         '400':
           content:
@@ -12048,6 +12135,175 @@ paths:
             value: de
           Weighted:
             value: fr-CA, fr;q=0.9, en;q=0.5
+  /providers/data-balances:
+    get:
+      operationId: providers_data_balances_list
+      description: Requires a JWT belonging to an active superuser or an API key owned
+        by an active superuser, including requests using X-Impersonate-User. Returns
+        one result per provider with recorded balances. The latest observation by
+        observed_at is the baseline; available_bytes is that observation's balance,
+        not a sum of purchased data. All byte amounts are decimal strings. Calculations
+        are saved asynchronously; inspect freshness, error and calculated_at before
+        using them. History is ordered by creation time descending and limited by
+        PROVIDER_DATA_BALANCE_HISTORY_LIMIT (default 10). Pagination counts providers,
+        not history entries.
+      summary: List provider data balances
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: Accept-Language
+        in: header
+        required: false
+        schema:
+          type: string
+          default: en
+        description: 'Preferred language for human-readable API errors. Supported
+          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
+          and quality weights are accepted; unsupported or omitted values use English.'
+        examples:
+          German:
+            value: de
+          Weighted:
+            value: fr-CA, fr;q=0.9, en;q=0.5
+      tags:
+      - Providers
+      security:
+      - BearerAuth: []
+      - StaticAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProviderDataBalanceList'
+              examples:
+                ProviderDataBalance:
+                  value:
+                    count: 1
+                    next: null
+                    previous: null
+                    results:
+                    - provider_id: 550e8400-e29b-41d4-a716-446655440001
+                      provider_name: Example provider
+                      checkpoint_id: 550e8400-e29b-41d4-a716-446655440002
+                      available_bytes: '5000000000000'
+                      used_bytes: '1000000000000'
+                      remaining_bytes: '4000000000000'
+                      remaining_percent: 80.0
+                      observed_at: '2026-09-25T12:00:00Z'
+                      calculated_at: '2026-09-25T12:30:00Z'
+                      severity: null
+                      freshness: fresh
+                      error: ''
+                      history:
+                      - id: 550e8400-e29b-41d4-a716-446655440002
+                        available_bytes: '5000000000000'
+                        observed_at: '2026-09-25T12:00:00Z'
+                        created: '2026-09-25T12:01:00Z'
+                        created_by: admin
+                  summary: Provider data balance
+          description: The operation completed successfully.
+        '401':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                AuthenticationRequired:
+                  value:
+                    detail: Authentication credentials were not provided.
+                  summary: Authentication required
+          description: Authentication credentials are missing, expired, or invalid.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                PermissionDenied:
+                  value:
+                    detail: You do not have permission to perform this action.
+                  summary: Permission denied
+          description: The authenticated account cannot perform this operation.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '400':
+          description: The request is malformed or violates a business rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Validation error
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
   /proxies/generate:
     post:
       operationId: proxies_generate_create
@@ -17250,6 +17506,10 @@ components:
           items:
             $ref: '#/components/schemas/LocationCodeName'
           readOnly: true
+          description: The asns field is always present and defaults to an empty array.
+            Pass include_asns=true to include available autonomous system numbers.
+            This option does not affect the standalone /locations/asn endpoint or
+            the compact proxy-node response format.
       required:
       - asns
       - code
@@ -17357,6 +17617,10 @@ components:
           items:
             $ref: '#/components/schemas/LocationCodeName'
           readOnly: true
+          description: The asns field is always present and defaults to an empty array.
+            Pass include_asns=true to include available autonomous system numbers.
+            This option does not affect the standalone /locations/asn endpoint or
+            the compact proxy-node response format.
       required:
       - asns
       - code
@@ -17907,6 +18171,13 @@ components:
       - results
       - start
       - timezone
+    FreshnessEnum:
+      enum:
+      - fresh
+      - stale
+      - unavailable
+      type: string
+      description: '* `fresh` - fresh * `stale` - stale * `unavailable` - unavailable'
     GenerateProxyRequest:
       type: object
       description: Validates proxy generation request data and builds generator config.
@@ -18648,6 +18919,9 @@ components:
       required:
       - content
       - title
+    NullEnum:
+      enum:
+      - null
     OTPChallenge:
       type: object
       properties:
@@ -19456,6 +19730,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Package'
+    PaginatedProviderDataBalanceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 1
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: null
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: null
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderDataBalance'
     PaginatedRegionList:
       type: object
       required:
@@ -19851,6 +20148,96 @@ components:
       - auto
       type: string
       description: '* `http` - http * `socks5` - socks5 * `auto` - auto'
+    ProviderBalanceCheckpoint:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        available_bytes:
+          type: string
+          description: Observed balance in bytes, as a decimal string.
+        observed_at:
+          type: string
+          format: date-time
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - available_bytes
+      - created
+      - created_by
+      - id
+      - observed_at
+    ProviderDataBalance:
+      type: object
+      properties:
+        checkpoint_id:
+          type: string
+          format: uuid
+        provider_id:
+          type: string
+        provider_name:
+          type: string
+        observed_at:
+          type: string
+          format: date-time
+          description: Time the available balance was observed.
+        available_bytes:
+          type: string
+          description: Observed balance in bytes, as a decimal string.
+        used_bytes:
+          type: string
+          nullable: true
+          description: Calculated usage since the observation, in bytes.
+        remaining_bytes:
+          type: string
+          nullable: true
+          description: Remaining bytes at calculated_at, as a decimal string.
+        remaining_percent:
+          type: number
+          format: double
+          nullable: true
+        severity:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/SeverityEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        freshness:
+          $ref: '#/components/schemas/FreshnessEnum'
+        error:
+          type: string
+        calculated_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Time of the last successful calculation.
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderBalanceCheckpoint'
+          description: Latest entries by creation time, limited by PROVIDER_DATA_BALANCE_HISTORY_LIMIT
+            (default 10).
+      required:
+      - available_bytes
+      - calculated_at
+      - checkpoint_id
+      - error
+      - freshness
+      - history
+      - observed_at
+      - provider_id
+      - provider_name
+      - remaining_bytes
+      - remaining_percent
+      - severity
+      - used_bytes
     ProxyGenerationConnectionRequest:
       type: object
       properties:
@@ -19997,6 +20384,10 @@ components:
           items:
             $ref: '#/components/schemas/LocationCodeName'
           readOnly: true
+          description: The asns field is always present and defaults to an empty array.
+            Pass include_asns=true to include available autonomous system numbers.
+            This option does not affect the standalone /locations/asn endpoint or
+            the compact proxy-node response format.
       required:
       - asns
       - code
@@ -20190,6 +20581,12 @@ components:
       - payment_methods
       - referrals
       - spent_total
+    SeverityEnum:
+      enum:
+      - warning
+      - danger
+      type: string
+      description: '* `warning` - warning * `danger` - danger'
     SignUpRequest:
       type: object
       description: Comprehensive user registration with enhanced validation, security
@@ -21018,6 +21415,9 @@ tags:
   description: Inspect referred accounts and affiliate earnings.
 - name: Packages
   description: Browse available proxy products, pricing, and targeting capabilities.
+- name: Providers
+  description: Read provider data balances and observation history. Superuser credentials
+    required.
 - name: Locations
   description: Browse locations, networks, and providers available for proxy targeting.
 - name: API Keys

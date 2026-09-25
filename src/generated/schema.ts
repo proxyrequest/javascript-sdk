@@ -484,7 +484,7 @@ export interface paths {
     };
     /**
      * List available cities
-     * @description Returns cities supported by the selected package, country, and region, including targetable ISPs and autonomous system numbers.
+     * @description Returns cities supported by the selected package, country, and region, including targetable ISPs. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.
      */
     get: operations["locations_cities_list"];
     put?: never;
@@ -504,7 +504,7 @@ export interface paths {
     };
     /**
      * Get a city
-     * @description Returns one city and its available network targeting options.
+     * @description Returns one city and its available network targeting options. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.
      */
     get: operations["locations_cities_retrieve"];
     put?: never;
@@ -564,7 +564,7 @@ export interface paths {
     };
     /**
      * List available countries
-     * @description Returns countries supported by the selected package, including targetable ISPs and autonomous system numbers when available.
+     * @description Returns countries supported by the selected package, including targetable ISPs. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.
      */
     get: operations["locations_countries_list"];
     put?: never;
@@ -584,7 +584,7 @@ export interface paths {
     };
     /**
      * Get a country
-     * @description Returns one country and its available network targeting options.
+     * @description Returns one country and its available network targeting options. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.
      */
     get: operations["locations_countries_retrieve"];
     put?: never;
@@ -624,7 +624,7 @@ export interface paths {
     };
     /**
      * List available regions
-     * @description Returns regions supported by the selected package and country, including targetable ISPs and autonomous system numbers.
+     * @description Returns regions supported by the selected package and country, including targetable ISPs. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.
      */
     get: operations["locations_regions_list"];
     put?: never;
@@ -644,7 +644,7 @@ export interface paths {
     };
     /**
      * Get a region
-     * @description Returns one region and its available network targeting options.
+     * @description Returns one region and its available network targeting options. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.
      */
     get: operations["locations_regions_retrieve"];
     put?: never;
@@ -945,6 +945,26 @@ export interface paths {
      * @description Verifies the current password, applies the new password, and keeps the current authenticated session active.
      */
     post: operations["profile_change_password_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/providers/data-balances": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List provider data balances
+     * @description Requires a JWT belonging to an active superuser or an API key owned by an active superuser, including requests using X-Impersonate-User. Returns one result per provider with recorded balances. The latest observation by observed_at is the baseline; available_bytes is that observation's balance, not a sum of purchased data. All byte amounts are decimal strings. Calculations are saved asynchronously; inspect freshness, error and calculated_at before using them. History is ordered by creation time descending and limited by PROVIDER_DATA_BALANCE_HISTORY_LIMIT (default 10). Pagination counts providers, not history entries.
+     */
+    get: operations["providers_data_balances_list"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1402,6 +1422,7 @@ export interface components {
      */
     CheckoutStatusEnum: "not_required" | "initializing" | "ready" | "failed";
     City: {
+      /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
       readonly asns: components["schemas"]["LocationCodeName"][];
       /** @description Raw city code as it appears in the source data. los_angeles paris */
       code: string;
@@ -1444,6 +1465,7 @@ export interface components {
       name: string;
     };
     Country: {
+      /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
       readonly asns: components["schemas"]["LocationCodeName"][];
       /**
        * ISO 3166-1 Alpha-2 Code
@@ -1740,6 +1762,11 @@ export interface components {
       start: string;
       timezone: string;
     };
+    /**
+     * @description * `fresh` - fresh * `stale` - stale * `unavailable` - unavailable
+     * @enum {string}
+     */
+    FreshnessEnum: "fresh" | "stale" | "unavailable";
     GeneratedProxy: {
       connection_string: string;
       host: string;
@@ -2209,6 +2236,8 @@ export interface components {
       id?: string;
       title: string;
     };
+    /** @enum {unknown} */
+    NullEnum: null;
     Order: {
       /**
        * Auto Renewal Data (GB)
@@ -2676,6 +2705,21 @@ export interface components {
       previous?: string | null;
       results: components["schemas"]["Package"][];
     };
+    PaginatedProviderDataBalanceList: {
+      /** @example 1 */
+      count: number;
+      /**
+       * Format: uri
+       * @example null
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example null
+       */
+      previous?: string | null;
+      results: components["schemas"]["ProviderDataBalance"][];
+    };
     PaginatedRegionList: {
       /** @example 1 */
       count: number;
@@ -2886,6 +2930,46 @@ export interface components {
      * @enum {string}
      */
     ProtocolEnum: "http" | "socks5" | "auto";
+    ProviderBalanceCheckpoint: {
+      /** @description Observed balance in bytes, as a decimal string. */
+      available_bytes: string;
+      /** Format: date-time */
+      readonly created: string;
+      readonly created_by: string | null;
+      /** Format: uuid */
+      readonly id: string;
+      /** Format: date-time */
+      observed_at: string;
+    };
+    ProviderDataBalance: {
+      /** @description Observed balance in bytes, as a decimal string. */
+      available_bytes: string;
+      /**
+       * Format: date-time
+       * @description Time of the last successful calculation.
+       */
+      calculated_at: string | null;
+      /** Format: uuid */
+      checkpoint_id: string;
+      error: string;
+      freshness: components["schemas"]["FreshnessEnum"];
+      /** @description Latest entries by creation time, limited by PROVIDER_DATA_BALANCE_HISTORY_LIMIT (default 10). */
+      history: components["schemas"]["ProviderBalanceCheckpoint"][];
+      /**
+       * Format: date-time
+       * @description Time the available balance was observed.
+       */
+      observed_at: string;
+      provider_id: string;
+      provider_name: string;
+      /** @description Remaining bytes at calculated_at, as a decimal string. */
+      remaining_bytes: string | null;
+      /** Format: double */
+      remaining_percent: number | null;
+      severity: (components["schemas"]["SeverityEnum"] | components["schemas"]["NullEnum"]) | null;
+      /** @description Calculated usage since the observation, in bytes. */
+      used_bytes: string | null;
+    };
     ProxyGenerationConnectionRequest: {
       /**
        * @description Connection string format.
@@ -2947,6 +3031,7 @@ export interface components {
       token: string;
     };
     Region: {
+      /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
       readonly asns: components["schemas"]["LocationCodeName"][];
       /** @description Raw region code as it appears in the source data. Used together with country to form a unique identifier. california ile_de_france */
       code: string;
@@ -3044,6 +3129,11 @@ export interface components {
       /** Format: double */
       spent_total: number;
     };
+    /**
+     * @description * `warning` - warning * `danger` - danger
+     * @enum {string}
+     */
+    SeverityEnum: "warning" | "danger";
     /** @description Comprehensive user registration with enhanced validation, security measures, and referral/affiliate code handling. */
     SignUpRequest: {
       /** @description Optional affiliate referral code */
@@ -6289,6 +6379,8 @@ export interface operations {
       query: {
         code?: string;
         country__code?: string;
+        /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
+        include_asns?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
         name?: string;
@@ -6370,6 +6462,8 @@ export interface operations {
   locations_cities_retrieve: {
     parameters: {
       query: {
+        /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
+        include_asns?: boolean;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
       };
@@ -6628,6 +6722,8 @@ export interface operations {
     parameters: {
       query: {
         code?: string;
+        /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
+        include_asns?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
         name?: string;
@@ -6708,6 +6804,8 @@ export interface operations {
   locations_countries_retrieve: {
     parameters: {
       query: {
+        /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
+        include_asns?: boolean;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
       };
@@ -6880,6 +6978,8 @@ export interface operations {
       query: {
         code?: string;
         country__code?: string;
+        /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
+        include_asns?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
         name?: string;
@@ -6960,6 +7060,8 @@ export interface operations {
   locations_regions_retrieve: {
     parameters: {
       query: {
+        /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
+        include_asns?: boolean;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
       };
@@ -8420,6 +8522,79 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  providers_data_balances_list: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaginatedProviderDataBalanceList"];
         };
       };
       /** @description The request is malformed or violates a business rule. */

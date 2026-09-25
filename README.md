@@ -87,8 +87,8 @@ Never embed a Static API key or webhook secret in frontend JavaScript. Browser s
 
 ## Resource API
 
-The client exposes 80 supported operations through 17 resource groups. The pinned
-public schema contains 82 operations; the disabled `sessions_list` and
+The client exposes 81 supported operations through 18 resource groups. The pinned
+public schema contains 83 operations; the disabled `sessions_list` and
 `sessions_destroy` operations are intentionally excluded from the SDK. Sticky
 session options in proxy generation remain supported.
 
@@ -107,6 +107,7 @@ client.news;
 client.orders;
 client.packages;
 client.profile;
+client.providers;
 client.proxies;
 client.rewards;
 client.settings;
@@ -312,7 +313,7 @@ It reuses base URL, authentication, language, timeout, cancellation, and `ApiErr
 
 ## Types and generated code
 
-All 127 OpenAPI model types are exported from both the package root and `@proxyrequest/sdk/models`:
+All public OpenAPI model types are exported from both the package root and `@proxyrequest/sdk/models`:
 
 ```ts
 import type { User, InvoiceCreateRequestRequest } from "@proxyrequest/sdk/models";
@@ -370,3 +371,18 @@ Send only `package_id`, without `data`. A system administrator can reset any use
 Persist one operation ID and reuse it when retrying the same reset, including after a process restart. This prevents a repeated request from clearing a later top-up. Use subtraction when an explicit amount should be removed from a child quota. The backend must support the reset endpoint before calling it.
 
 Version 2.1 retains legacy user and invoice models from 2.0 for compatibility with older deployments. These compatibility types do not change the current public API contract.
+
+## Provider data balances
+
+Available since 4.1.0. Authenticate with a superuser JWT or an API key owned by an active superuser.
+
+```ts
+const page = await client.providers.listDataBalances({ limit: 20 });
+for (const balance of page.results) {
+  console.log(balance.provider_name, balance.remaining_bytes, balance.history);
+}
+```
+
+Provider byte amounts are exact decimal **strings**, including history entries; calculated usage and remaining amounts can be `null`. The response includes observation and calculation times, freshness, errors, and recent checkpoint history. History is limited by the server's `PROVIDER_DATA_BALANCE_HISTORY_LIMIT` setting (default 10). Standard pagination applies to providers.
+
+Country, region, and city methods also support `includeAsns`. Set it to `true` to populate nested ASN arrays; omitted or false uses the API's empty-array default.

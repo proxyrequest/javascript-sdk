@@ -4,17 +4,17 @@
     "id": "javascript",
     "label": "JavaScript / TypeScript",
     "language": "TypeScript",
-    "version": "4.0.0",
+    "version": "4.1.0",
     "package": "@proxyrequest/sdk",
     "runtime": "Node.js 22 or later",
     "install": "npm install @proxyrequest/sdk",
     "openapi": {
-      "commit": "a2d72455d3b91a7d6be962f0e056f7d04fbd7f05",
+      "commit": "09dab1ad6f5ab4e879120074e55f817e58856a6f",
       "excludedOperations": ["sessions_destroy", "sessions_list"],
-      "operations": 82,
+      "operations": 83,
       "repository": "papaproxy/api",
-      "schemas": 133,
-      "sha256": "9a20a33711a9291dcba57046b1d2b4cf14b3eec506383a3986b0ac7a15f14c6e",
+      "schemas": 139,
+      "sha256": "b9106a09b1fadc44722b22afec3b37fe1f9839298e3878ac366268627ce78741",
       "source": "openapi.yml"
     }
   },
@@ -93,6 +93,11 @@
         {
           "name": "profile",
           "signature": "readonly profile: ProfileResource",
+          "description": ""
+        },
+        {
+          "name": "providers",
+          "signature": "readonly providers: ProvidersResource",
           "description": ""
         },
         {
@@ -4414,7 +4419,7 @@
           "operationId": "locations_cities_list",
           "name": "listCities",
           "summary": "List available cities",
-          "description": "Returns cities supported by the selected package, country, and region, including targetable ISPs and autonomous system numbers.",
+          "description": "Returns cities supported by the selected package, country, and region, including targetable ISPs. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "httpMethod": "GET",
           "path": "/locations/cities",
           "signatures": [
@@ -4449,6 +4454,17 @@
               "type": "string",
               "description": "",
               "example": "{country__code}",
+              "modelRefs": []
+            },
+            {
+              "name": "includeAsns",
+              "wireName": "include_asns",
+              "in": "query",
+              "required": false,
+              "type": "boolean",
+              "default": false,
+              "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
+              "example": false,
               "modelRefs": []
             },
             {
@@ -4590,7 +4606,7 @@
           "operationId": "locations_cities_retrieve",
           "name": "getCity",
           "summary": "Get a city",
-          "description": "Returns one city and its available network targeting options.",
+          "description": "Returns one city and its available network targeting options. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "httpMethod": "GET",
           "path": "/locations/cities/{id}",
           "signatures": [
@@ -4615,6 +4631,17 @@
               "type": "string",
               "description": "",
               "example": "550e8400-e29b-41d4-a716-446655440000",
+              "modelRefs": []
+            },
+            {
+              "name": "includeAsns",
+              "wireName": "include_asns",
+              "in": "query",
+              "required": false,
+              "type": "boolean",
+              "default": false,
+              "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
+              "example": false,
               "modelRefs": []
             },
             {
@@ -4974,7 +5001,7 @@
           "operationId": "locations_countries_list",
           "name": "listCountries",
           "summary": "List available countries",
-          "description": "Returns countries supported by the selected package, including targetable ISPs and autonomous system numbers when available.",
+          "description": "Returns countries supported by the selected package, including targetable ISPs. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "httpMethod": "GET",
           "path": "/locations/countries",
           "signatures": [
@@ -4999,6 +5026,17 @@
               "type": "string",
               "description": "",
               "example": "{code}",
+              "modelRefs": []
+            },
+            {
+              "name": "includeAsns",
+              "wireName": "include_asns",
+              "in": "query",
+              "required": false,
+              "type": "boolean",
+              "default": false,
+              "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
+              "example": false,
               "modelRefs": []
             },
             {
@@ -5130,7 +5168,7 @@
           "operationId": "locations_countries_retrieve",
           "name": "getCountry",
           "summary": "Get a country",
-          "description": "Returns one country and its available network targeting options.",
+          "description": "Returns one country and its available network targeting options. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "httpMethod": "GET",
           "path": "/locations/countries/{id}",
           "signatures": [
@@ -5155,6 +5193,17 @@
               "type": "string",
               "description": "",
               "example": "550e8400-e29b-41d4-a716-446655440000",
+              "modelRefs": []
+            },
+            {
+              "name": "includeAsns",
+              "wireName": "include_asns",
+              "in": "query",
+              "required": false,
+              "type": "boolean",
+              "default": false,
+              "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
+              "example": false,
               "modelRefs": []
             },
             {
@@ -5410,7 +5459,7 @@
           "operationId": "locations_regions_list",
           "name": "listRegions",
           "summary": "List available regions",
-          "description": "Returns regions supported by the selected package and country, including targetable ISPs and autonomous system numbers.",
+          "description": "Returns regions supported by the selected package and country, including targetable ISPs. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "httpMethod": "GET",
           "path": "/locations/regions",
           "signatures": [
@@ -5445,6 +5494,17 @@
               "type": "string",
               "description": "",
               "example": "{country__code}",
+              "modelRefs": []
+            },
+            {
+              "name": "includeAsns",
+              "wireName": "include_asns",
+              "in": "query",
+              "required": false,
+              "type": "boolean",
+              "default": false,
+              "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
+              "example": false,
               "modelRefs": []
             },
             {
@@ -5576,7 +5636,7 @@
           "operationId": "locations_regions_retrieve",
           "name": "getRegion",
           "summary": "Get a region",
-          "description": "Returns one region and its available network targeting options.",
+          "description": "Returns one region and its available network targeting options. The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "httpMethod": "GET",
           "path": "/locations/regions/{id}",
           "signatures": [
@@ -5601,6 +5661,17 @@
               "type": "string",
               "description": "",
               "example": "550e8400-e29b-41d4-a716-446655440000",
+              "modelRefs": []
+            },
+            {
+              "name": "includeAsns",
+              "wireName": "include_asns",
+              "in": "query",
+              "required": false,
+              "type": "boolean",
+              "default": false,
+              "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
+              "example": false,
               "modelRefs": []
             },
             {
@@ -7530,6 +7601,120 @@
           "example": {
             "language": "typescript",
             "code": "const result = await client.profile.changePassword({\n  body: {\n    \"old_password\": \"Correct-Horse-Battery-Staple-42\",\n    \"new_password1\": \"Correct-Horse-Battery-Staple-42\",\n    \"new_password2\": \"Correct-Horse-Battery-Staple-42\"\n  }\n});"
+          }
+        }
+      ]
+    },
+    {
+      "tag": "Providers",
+      "accessor": "providers",
+      "className": "ProvidersResource",
+      "description": "Read provider data balances and observation history. Superuser credentials required.",
+      "methods": [
+        {
+          "operationId": "providers_data_balances_list",
+          "name": "listDataBalances",
+          "summary": "List provider data balances",
+          "description": "Requires a JWT belonging to an active superuser or an API key owned by an active superuser, including requests using X-Impersonate-User. Returns one result per provider with recorded balances. The latest observation by observed_at is the baseline; available_bytes is that observation's balance, not a sum of purchased data. All byte amounts are decimal strings. Calculations are saved asynchronously; inspect freshness, error and calculated_at before using them. History is ordered by creation time descending and limited by PROVIDER_DATA_BALANCE_HISTORY_LIMIT (default 10). Pagination counts providers, not history entries.",
+          "httpMethod": "GET",
+          "path": "/providers/data-balances",
+          "signatures": [
+            {
+              "label": "Promise",
+              "signature": "client.providers.listDataBalances(options: ProvidersListDataBalancesOptions = {}): Promise<ProvidersListDataBalancesResponse>"
+            }
+          ],
+          "variants": [
+            {
+              "name": "listDataBalancesWithResponse",
+              "signature": "client.providers.listDataBalancesWithResponse(options): Promise<ApiResponse<ProvidersListDataBalancesResponse>>",
+              "description": "Returns response status, headers, ETag and idempotency metadata with the decoded data."
+            }
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "wireName": "limit",
+              "in": "query",
+              "required": false,
+              "type": "number",
+              "description": "Number of results to return per page.",
+              "example": 1,
+              "modelRefs": []
+            },
+            {
+              "name": "offset",
+              "wireName": "offset",
+              "in": "query",
+              "required": false,
+              "type": "number",
+              "description": "The initial index from which to return the results.",
+              "example": 1,
+              "modelRefs": []
+            },
+            {
+              "name": "acceptLanguage",
+              "wireName": "Accept-Language",
+              "in": "header",
+              "required": false,
+              "type": "string",
+              "default": "en",
+              "description": "Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English.",
+              "example": "en",
+              "modelRefs": []
+            }
+          ],
+          "body": null,
+          "returns": {
+            "type": "PaginatedProviderDataBalanceList",
+            "description": "The operation completed successfully.",
+            "modelRefs": ["PaginatedProviderDataBalanceList"]
+          },
+          "errors": [
+            {
+              "status": "400",
+              "description": "The request is malformed or violates a business rule."
+            },
+            {
+              "status": "401",
+              "description": "Authentication credentials are missing, expired, or invalid."
+            },
+            {
+              "status": "403",
+              "description": "The authenticated account cannot perform this operation."
+            }
+          ],
+          "throws": [
+            {
+              "type": "ApiError",
+              "description": "Normalized API, transport, and response processing failure.",
+              "conditions": [
+                {
+                  "kind": "kind: \"validation\"",
+                  "description": "The request arguments or business rules are invalid."
+                },
+                {
+                  "kind": "kind: \"authentication\"",
+                  "description": "Authentication credentials are missing, expired, or invalid."
+                },
+                {
+                  "kind": "kind: \"permission\"",
+                  "description": "The authenticated account cannot perform this operation."
+                },
+                {
+                  "kind": "kind: \"network\"",
+                  "description": "The request could not reach ProxyRequest."
+                },
+                {
+                  "kind": "kind: \"unexpected\"",
+                  "description": "The response could not be decoded or did not match the SDK contract."
+                }
+              ]
+            }
+          ],
+          "example": {
+            "language": "typescript",
+            "code": "const result = await client.providers.listDataBalances();"
           }
         }
       ]
@@ -10511,7 +10696,7 @@
           "name": "asns",
           "type": "LocationCodeName[]",
           "required": true,
-          "description": "",
+          "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "modelRefs": ["LocationCodeName"]
         }
       ]
@@ -10664,7 +10849,7 @@
           "name": "asns",
           "type": "LocationCodeName[]",
           "required": true,
-          "description": "",
+          "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "modelRefs": ["LocationCodeName"]
         }
       ]
@@ -11535,6 +11720,12 @@
           "modelRefs": ["FeedRecord"]
         }
       ]
+    },
+    {
+      "name": "FreshnessEnum",
+      "kind": "enum",
+      "description": "* `fresh` - fresh * `stale` - stale * `unavailable` - unavailable",
+      "fields": []
     },
     {
       "name": "GeneratedProxy",
@@ -13064,6 +13255,12 @@
       ]
     },
     {
+      "name": "NullEnum",
+      "kind": "enum",
+      "description": "",
+      "fields": []
+    },
+    {
       "name": "Order",
       "kind": "type",
       "description": "",
@@ -14205,6 +14402,41 @@
       ]
     },
     {
+      "name": "PaginatedProviderDataBalanceList",
+      "kind": "type",
+      "description": "",
+      "fields": [
+        {
+          "name": "count",
+          "type": "number",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "next",
+          "type": "string",
+          "required": false,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "previous",
+          "type": "string",
+          "required": false,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "results",
+          "type": "ProviderDataBalance[]",
+          "required": true,
+          "description": "",
+          "modelRefs": ["ProviderDataBalance"]
+        }
+      ]
+    },
+    {
       "name": "PaginatedRegionList",
       "kind": "type",
       "description": "",
@@ -14839,6 +15071,146 @@
       "fields": []
     },
     {
+      "name": "ProviderBalanceCheckpoint",
+      "kind": "type",
+      "description": "",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "available_bytes",
+          "type": "string",
+          "required": true,
+          "description": "Observed balance in bytes, as a decimal string.",
+          "modelRefs": []
+        },
+        {
+          "name": "observed_at",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "created",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        }
+      ]
+    },
+    {
+      "name": "ProviderDataBalance",
+      "kind": "type",
+      "description": "",
+      "fields": [
+        {
+          "name": "checkpoint_id",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "provider_id",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "provider_name",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "observed_at",
+          "type": "string",
+          "required": true,
+          "description": "Time the available balance was observed.",
+          "modelRefs": []
+        },
+        {
+          "name": "available_bytes",
+          "type": "string",
+          "required": true,
+          "description": "Observed balance in bytes, as a decimal string.",
+          "modelRefs": []
+        },
+        {
+          "name": "used_bytes",
+          "type": "string",
+          "required": true,
+          "description": "Calculated usage since the observation, in bytes.",
+          "modelRefs": []
+        },
+        {
+          "name": "remaining_bytes",
+          "type": "string",
+          "required": true,
+          "description": "Remaining bytes at calculated_at, as a decimal string.",
+          "modelRefs": []
+        },
+        {
+          "name": "remaining_percent",
+          "type": "number",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "severity",
+          "type": "SeverityEnum | NullEnum",
+          "required": true,
+          "description": "",
+          "modelRefs": ["SeverityEnum", "NullEnum"]
+        },
+        {
+          "name": "freshness",
+          "type": "FreshnessEnum",
+          "required": true,
+          "description": "",
+          "modelRefs": ["FreshnessEnum"]
+        },
+        {
+          "name": "error",
+          "type": "string",
+          "required": true,
+          "description": "",
+          "modelRefs": []
+        },
+        {
+          "name": "calculated_at",
+          "type": "string",
+          "required": true,
+          "description": "Time of the last successful calculation.",
+          "modelRefs": []
+        },
+        {
+          "name": "history",
+          "type": "ProviderBalanceCheckpoint[]",
+          "required": true,
+          "description": "Latest entries by creation time, limited by PROVIDER_DATA_BALANCE_HISTORY_LIMIT (default 10).",
+          "modelRefs": ["ProviderBalanceCheckpoint"]
+        }
+      ]
+    },
+    {
       "name": "ProxyGenerationConnectionRequest",
       "kind": "type",
       "description": "",
@@ -15059,7 +15431,7 @@
           "name": "asns",
           "type": "LocationCodeName[]",
           "required": true,
-          "description": "",
+          "description": "The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format.",
           "modelRefs": ["LocationCodeName"]
         }
       ]
@@ -15377,6 +15749,12 @@
           "modelRefs": ["PaymentGateway"]
         }
       ]
+    },
+    {
+      "name": "SeverityEnum",
+      "kind": "enum",
+      "description": "* `warning` - warning * `danger` - danger",
+      "fields": []
     },
     {
       "name": "SignUpRequest",
