@@ -32,8 +32,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -181,8 +181,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -463,8 +463,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -610,8 +610,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -843,8 +843,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -1185,8 +1185,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -1535,8 +1535,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -1889,8 +1889,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -2213,8 +2213,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -2394,8 +2394,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -2679,8 +2679,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -2715,8 +2715,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -2939,8 +2939,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -3371,8 +3371,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -3397,8 +3397,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -3615,8 +3615,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -3923,8 +3923,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -4239,8 +4239,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -4489,8 +4489,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -4802,8 +4802,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -4938,8 +4938,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -5101,8 +5101,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -5219,8 +5219,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -5349,8 +5349,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -5494,8 +5494,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -5726,25 +5726,31 @@ paths:
               $ref: '#/components/headers/ContentLanguage'
     post:
       operationId: invoices_create
-      description: 'Calculates package pricing and initializes the selected payment
-        provider when required. The status defaults to `pending`. Creating an already-paid
-        invoice by setting `status` to `paid` requires a superuser or an active superuser''s
-        API key (Static or Bearer), including requests using `X-Impersonate-User`.
-        Other authenticated users receive a 403 response. During API-key impersonation,
-        the invoice recipient and user_id access rules are still determined by the
-        impersonated user. For wallet payments, omit `status`: the invoice is created
-        as pending and becomes paid after the balance is debited successfully. For
-        your own billing system, confirm payment on your backend before sending gateway=manual
-        and status=paid with a superuser credential. Sending user_id also requires
-        is_reseller; omit user_id for a purchase by the caller. Sub-users cannot create
-        invoices themselves. A paid package purchase creates or tops up the recipient''s
-        order for that package. Repeated purchases reuse the order. Finite expiring
-        purchases have separate data ledgers; compatible non-expiring purchases and
-        unlimited packages may reuse a ledger. This is different from assigning a
-        child quota with /users/{id}/data/add. An amount-only invoice tops up money,
-        not data. Persist the invoice ID and use Idempotency-Key for retries. Before
-        delivering access, read the paid invoice and the resulting order: fulfillment
-        can be recovered asynchronously. Accounting webhooks do not include invoice.paid.'
+      description: 'Validates package and purchase details, calculates package pricing
+        unless a superuser supplies `price_total`, and initializes the selected payment
+        provider when required. `price_total` is the final amount in the smallest
+        currency unit, including tax and discounts; it also sets the credit for a
+        balance invoice. It requires a superuser or an active superuser''s API key
+        (Static or Bearer), including during API-key impersonation, and cannot be
+        combined with `coupon_code`. Other authenticated users receive a 403 response.
+        The status defaults to `pending`. Creating an already-paid invoice by setting
+        `status` to `paid` requires a superuser or an active superuser''s API key
+        (Static or Bearer), including requests using `X-Impersonate-User`. Other authenticated
+        users receive a 403 response. During API-key impersonation, the invoice recipient
+        and user_id access rules are still determined by the impersonated user. For
+        wallet payments, omit `status`: the invoice is created as pending and becomes
+        paid after the balance is debited successfully. For your own billing system,
+        confirm payment on your backend before sending gateway=manual and status=paid
+        with a superuser credential. Sending user_id also requires is_reseller; omit
+        user_id for a purchase by the caller. Sub-users cannot create invoices themselves.
+        A paid package purchase creates or tops up the recipient''s order for that
+        package. Repeated purchases reuse the order. Finite expiring purchases have
+        separate data ledgers; compatible non-expiring purchases and unlimited packages
+        may reuse a ledger. This is different from assigning a child quota with /users/{id}/data/add.
+        An amount-only invoice tops up money, not data. Persist the invoice ID and
+        use Idempotency-Key for retries. Before delivering access, read the paid invoice
+        and the resulting order: fulfillment can be recovered asynchronously. Accounting
+        webhooks do not include invoice.paid.'
       summary: Create an invoice
       tags:
       - Invoices
@@ -5760,6 +5766,13 @@ paths:
                   data: 10737418240
                   gateway: stripe
                 summary: Purchase residential data
+              CreateAnInvoiceAtAnExplicitTotal(superuserOnly):
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  price_total: 2100
+                  gateway: manual
+                summary: Create an invoice at an explicit total (superuser only)
               CreateAnAlready-paidInvoice(superuserOrSuperuserAPIKey):
                 value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
@@ -5790,6 +5803,13 @@ paths:
                   data: 10737418240
                   gateway: stripe
                 summary: Purchase residential data
+              CreateAnInvoiceAtAnExplicitTotal(superuserOnly):
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  price_total: 2100
+                  gateway: manual
+                summary: Create an invoice at an explicit total (superuser only)
               CreateAnAlready-paidInvoice(superuserOrSuperuserAPIKey):
                 value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
@@ -5820,6 +5840,13 @@ paths:
                   data: 10737418240
                   gateway: stripe
                 summary: Purchase residential data
+              CreateAnInvoiceAtAnExplicitTotal(superuserOnly):
+                value:
+                  package_id: 550e8400-e29b-41d4-a716-446655440002
+                  data: 10737418240
+                  price_total: 2100
+                  gateway: manual
+                summary: Create an invoice at an explicit total (superuser only)
               CreateAnAlready-paidInvoice(superuserOrSuperuserAPIKey):
                 value:
                   user_id: 550e8400-e29b-41d4-a716-446655440001
@@ -6104,8 +6131,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -6131,8 +6158,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -6427,8 +6454,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -6646,8 +6673,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -6808,8 +6835,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -7022,8 +7049,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -7235,8 +7262,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -7414,8 +7441,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -7632,8 +7659,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -7782,8 +7809,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -8004,8 +8031,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -8176,8 +8203,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -8391,8 +8418,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -8590,8 +8617,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -8767,8 +8794,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -9029,8 +9056,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -9168,8 +9195,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -9267,8 +9294,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -9314,8 +9341,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -9505,8 +9532,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -9699,8 +9726,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -9930,8 +9957,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -10229,8 +10256,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -10489,8 +10516,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -10531,6 +10558,9 @@ paths:
                       pricing_unit: data
                       billing_cycle: 1
                       billing_model: {}
+                      is_unlimited_data: true
+                      billing_unlimited: 1
+                      price_requires_configuration: true
                       commission_rate: commission rate
                       commission_type: flexible
                       targeting_options:
@@ -10704,8 +10734,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -10966,8 +10996,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -11169,8 +11199,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -11323,8 +11353,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -11479,8 +11509,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -11653,8 +11683,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -11837,8 +11867,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -11966,8 +11996,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -12128,8 +12158,304 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
+        examples:
+          German:
+            value: de
+          Weighted:
+            value: fr-CA, fr;q=0.9, en;q=0.5
+  /profile/social-accounts:
+    get:
+      operationId: profileSocialAccounts
+      description: Returns social sign-in connections and unlink restrictions for
+        the signed-in account.
+      summary: List social account connections
+      tags:
+      - Profile
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialAccountState'
+              examples:
+                example:
+                  summary: Example response
+                  value:
+                  - provider: discord
+                    linked: true
+                    can_unlink: true
+                    unlink_block_reason: unlink block reason
+          description: The operation completed successfully.
+        '400':
+          description: The request is malformed or violates a business rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Validation error
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '401':
+          description: Authentication credentials are missing, expired, or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Authentication required
+                  value:
+                    detail: Authentication credentials were not provided.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '403':
+          description: The authenticated account cannot perform this operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Permission denied
+                  value:
+                    detail: You do not have permission to perform this action.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        schema:
+          type: string
+          default: en
+        description: 'Preferred language for human-readable API errors. Supported
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
+        examples:
+          German:
+            value: de
+          Weighted:
+            value: fr-CA, fr;q=0.9, en;q=0.5
+  /profile/social-accounts/google:
+    post:
+      operationId: profileConnectGoogle
+      description: Connect a verified Google identity to the signed-in account after
+        confirming its password.
+      summary: Connect Google to the signed-in account
+      tags:
+      - Profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleConnectRequestRequest'
+            examples:
+              example:
+                summary: Example request
+                value:
+                  credential: credential
+                  password: Correct-Horse-Battery-Staple-42
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GoogleConnectRequestRequest'
+            examples:
+              example:
+                summary: Example request
+                value:
+                  credential: credential
+                  password: Correct-Horse-Battery-Staple-42
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GoogleConnectRequestRequest'
+            examples:
+              example:
+                summary: Example request
+                value:
+                  credential: credential
+                  password: Correct-Horse-Battery-Staple-42
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialAccountState'
+              examples:
+                example:
+                  summary: Example response
+                  value:
+                  - provider: discord
+                    linked: true
+                    can_unlink: true
+                    unlink_block_reason: unlink block reason
+          description: The operation completed successfully.
+        '400':
+          description: The request is malformed or violates a business rule.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Validation error
+                  value:
+                    non_field_errors:
+                    - The request could not be processed.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '401':
+          description: Authentication credentials are missing, expired, or invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Authentication required
+                  value:
+                    detail: Authentication credentials were not provided.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+        '403':
+          description: The authenticated account cannot perform this operation.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Validation and API error payload. Field names may be
+                  added dynamically; field errors are returned as arrays of human-readable
+                  messages.
+                properties:
+                  detail:
+                    type: string
+                  non_field_errors:
+                    type: array
+                    items:
+                      type: string
+                additionalProperties:
+                  oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              examples:
+                example:
+                  summary: Permission denied
+                  value:
+                    detail: You do not have permission to perform this action.
+          headers:
+            Content-Language:
+              $ref: '#/components/headers/ContentLanguage'
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        schema:
+          type: string
+          default: en
+        description: 'Preferred language for human-readable API errors. Supported
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -12168,8 +12494,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -12529,8 +12855,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -12628,8 +12954,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -12751,8 +13077,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -12879,8 +13205,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -12938,8 +13264,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -13207,8 +13533,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -13324,8 +13650,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -13349,8 +13675,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -13679,8 +14005,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -13817,8 +14143,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -13890,8 +14216,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -14408,8 +14734,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -14435,8 +14761,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -14618,8 +14944,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -14927,8 +15253,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -15162,8 +15488,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -15460,8 +15786,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -15753,8 +16079,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -16069,8 +16395,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -16293,8 +16619,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -16498,8 +16824,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -16841,8 +17167,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -16867,8 +17193,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -17059,8 +17385,8 @@ paths:
           type: string
           default: en
         description: 'Preferred language for human-readable API errors. Supported
-          languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags
-          and quality weights are accepted; unsupported or omitted values use English.'
+          languages: en, ru, uk, de, it, fr, es. Regional language tags and quality
+          weights are accepted; unsupported or omitted values use English.'
         examples:
           German:
             value: de
@@ -17657,9 +17983,6 @@ components:
           readOnly: true
         value:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -17677,8 +18000,6 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
-          maximum: 2147483647
-          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -17720,7 +18041,8 @@ components:
           maxLength: 64
         data:
           type: integer
-          minimum: 1
+          minimum: 0
+          description: Bytes; zero only for an unlimited Residential package.
       required:
       - coupon_code
       - data
@@ -17729,9 +18051,6 @@ components:
       properties:
         value:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -17755,8 +18074,6 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
-          maximum: 2147483647
-          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -17849,9 +18166,6 @@ components:
           readOnly: true
         value:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -17869,8 +18183,6 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
-          maximum: 2147483647
-          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -17930,9 +18242,6 @@ components:
       properties:
         value:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -17957,8 +18266,6 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
-          maximum: 2147483647
-          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -18270,6 +18577,22 @@ components:
           maxLength: 50
       required:
       - credential
+    GoogleConnectRequestRequest:
+      type: object
+      properties:
+        credential:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 16384
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          maxLength: 128
+      required:
+      - credential
+      - password
     ISP:
       type: object
       properties:
@@ -18376,13 +18699,11 @@ components:
             be left blank.
         connection_limit:
           type: integer
-          maximum: 2147483647
           minimum: -1
           description: The maximum number of concurrent connections allowed for this
             package.
         quantity:
           type: integer
-          maximum: 2147483647
           minimum: 0
           description: The number of proxies to assign.
         data:
@@ -18583,9 +18904,10 @@ components:
         data:
           type: integer
           description: Residential proxy data to purchase, in integer bytes (1 GiB
-            = 1073741824). Required with package_id for a residential purchase. A
-            paid purchase funds the recipient's order; it is not a virtual allocation
-            from a parent pool.
+            = 1073741824). Use 0 for an unlimited Residential package; its fixed price
+            is not multiplied by volume. Required with package_id for a residential
+            purchase. A paid purchase funds the recipient's order; it is not a virtual
+            allocation from a parent pool.
         quantity:
           type: integer
           description: Number of static proxies to purchase.
@@ -18594,6 +18916,16 @@ components:
           description: Account balance amount to purchase, in the smallest currency
             unit. Use for a wallet top-up without package_id, not for buying proxy
             data.
+        price_total:
+          type: integer
+          maximum: 10000000000
+          minimum: 1
+          format: int64
+          description: Optional final invoice total in the smallest currency unit,
+            including tax and discounts. For a balance invoice, this is also the balance
+            credit and takes precedence over amount. Only superusers or active superuser
+            API keys may supply it, including during API-key impersonation; coupon_code
+            cannot be supplied with price_total.
         connection_limit:
           type: integer
           minimum: -1
@@ -19000,12 +19332,11 @@ components:
             data.'
         data_spent:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
           format: int64
-          title: Data Spent (bytes)
-          description: Total bytes consumed from this order's data allowance so far.
-            Updated in real time as the customer uses the proxy.
+          readOnly: true
+          description: 'Integer bytes. Root order: its own usage plus usage of existing
+            linked child orders, including inactive ones. Deleted child orders are
+            excluded. Child order: its own usage.'
         ledgers:
           type: array
           items:
@@ -19017,9 +19348,6 @@ components:
             order.
         latest_data_top_up:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           title: Latest Top-up (bytes)
           description: Amount of data added to this order in bytes during the most
             recent top-up.
@@ -19046,6 +19374,7 @@ components:
       required:
       - created
       - data_remaining
+      - data_spent
       - data_updated
       - is_auto_renewal
       - ledgers
@@ -19121,12 +19450,11 @@ components:
             parent pool.'
         data_spent:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
           format: int64
-          title: Data Spent (bytes)
-          description: Total bytes consumed from this order's data allowance so far.
-            Updated in real time as the customer uses the proxy.
+          readOnly: true
+          description: 'Integer bytes. Root order: its own usage plus usage of existing
+            linked child orders, including inactive ones. Deleted child orders are
+            excluded. Child order: its own usage.'
         ledgers:
           type: array
           items:
@@ -19136,9 +19464,6 @@ components:
             orders. Not a complete history, and array position is not spending priority.
         latest_data_top_up:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           title: Latest Top-up (bytes)
           description: Amount of data added to this order in bytes during the most
             recent top-up.
@@ -19162,6 +19487,7 @@ components:
             Leave blank for orders that do not expire.
       required:
       - data_remaining
+      - data_spent
       - data_updated
       - is_auto_renewal
       - ledgers
@@ -19238,7 +19564,6 @@ components:
           $ref: '#/components/schemas/ProxyTypeEnum'
         order:
           type: integer
-          maximum: 2147483647
           minimum: 0
           description: Display order in the UI. Lower values appear first.
         is_continent_targeting:
@@ -19296,6 +19621,20 @@ components:
           type: object
           additionalProperties: {}
           readOnly: true
+        is_unlimited_data:
+          type: boolean
+          title: Unlimited Data
+          description: When enabled, users on this package have no data cap. The proxy
+            will not enforce any bandwidth limit.
+        billing_unlimited:
+          type: integer
+          minimum: 0
+          title: Unlimited Price
+          description: Price charged for unlimited data access on this package. Set
+            to 0 to disable unlimited option.
+        price_requires_configuration:
+          type: boolean
+          readOnly: true
         commission_rate:
           type: string
           format: decimal
@@ -19321,6 +19660,7 @@ components:
       - billing_model
       - features
       - name
+      - price_requires_configuration
       - targeting_options
     PackageCommission:
       type: object
@@ -19861,9 +20201,6 @@ components:
       properties:
         value:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -19888,8 +20225,6 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
-          maximum: 2147483647
-          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -20238,6 +20573,15 @@ components:
       - remaining_percent
       - severity
       - used_bytes
+    ProviderEnum:
+      enum:
+      - discord
+      - google
+      - meta
+      - twitter
+      type: string
+      description: '* `discord` - discord * `google` - google * `meta` - meta * `twitter`
+        - twitter'
     ProxyGenerationConnectionRequest:
       type: object
       properties:
@@ -20268,10 +20612,10 @@ components:
       properties:
         ttl:
           type: integer
-          default: 3600
+          default: 600
           description: Sticky session lifetime in seconds. The accepted range is configured
             per deployment.
-          minimum: 30
+          minimum: 1
           maximum: 86400
     ProxyGenerationTargetingRequest:
       type: object
@@ -20426,7 +20770,6 @@ components:
           readOnly: true
         balance:
           type: integer
-          maximum: 2147483647
           minimum: 0
           title: Balance (cents)
         data:
@@ -20620,6 +20963,22 @@ components:
       - email
       - password
       - token
+    SocialAccountState:
+      type: object
+      properties:
+        provider:
+          $ref: '#/components/schemas/ProviderEnum'
+        linked:
+          type: boolean
+        can_unlink:
+          type: boolean
+        unlink_block_reason:
+          type: string
+      required:
+      - can_unlink
+      - linked
+      - provider
+      - unlink_block_reason
     SubtractDataRequest:
       type: object
       properties:
@@ -20957,7 +21316,6 @@ components:
           maxLength: 150
         balance:
           type: integer
-          maximum: 2147483647
           minimum: 0
         language:
           $ref: '#/components/schemas/LanguageEnum'
@@ -21008,7 +21366,6 @@ components:
           readOnly: true
         connection_limit:
           type: integer
-          maximum: 2147483647
           minimum: -1
           description: The maximum number of concurrent connections allowed for this
             package.

@@ -37,6 +37,7 @@ export type GeneratedProxy = components["schemas"]["GeneratedProxy"];
 export type GenerateProxyRequest = components["schemas"]["GenerateProxyRequest"];
 export type GenerateProxyResponse = components["schemas"]["GenerateProxyResponse"];
 export type GoogleAuthRequest = components["schemas"]["GoogleAuthRequest"];
+export type GoogleConnectRequestRequest = components["schemas"]["GoogleConnectRequestRequest"];
 export type Invoice = components["schemas"]["Invoice"];
 export type InvoiceCreateRequestGatewayEnum =
   components["schemas"]["InvoiceCreateRequestGatewayEnum"];
@@ -108,6 +109,7 @@ export type PricingUnitEnum = components["schemas"]["PricingUnitEnum"];
 export type ProtocolEnum = components["schemas"]["ProtocolEnum"];
 export type ProviderBalanceCheckpoint = components["schemas"]["ProviderBalanceCheckpoint"];
 export type ProviderDataBalance = components["schemas"]["ProviderDataBalance"];
+export type ProviderEnum = components["schemas"]["ProviderEnum"];
 export type ProxyGenerationConnectionRequest =
   components["schemas"]["ProxyGenerationConnectionRequest"];
 export type ProxyGenerationSessionRequest = components["schemas"]["ProxyGenerationSessionRequest"];
@@ -128,6 +130,7 @@ export type SettingsReferral = components["schemas"]["SettingsReferral"];
 export type SettingsResponse = components["schemas"]["SettingsResponse"];
 export type SeverityEnum = components["schemas"]["SeverityEnum"];
 export type SignUpRequest = components["schemas"]["SignUpRequest"];
+export type SocialAccountState = components["schemas"]["SocialAccountState"];
 export type SubtractDataRequest = components["schemas"]["SubtractDataRequest"];
 export type TargetingOptions = components["schemas"]["TargetingOptions"];
 export type TelegramConnectionResponse = components["schemas"]["TelegramConnectionResponse"];

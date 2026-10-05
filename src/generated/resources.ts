@@ -2455,6 +2455,31 @@ export type ProfileChangePasswordResponse = OperationResult<
   operations["profile_change_password_create"]
 >;
 
+export interface ProfileListSocialAccountsOptions {
+  acceptLanguage?: OperationParameter<
+    operations["profileSocialAccounts"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type ProfileListSocialAccountsResponse = OperationResult<
+  operations["profileSocialAccounts"]
+>;
+
+export interface ProfileConnectGoogleOptions {
+  acceptLanguage?: OperationParameter<
+    operations["profileConnectGoogle"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["profileConnectGoogle"]>;
+  request?: RequestControls;
+}
+
+export type ProfileConnectGoogleResponse = OperationResult<operations["profileConnectGoogle"]>;
+
 export class ProfileResource {
   readonly #client: ResourceClient;
 
@@ -2658,6 +2683,57 @@ export class ProfileResource {
         operationId: "profile_change_password_create",
         method: "POST",
         path: "/profile/change-password",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List social account connections */
+  async listSocialAccounts(
+    options: ProfileListSocialAccountsOptions = {},
+  ): Promise<ProfileListSocialAccountsResponse> {
+    return (await this.listSocialAccountsWithResponse(options)).data;
+  }
+
+  /** List social account connections; include response metadata. */
+  async listSocialAccountsWithResponse(
+    options: ProfileListSocialAccountsOptions = {},
+  ): Promise<ApiResponse<ProfileListSocialAccountsResponse>> {
+    return this.#client._callWithResponse<ProfileListSocialAccountsResponse>(
+      {
+        operationId: "profileSocialAccounts",
+        method: "GET",
+        path: "/profile/social-accounts",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Connect Google to the signed-in account */
+  async connectGoogle(options: ProfileConnectGoogleOptions): Promise<ProfileConnectGoogleResponse> {
+    return (await this.connectGoogleWithResponse(options)).data;
+  }
+
+  /** Connect Google to the signed-in account; include response metadata. */
+  async connectGoogleWithResponse(
+    options: ProfileConnectGoogleOptions,
+  ): Promise<ApiResponse<ProfileConnectGoogleResponse>> {
+    return this.#client._callWithResponse<ProfileConnectGoogleResponse>(
+      {
+        operationId: "profileConnectGoogle",
+        method: "POST",
+        path: "/profile/social-accounts/google",
       },
       {
         headers: {

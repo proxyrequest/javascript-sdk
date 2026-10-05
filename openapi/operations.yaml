@@ -77,6 +77,8 @@ operations:
   profile_2fa_setup_create: setup_two_factor
   profile_2fa_status_retrieve: get_two_factor_status
   profile_change_password_create: change_password
+  profileSocialAccounts: list_social_accounts
+  profileConnectGoogle: connect_google
   providers_data_balances_list: list_data_balances
   proxies_generate_create: generate
   recover_password_create: recover_password

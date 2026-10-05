@@ -382,7 +382,7 @@ export interface paths {
     put?: never;
     /**
      * Create an invoice
-     * @description Calculates package pricing and initializes the selected payment provider when required. The status defaults to `pending`. Creating an already-paid invoice by setting `status` to `paid` requires a superuser or an active superuser's API key (Static or Bearer), including requests using `X-Impersonate-User`. Other authenticated users receive a 403 response. During API-key impersonation, the invoice recipient and user_id access rules are still determined by the impersonated user. For wallet payments, omit `status`: the invoice is created as pending and becomes paid after the balance is debited successfully. For your own billing system, confirm payment on your backend before sending gateway=manual and status=paid with a superuser credential. Sending user_id also requires is_reseller; omit user_id for a purchase by the caller. Sub-users cannot create invoices themselves. A paid package purchase creates or tops up the recipient's order for that package. Repeated purchases reuse the order. Finite expiring purchases have separate data ledgers; compatible non-expiring purchases and unlimited packages may reuse a ledger. This is different from assigning a child quota with /users/{id}/data/add. An amount-only invoice tops up money, not data. Persist the invoice ID and use Idempotency-Key for retries. Before delivering access, read the paid invoice and the resulting order: fulfillment can be recovered asynchronously. Accounting webhooks do not include invoice.paid.
+     * @description Validates package and purchase details, calculates package pricing unless a superuser supplies `price_total`, and initializes the selected payment provider when required. `price_total` is the final amount in the smallest currency unit, including tax and discounts; it also sets the credit for a balance invoice. It requires a superuser or an active superuser's API key (Static or Bearer), including during API-key impersonation, and cannot be combined with `coupon_code`. Other authenticated users receive a 403 response. The status defaults to `pending`. Creating an already-paid invoice by setting `status` to `paid` requires a superuser or an active superuser's API key (Static or Bearer), including requests using `X-Impersonate-User`. Other authenticated users receive a 403 response. During API-key impersonation, the invoice recipient and user_id access rules are still determined by the impersonated user. For wallet payments, omit `status`: the invoice is created as pending and becomes paid after the balance is debited successfully. For your own billing system, confirm payment on your backend before sending gateway=manual and status=paid with a superuser credential. Sending user_id also requires is_reseller; omit user_id for a purchase by the caller. Sub-users cannot create invoices themselves. A paid package purchase creates or tops up the recipient's order for that package. Repeated purchases reuse the order. Finite expiring purchases have separate data ledgers; compatible non-expiring purchases and unlimited packages may reuse a ledger. This is different from assigning a child quota with /users/{id}/data/add. An amount-only invoice tops up money, not data. Persist the invoice ID and use Idempotency-Key for retries. Before delivering access, read the paid invoice and the resulting order: fulfillment can be recovered asynchronously. Accounting webhooks do not include invoice.paid.
      */
     post: operations["invoices_create"];
     delete?: never;
@@ -945,6 +945,46 @@ export interface paths {
      * @description Verifies the current password, applies the new password, and keeps the current authenticated session active.
      */
     post: operations["profile_change_password_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/social-accounts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List social account connections
+     * @description Returns social sign-in connections and unlink restrictions for the signed-in account.
+     */
+    get: operations["profileSocialAccounts"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/social-accounts/google": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Connect Google to the signed-in account
+     * @description Connect a verified Google identity to the signed-in account after confirming its password.
+     */
+    post: operations["profileConnectGoogle"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1518,14 +1558,12 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /**
-       * Format: int64
-       * @description Arbitrary coupon value
-       */
+      /** @description Arbitrary coupon value */
       value: number;
     };
     CouponCalculatePriceRequest: {
       coupon_code: string;
+      /** @description Bytes; zero only for an unlimited Residential package. */
       data: number;
       /** Format: uuid */
       package_id?: string;
@@ -1561,10 +1599,7 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /**
-       * Format: int64
-       * @description Arbitrary coupon value
-       */
+      /** @description Arbitrary coupon value */
       value: number;
     };
     CouponPriceResponse: {
@@ -1626,10 +1661,7 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /**
-       * Format: int64
-       * @description Arbitrary coupon value
-       */
+      /** @description Arbitrary coupon value */
       value: number;
     };
     CouponStats: {
@@ -1675,10 +1707,7 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /**
-       * Format: int64
-       * @description Arbitrary coupon value
-       */
+      /** @description Arbitrary coupon value */
       value: number;
     };
     /** @description A purchased data bucket, not a complete transaction history. Finite purchases with an expiration have separate buckets. Compatible non-expiring top-ups and unlimited packages may reuse an existing bucket. */
@@ -1809,6 +1838,10 @@ export interface components {
       referral_code?: string;
       /** @description User selection method */
       select_by?: string;
+    };
+    GoogleConnectRequestRequest: {
+      credential: string;
+      password: string;
     };
     Invoice: {
       /**
@@ -1960,7 +1993,7 @@ export interface components {
       country_code?: string;
       coupon_code?: string;
       crypto_currency?: string;
-      /** @description Residential proxy data to purchase, in integer bytes (1 GiB = 1073741824). Required with package_id for a residential purchase. A paid purchase funds the recipient's order; it is not a virtual allocation from a parent pool. */
+      /** @description Residential proxy data to purchase, in integer bytes (1 GiB = 1073741824). Use 0 for an unlimited Residential package; its fixed price is not multiplied by volume. Required with package_id for a residential purchase. A paid purchase funds the recipient's order; it is not a virtual allocation from a parent pool. */
       data?: number;
       /** @description Optional future expiration as a Unix timestamp in seconds, not milliseconds. Otherwise a positive package billing cycle determines the purchased data's expiration from the payment date; a zero cycle has no automatic expiration. A later purchase does not extend earlier finite, expiring ledgers. */
       expires?: number;
@@ -1972,6 +2005,11 @@ export interface components {
       package_id?: string;
       /** @description ISO 4217 currency charged by a regional fiat provider. */
       payment_currency?: string;
+      /**
+       * Format: int64
+       * @description Optional final invoice total in the smallest currency unit, including tax and discounts. For a balance invoice, this is also the balance credit and takes precedence over amount. Only superusers or active superuser API keys may supply it, including during API-key impersonation; coupon_code cannot be supplied with price_total.
+       */
+      price_total?: number;
       /** @description Number of static proxies to purchase. */
       quantity?: number;
       /**
@@ -2260,11 +2298,10 @@ export interface components {
       /** @description Integer bytes. Root order: sum of usable ledger balances, not data minus data_spent. Virtual child order: max(data - data_spent, 0), a personal quota that does not guarantee the parent still has usable data. */
       readonly data_remaining: number;
       /**
-       * Data Spent (bytes)
        * Format: int64
-       * @description Total bytes consumed from this order's data allowance so far. Updated in real time as the customer uses the proxy.
+       * @description Integer bytes. Root order: its own usage plus usage of existing linked child orders, including inactive ones. Deleted child orders are excluded. Child order: its own usage.
        */
-      data_spent?: number;
+      readonly data_spent: number;
       /**
        * Last Used
        * Format: date-time
@@ -2274,7 +2311,6 @@ export interface components {
       readonly is_auto_renewal: boolean;
       /**
        * Latest Top-up (bytes)
-       * Format: int64
        * @description Amount of data added to this order in bytes during the most recent top-up.
        */
       latest_data_top_up?: number;
@@ -2320,11 +2356,10 @@ export interface components {
       /** @description Integer bytes. Root order: sum of usable ledger balances. Virtual child order: max(data - data_spent, 0); access also needs a usable parent pool. */
       readonly data_remaining: number;
       /**
-       * Data Spent (bytes)
        * Format: int64
-       * @description Total bytes consumed from this order's data allowance so far. Updated in real time as the customer uses the proxy.
+       * @description Integer bytes. Root order: its own usage plus usage of existing linked child orders, including inactive ones. Deleted child orders are excluded. Child order: its own usage.
        */
-      data_spent?: number;
+      readonly data_spent: number;
       /**
        * Last Used
        * Format: date-time
@@ -2344,7 +2379,6 @@ export interface components {
       readonly is_auto_renewal: boolean;
       /**
        * Latest Top-up (bytes)
-       * Format: int64
        * @description Amount of data added to this order in bytes during the most recent top-up.
        */
       latest_data_top_up?: number;
@@ -2406,6 +2440,11 @@ export interface components {
         [key: string]: unknown;
       };
       /**
+       * Unlimited Price
+       * @description Price charged for unlimited data access on this package. Set to 0 to disable unlimited option.
+       */
+      billing_unlimited?: number;
+      /**
        * Commission Rate (%)
        * Format: decimal
        * @description Reseller commission rate as a percentage of the sale price. Applies to all purchases of this package. 10.00 → 10 percent commission on every purchase
@@ -2442,10 +2481,16 @@ export interface components {
        * @description Allow users to target a specific region in their proxy username. Requires country targeting to be enabled. country-us-region-california
        */
       is_region_targeting?: boolean;
+      /**
+       * Unlimited Data
+       * @description When enabled, users on this package have no data cap. The proxy will not enforce any bandwidth limit.
+       */
+      is_unlimited_data?: boolean;
       /** @description Unique display name for this package shown to customers and in the admin. Residential Starter Business Pro */
       name: string;
       /** @description Display order in the UI. Lower values appear first. */
       order?: number;
+      readonly price_requires_configuration: boolean;
       /** @description Pricing model applied when customers purchase data on this package. Fixed a fixed price per data amount — 10 GB for $10, 50 GB for $50 Range tiered pricing where the unit price decreases as quantity increases * `fixed` - Fixed * `range` - Range */
       pricing?: components["schemas"]["PricingEnum"];
       /** @description Unit customers purchase — determines how the billing model amounts are interpreted. * `data` - Data * `proxy` - Proxy */
@@ -2816,10 +2861,7 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /**
-       * Format: int64
-       * @description Arbitrary coupon value
-       */
+      /** @description Arbitrary coupon value */
       value?: number;
     };
     PatchedOrderAutoRenewalRequest: {
@@ -2970,6 +3012,11 @@ export interface components {
       /** @description Calculated usage since the observation, in bytes. */
       used_bytes: string | null;
     };
+    /**
+     * @description * `discord` - discord * `google` - google * `meta` - meta * `twitter` - twitter
+     * @enum {string}
+     */
+    ProviderEnum: "discord" | "google" | "meta" | "twitter";
     ProxyGenerationConnectionRequest: {
       /**
        * @description Connection string format.
@@ -2989,7 +3036,7 @@ export interface components {
     ProxyGenerationSessionRequest: {
       /**
        * @description Sticky session lifetime in seconds. The accepted range is configured per deployment.
-       * @default 3600
+       * @default 600
        */
       ttl: number;
     };
@@ -3149,6 +3196,12 @@ export interface components {
       referral_code?: string;
       /** @description Cloudflare Turnstile security token */
       token: string;
+    };
+    SocialAccountState: {
+      can_unlink: boolean;
+      linked: boolean;
+      provider: components["schemas"]["ProviderEnum"];
+      unlink_block_reason: string;
     };
     SubtractDataRequest: {
       /** @description Positive integer bytes to remove from assigned quota, not from usage. Cannot exceed total assigned data. Does not credit the parent's pool. */
@@ -3517,7 +3570,7 @@ export interface operations {
         offset?: number;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -3590,7 +3643,7 @@ export interface operations {
         offset?: number;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -3658,7 +3711,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -3743,7 +3796,7 @@ export interface operations {
         type?: number;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -3853,7 +3906,7 @@ export interface operations {
         user_id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -3961,7 +4014,7 @@ export interface operations {
         user_id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -4073,7 +4126,7 @@ export interface operations {
         user_id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -4188,7 +4241,7 @@ export interface operations {
         user_id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -4288,7 +4341,7 @@ export interface operations {
         user_id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -4376,7 +4429,7 @@ export interface operations {
         offset?: number;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -4444,7 +4497,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -4518,7 +4571,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -4633,7 +4686,7 @@ export interface operations {
         type?: "free_data" | "monetary" | "percentage";
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -4701,7 +4754,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -4796,7 +4849,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -4884,7 +4937,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Strong ETag from the latest representation of this resource. */
         "If-Match"?: string;
@@ -4997,7 +5050,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -5119,7 +5172,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Strong ETag from the latest representation of this resource. */
         "If-Match"?: string;
@@ -5242,7 +5295,7 @@ export interface operations {
         type?: "free_data" | "monetary" | "percentage";
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -5328,7 +5381,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -5402,7 +5455,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -5470,7 +5523,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -5536,7 +5589,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -5610,7 +5663,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -5733,7 +5786,7 @@ export interface operations {
         user__id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -5801,7 +5854,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -5912,7 +5965,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -6000,7 +6053,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -6122,7 +6175,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -6208,7 +6261,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -6310,7 +6363,7 @@ export interface operations {
         search?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -6395,7 +6448,7 @@ export interface operations {
         search?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -6468,7 +6521,7 @@ export interface operations {
         package_id: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -6566,7 +6619,7 @@ export interface operations {
         search?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -6637,7 +6690,7 @@ export interface operations {
         package_id: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -6737,7 +6790,7 @@ export interface operations {
         search?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -6810,7 +6863,7 @@ export interface operations {
         package_id: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -6909,7 +6962,7 @@ export interface operations {
         search?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -6993,7 +7046,7 @@ export interface operations {
         search?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7066,7 +7119,7 @@ export interface operations {
         package_id: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -7151,7 +7204,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7204,7 +7257,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7272,7 +7325,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7325,7 +7378,7 @@ export interface operations {
         search?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7408,7 +7461,7 @@ export interface operations {
         user__id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7476,7 +7529,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -7564,7 +7617,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -7686,7 +7739,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Strong ETag from the latest representation of this resource. */
         "If-Match"?: string;
@@ -7813,7 +7866,7 @@ export interface operations {
         type?: "residential" | "static";
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7893,7 +7946,7 @@ export interface operations {
         type?: "residential" | "static";
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -7961,7 +8014,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8031,7 +8084,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Strong ETag from the latest representation of this resource. */
         "If-Match"?: string;
@@ -8116,7 +8169,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Strong ETag from the latest representation of this resource. */
         "If-Match"?: string;
@@ -8211,7 +8264,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8285,7 +8338,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8359,7 +8412,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8433,7 +8486,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8501,7 +8554,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8571,6 +8624,148 @@ export interface operations {
       };
     };
   };
+  profileSocialAccounts: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SocialAccountState"][];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  profileConnectGoogle: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GoogleConnectRequestRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["GoogleConnectRequestRequest"];
+        "multipart/form-data": components["schemas"]["GoogleConnectRequestRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SocialAccountState"][];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
   providers_data_balances_list: {
     parameters: {
       query?: {
@@ -8580,7 +8775,7 @@ export interface operations {
         offset?: number;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8648,7 +8843,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8737,7 +8932,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8781,7 +8976,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8840,7 +9035,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8910,7 +9105,7 @@ export interface operations {
         user__id?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -8978,7 +9173,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -9050,7 +9245,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -9133,7 +9328,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -9206,7 +9401,7 @@ export interface operations {
         username?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -9274,7 +9469,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -9369,7 +9564,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -9457,7 +9652,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -9579,7 +9774,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Strong ETag from the latest representation of this resource. */
         "If-Match"?: string;
@@ -9692,7 +9887,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -9803,7 +9998,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -9914,7 +10109,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -10035,7 +10230,7 @@ export interface operations {
         username?: string;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -10121,7 +10316,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -10218,7 +10413,7 @@ export interface operations {
         offset?: number;
       };
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path?: never;
@@ -10286,7 +10481,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
@@ -10381,7 +10576,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
       };
       path: {
@@ -10469,7 +10664,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es, zh-hans, ja. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
         /** @description Stable key for one logical mutation. Successful responses are replayable for 24 hours; reusing a key with a different request returns 409. */
         "Idempotency-Key"?: string;
