@@ -34,6 +34,27 @@ function mocked(responses: Response[]) {
 }
 
 describe("backend compatibility", () => {
+  it.each([undefined, 0, 2375, 10_000_000_000])(
+    "preserves explicit invoice total %s on the wire",
+    async (total) => {
+      const { client, requests } = mocked([Response.json(fixtures.invoice_full, { status: 201 })]);
+      await client.invoices.create({
+        body: {
+          gateway: "manual",
+          status: "paid",
+          data: 1_073_741_824,
+          ...(total === undefined ? {} : { price_total: total }),
+        },
+      });
+      const sent = await requests[0]?.json();
+      if (total === undefined) {
+        expect(sent).not.toHaveProperty("price_total");
+      } else {
+        expect(sent.price_total).toBe(total);
+      }
+    },
+  );
+
   it.each(["feed", "domains"] as const)(
     "decodes backend analytics/%s responses",
     async (endpoint) => {

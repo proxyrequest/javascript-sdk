@@ -4,7 +4,7 @@
     "id": "javascript",
     "label": "JavaScript / TypeScript",
     "language": "TypeScript",
-    "version": "4.2.0",
+    "version": "4.2.1",
     "package": "@proxyrequest/sdk",
     "runtime": "Node.js 22 or later",
     "install": "npm install @proxyrequest/sdk",
@@ -14,7 +14,7 @@
       "operations": 85,
       "repository": "papaproxy/api",
       "schemas": 142,
-      "sha256": "08b890bf82142b5a60d198ef7cf53f5cbc073e8f4a44b7b7994b7a49baae4a88",
+      "sha256": "44538b2e5f651dc95ff0883b62239bb06b8803caf537d78e5a815e289a6545e5",
       "source": "openapi.yml"
     }
   },
@@ -2708,7 +2708,7 @@
           ],
           "example": {
             "language": "typescript",
-            "code": "const result = await client.coupons.create({\n  body: {\n    \"value\": 1,\n    \"type\": \"free_data\"\n  }\n});"
+            "code": "const result = await client.coupons.create({\n  body: {\n    \"value\": -9223372036854776000,\n    \"type\": \"free_data\"\n  }\n});"
           }
         },
         {
@@ -2940,7 +2940,7 @@
           ],
           "example": {
             "language": "typescript",
-            "code": "const result = await client.coupons.replace({\n  id: \"550e8400-e29b-41d4-a716-446655440000\",\n  body: {\n    \"value\": 1,\n    \"type\": \"free_data\"\n  }\n});"
+            "code": "const result = await client.coupons.replace({\n  id: \"550e8400-e29b-41d4-a716-446655440000\",\n  body: {\n    \"value\": -9223372036854776000,\n    \"type\": \"free_data\"\n  }\n});"
           }
         },
         {
@@ -12453,7 +12453,7 @@
           "name": "price_total",
           "type": "number",
           "required": false,
-          "description": "Optional final invoice total in the smallest currency unit, including tax and discounts. For a balance invoice, this is also the balance credit and takes precedence over amount. Only superusers or active superuser API keys may supply it, including during API-key impersonation; coupon_code cannot be supplied with price_total.",
+          "description": "Optional final invoice total in the smallest currency unit, including tax and discounts. Zero is allowed for a free product purchase. For a balance invoice, this is also the balance credit, must satisfy the balance top-up limits, and takes precedence over amount. Only superusers or active superuser API keys may supply it, including zero and during API-key impersonation; coupon_code cannot be supplied with price_total.",
           "modelRefs": []
         },
         {

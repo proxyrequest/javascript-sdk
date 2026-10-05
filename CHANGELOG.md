@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## 4.2.1 (2026-10-05)
+
+- Allow an explicit zero invoice total for free product purchases; setting any explicit total requires superuser authorization.
+- Restore PostgreSQL integer bounds and int64 formats in the bundled OpenAPI contract and regenerate the SDK.
+
 ## 4.2.0 (2026-10-05)
 
 - Add the optional priceTotal invoice creation field.

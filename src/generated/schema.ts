@@ -1558,7 +1558,10 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /** @description Arbitrary coupon value */
+      /**
+       * Format: int64
+       * @description Arbitrary coupon value
+       */
       value: number;
     };
     CouponCalculatePriceRequest: {
@@ -1599,7 +1602,10 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /** @description Arbitrary coupon value */
+      /**
+       * Format: int64
+       * @description Arbitrary coupon value
+       */
       value: number;
     };
     CouponPriceResponse: {
@@ -1661,7 +1667,10 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /** @description Arbitrary coupon value */
+      /**
+       * Format: int64
+       * @description Arbitrary coupon value
+       */
       value: number;
     };
     CouponStats: {
@@ -1707,7 +1716,10 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /** @description Arbitrary coupon value */
+      /**
+       * Format: int64
+       * @description Arbitrary coupon value
+       */
       value: number;
     };
     /** @description A purchased data bucket, not a complete transaction history. Finite purchases with an expiration have separate buckets. Compatible non-expiring top-ups and unlimited packages may reuse an existing bucket. */
@@ -2007,7 +2019,7 @@ export interface components {
       payment_currency?: string;
       /**
        * Format: int64
-       * @description Optional final invoice total in the smallest currency unit, including tax and discounts. For a balance invoice, this is also the balance credit and takes precedence over amount. Only superusers or active superuser API keys may supply it, including during API-key impersonation; coupon_code cannot be supplied with price_total.
+       * @description Optional final invoice total in the smallest currency unit, including tax and discounts. Zero is allowed for a free product purchase. For a balance invoice, this is also the balance credit, must satisfy the balance top-up limits, and takes precedence over amount. Only superusers or active superuser API keys may supply it, including zero and during API-key impersonation; coupon_code cannot be supplied with price_total.
        */
       price_total?: number;
       /** @description Number of static proxies to purchase. */
@@ -2311,6 +2323,7 @@ export interface components {
       readonly is_auto_renewal: boolean;
       /**
        * Latest Top-up (bytes)
+       * Format: int64
        * @description Amount of data added to this order in bytes during the most recent top-up.
        */
       latest_data_top_up?: number;
@@ -2379,6 +2392,7 @@ export interface components {
       readonly is_auto_renewal: boolean;
       /**
        * Latest Top-up (bytes)
+       * Format: int64
        * @description Amount of data added to this order in bytes during the most recent top-up.
        */
       latest_data_top_up?: number;
@@ -2861,7 +2875,10 @@ export interface components {
        * @description Leave empty for coupons that never expire
        */
       valid_until?: string | null;
-      /** @description Arbitrary coupon value */
+      /**
+       * Format: int64
+       * @description Arbitrary coupon value
+       */
       value?: number;
     };
     PatchedOrderAutoRenewalRequest: {

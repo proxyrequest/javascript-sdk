@@ -17983,6 +17983,9 @@ components:
           readOnly: true
         value:
           type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -18000,6 +18003,8 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
+          maximum: 2147483647
+          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -18051,6 +18056,9 @@ components:
       properties:
         value:
           type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -18074,6 +18082,8 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
+          maximum: 2147483647
+          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -18166,6 +18176,9 @@ components:
           readOnly: true
         value:
           type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -18183,6 +18196,8 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
+          maximum: 2147483647
+          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -18242,6 +18257,9 @@ components:
       properties:
         value:
           type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -18266,6 +18284,8 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
+          maximum: 2147483647
+          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -18699,11 +18719,13 @@ components:
             be left blank.
         connection_limit:
           type: integer
+          maximum: 2147483647
           minimum: -1
           description: The maximum number of concurrent connections allowed for this
             package.
         quantity:
           type: integer
+          maximum: 2147483647
           minimum: 0
           description: The number of proxies to assign.
         data:
@@ -18919,13 +18941,14 @@ components:
         price_total:
           type: integer
           maximum: 10000000000
-          minimum: 1
+          minimum: 0
           format: int64
           description: Optional final invoice total in the smallest currency unit,
-            including tax and discounts. For a balance invoice, this is also the balance
-            credit and takes precedence over amount. Only superusers or active superuser
-            API keys may supply it, including during API-key impersonation; coupon_code
-            cannot be supplied with price_total.
+            including tax and discounts. Zero is allowed for a free product purchase.
+            For a balance invoice, this is also the balance credit, must satisfy the
+            balance top-up limits, and takes precedence over amount. Only superusers
+            or active superuser API keys may supply it, including zero and during
+            API-key impersonation; coupon_code cannot be supplied with price_total.
         connection_limit:
           type: integer
           minimum: -1
@@ -19348,6 +19371,9 @@ components:
             order.
         latest_data_top_up:
           type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
           title: Latest Top-up (bytes)
           description: Amount of data added to this order in bytes during the most
             recent top-up.
@@ -19464,6 +19490,9 @@ components:
             orders. Not a complete history, and array position is not spending priority.
         latest_data_top_up:
           type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
           title: Latest Top-up (bytes)
           description: Amount of data added to this order in bytes during the most
             recent top-up.
@@ -19564,6 +19593,7 @@ components:
           $ref: '#/components/schemas/ProxyTypeEnum'
         order:
           type: integer
+          maximum: 2147483647
           minimum: 0
           description: Display order in the UI. Lower values appear first.
         is_continent_targeting:
@@ -19628,6 +19658,7 @@ components:
             will not enforce any bandwidth limit.
         billing_unlimited:
           type: integer
+          maximum: 2147483647
           minimum: 0
           title: Unlimited Price
           description: Price charged for unlimited data access on this package. Set
@@ -20201,6 +20232,9 @@ components:
       properties:
         value:
           type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
           description: Arbitrary coupon value
         code:
           type: string
@@ -20225,6 +20259,8 @@ components:
           $ref: '#/components/schemas/CouponTypeEnum'
         limit:
           type: integer
+          maximum: 2147483647
+          minimum: -2147483648
           description: Number of times coupon can be used
         valid_until:
           type: string
@@ -20770,6 +20806,7 @@ components:
           readOnly: true
         balance:
           type: integer
+          maximum: 2147483647
           minimum: 0
           title: Balance (cents)
         data:
@@ -21316,6 +21353,7 @@ components:
           maxLength: 150
         balance:
           type: integer
+          maximum: 2147483647
           minimum: 0
         language:
           $ref: '#/components/schemas/LanguageEnum'
@@ -21366,6 +21404,7 @@ components:
           readOnly: true
         connection_limit:
           type: integer
+          maximum: 2147483647
           minimum: -1
           description: The maximum number of concurrent connections allowed for this
             package.
