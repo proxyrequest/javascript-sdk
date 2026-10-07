@@ -386,3 +386,5 @@ for (const balance of page.results) {
 Provider byte amounts are exact decimal **strings**, including history entries; calculated usage and remaining amounts can be `null`. The response includes observation and calculation times, freshness, errors, and recent checkpoint history. History is limited by the server's `PROVIDER_DATA_BALANCE_HISTORY_LIMIT` setting (default 10). Standard pagination applies to providers.
 
 Country, region, and city methods also support `includeAsns`. Set it to `true` to populate nested ASN arrays; omitted or false uses the API's empty-array default.
+
+`locations.listAsns({ packageId, includeGeo: true })` includes country, region, and city scopes in each ASN's `geo` list. Without `includeGeo`, `geo` is empty; `country_codes` still lists the available country codes.

@@ -464,7 +464,7 @@ export interface paths {
     };
     /**
      * List available autonomous systems
-     * @description Returns targetable ASNs for the selected package. Geo-scoped records include the country, region, or city where the ASN can be selected.
+     * @description Returns targetable ASNs for the selected package. The geo field is empty unless include_geo=true; then it contains targetable geographic scopes.
      */
     get: operations["locations_asn_list"];
     put?: never;
@@ -2205,7 +2205,8 @@ export interface components {
     };
     LocationASNRecord: {
       code: string;
-      geo?: components["schemas"]["LocationASNGeoItem"][];
+      country_codes: string[];
+      geo: components["schemas"]["LocationASNGeoItem"][];
       name: string;
     };
     LocationCodeName: {
@@ -6367,6 +6368,8 @@ export interface operations {
         country__code?: string;
         /** @description Set to true to return only globally targetable ASNs. */
         global?: boolean;
+        /** @description Include geographic scopes for each ASN. By default geo is an empty list. */
+        include_geo?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
         name?: string;

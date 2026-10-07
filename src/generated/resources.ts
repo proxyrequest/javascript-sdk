@@ -1455,6 +1455,7 @@ export interface LocationsListAsnsOptions {
   code?: OperationParameter<operations["locations_asn_list"], "query", "code">;
   countryCode?: OperationParameter<operations["locations_asn_list"], "query", "country__code">;
   global?: OperationParameter<operations["locations_asn_list"], "query", "global">;
+  includeGeo?: OperationParameter<operations["locations_asn_list"], "query", "include_geo">;
   limit?: OperationParameter<operations["locations_asn_list"], "query", "limit">;
   name?: OperationParameter<operations["locations_asn_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_asn_list"], "query", "offset">;
@@ -1670,6 +1671,7 @@ export class LocationsResource {
           code: options.code,
           country__code: options.countryCode,
           global: options.global,
+          include_geo: options.includeGeo,
           limit: options.limit,
           name: options.name,
           offset: options.offset,

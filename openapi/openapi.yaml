@@ -6984,8 +6984,8 @@ paths:
   /locations/asn:
     get:
       operationId: locations_asn_list
-      description: Returns targetable ASNs for the selected package. Geo-scoped records
-        include the country, region, or city where the ASN can be selected.
+      description: Returns targetable ASNs for the selected package. The geo field is
+        empty unless include_geo=true; then it contains targetable geographic scopes.
       summary: List available autonomous systems
       parameters:
       - in: query
@@ -7001,6 +7001,16 @@ paths:
         schema:
           type: boolean
         description: Set to true to return only globally targetable ASNs.
+      - in: query
+        name: include_geo
+        schema:
+          type: boolean
+          default: false
+        description: Include geographic scopes for each ASN. By default geo is an empty list.
+        examples:
+          IncludeASNGeography:
+            value: true
+            summary: Include ASN geography
       - name: limit
         required: false
         in: query
@@ -7076,16 +7086,9 @@ paths:
                     results:
                     - code: '7922'
                       name: Comcast Cable Communications
-                      geo:
-                      - country:
-                          code: us
-                          name: United States
-                        region:
-                          code: california
-                          name: California
-                        city:
-                          code: los_angeles
-                          name: Los Angeles
+                      country_codes:
+                      - us
+                      geo: []
                   summary: Available ASNs
           description: The operation completed successfully.
         '400':
@@ -19084,12 +19087,18 @@ components:
           type: string
         name:
           type: string
+        country_codes:
+          type: array
+          items:
+            type: string
         geo:
           type: array
           items:
             $ref: '#/components/schemas/LocationASNGeoItem'
       required:
       - code
+      - country_codes
+      - geo
       - name
     LocationCodeName:
       type: object
