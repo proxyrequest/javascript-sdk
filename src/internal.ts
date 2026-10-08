@@ -3,6 +3,8 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export interface RequestControls {
   /** Cancel this individual request. */
   signal?: AbortSignal;
+  /** Act as this reseller for this request only. Requires a superuser Static API key. */
+  impersonateUserId?: string;
   /** Merge additional headers into this request. */
   headers?: HeadersInit;
   /** Override the client timeout for this request. Set to 0 to disable it. */
