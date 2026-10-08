@@ -19,7 +19,7 @@ import {
 } from "./pagination.js";
 
 export const DEFAULT_BASE_URL = "https://api.proxyrequest.com/api/v1";
-export const SDK_VERSION = "4.3.0";
+export const SDK_VERSION = "4.4.0";
 
 export interface ClientCommonOptions {
   baseUrl?: string;
@@ -153,6 +153,12 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
   ): Promise<ApiResponse<Result>> {
     const controls = data.request ?? {};
     const controlHeaders = new Headers(controls.headers);
+    if (controls.impersonateUserId !== undefined) {
+      if (typeof controls.impersonateUserId !== "string" || !controls.impersonateUserId.trim()) {
+        throw new TypeError("impersonateUserId must be a non-empty user ID.");
+      }
+      controlHeaders.set("X-Impersonate-User", controls.impersonateUserId);
+    }
     const parameterKey = stringHeader(data.headers?.["Idempotency-Key"]);
     const controlKey = controlHeaders.get("Idempotency-Key") ?? undefined;
     const idempotencyKey = spec.idempotent

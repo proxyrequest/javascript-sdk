@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## 4.4.0 (2026-10-08)
+
+- Add optional `impersonateUserId` to request controls for every SDK operation. It sets `X-Impersonate-User` for that request only, so concurrent ordinary and impersonated calls can share one client.
+- Reject blank IDs before sending a request, and document the per-call usage pattern. Existing requests keep their behavior.
+- Keep the exported `SDK_VERSION` aligned with the npm package version.
+
 ## 4.3.0 (2026-10-07)
 
 - Add `includeGeo` to `locations.listAsns()`. Set it to `true` to request country, region, and city scopes in each ASN's `geo` list; the API returns an empty list by default.

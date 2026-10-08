@@ -2,6 +2,25 @@ import { describe, expect, it, vi } from "vitest";
 import { ApiError, FileDownload, ProxyRequestClient } from "../src/index.js";
 
 describe("ProxyRequestClient", () => {
+  it("scopes impersonation to each request on a shared client", async () => {
+    const headers: Array<string | null> = [];
+    const client = ProxyRequestClient.withApiKey("superuser-key", {
+      fetch: async (input, init) => {
+        headers.push(new Request(input, init).headers.get("X-Impersonate-User"));
+        return Response.json({ count: 0, next: null, previous: null, results: [] });
+      },
+    });
+
+    await Promise.all([
+      client.users.list({ request: { impersonateUserId: "reseller-1" } }),
+      client.users.list(),
+      client.users.list({ request: { impersonateUserId: "reseller-2" } }),
+    ]);
+    await client.users.list();
+
+    expect(headers).toEqual(["reseller-1", null, "reseller-2", null]);
+  });
+
   it("applies Static auth, language, path parameters and query parameters", async () => {
     const requests: Request[] = [];
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {

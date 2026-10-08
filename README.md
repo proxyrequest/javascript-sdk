@@ -356,6 +356,22 @@ The repository also has a real Chromium smoke test via `npm run test:browser`.
 
 [MIT](LICENSE)
 
+## Per-call reseller impersonation
+
+Pass `impersonateUserId` through a call's `request` controls. It applies to
+that request only, so one client can make scoped and ordinary calls, including
+concurrently.
+
+```typescript
+const child = await client.users.get({
+  id: childId,
+  request: { impersonateUserId: resellerId },
+});
+const admin = await client.users.get({ id: adminId });
+```
+
+The API key must have permission to impersonate the selected reseller.
+
 ## Reset remaining data (SDK 2.1.0+)
 
 ```typescript
