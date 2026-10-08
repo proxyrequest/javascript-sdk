@@ -30,7 +30,7 @@ describe("generated SDK reference", () => {
     };
     const methods = manifest.resources.flatMap((resource) => resource.methods);
     expect(manifest.schemaVersion).toBe(3);
-    expect(manifest.sdk.version).toBe("4.3.0");
+    expect(manifest.sdk.version).toBe("4.4.0");
     expect(methods).toHaveLength(
       manifest.sdk.openapi.operations - manifest.sdk.openapi.excludedOperations.length,
     );
