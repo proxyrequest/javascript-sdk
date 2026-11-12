@@ -84,6 +84,6 @@ jobs:
           fi
       - run: npm install --global npm@11.19.0
       - name: Publish locally tested package
-        run: npm publish dist/*.tgz --access public --provenance --ignore-scripts
+        run: npm publish ./dist/*.tgz --access public --provenance --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
