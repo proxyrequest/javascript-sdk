@@ -1,6 +1,12 @@
 name: Publish to npm
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Tag with locally tested release assets
+        required: true
+        type: string
   push:
     tags:
       - "v*"
@@ -11,6 +17,7 @@ permissions:
 
 jobs:
   publish:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: npm
     steps:
@@ -47,5 +54,36 @@ jobs:
           fi
       - name: Publish public package with provenance
         run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-local-artifacts:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download locally tested release artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.tgz' --dir dist
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Enable OIDC when no bootstrap token is configured
+        env:
+          BOOTSTRAP_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [[ -z "${BOOTSTRAP_NPM_TOKEN}" ]]; then
+            sed -i '/:_authToken=/d' "${NPM_CONFIG_USERCONFIG}"
+          fi
+      - run: npm install --global npm@11.19.0
+      - name: Publish locally tested package
+        run: npm publish dist/*.tgz --access public --provenance --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
