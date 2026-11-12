@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+
+## 4.4.1 (2026-11-12)
+
+- Document administrative traffic grants and debits for independent customers through the existing add/subtract methods. This capability requires the corresponding PapaProxy API update.
+- Refresh the bundled contract documentation while preserving request fields, response types and existing method signatures.
+- Synchronize the SDK version and User-Agent with this patch release.
+
 ## 4.4.0 (2026-10-08)
 
 - Add optional `impersonateUserId` to request controls for every SDK operation. It sets `X-Impersonate-User` for that request only, so concurrent ordinary and impersonated calls can share one client.

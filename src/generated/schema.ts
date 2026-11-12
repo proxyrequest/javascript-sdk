@@ -1233,8 +1233,8 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Add data to a sub-user order
-     * @description Adds data integer bytes to a managed sub-user's virtual quota for package_id and returns the updated order. Both fields are required. The caller must own a root order for this package and the target sub-user. Creates the child order if absent; an existing independently purchased order cannot be converted by this operation. The allocation does not reserve or debit the parent's ledger, and may exceed its remaining data. Actual traffic needs both personal quota and a usable parent pool. Use Idempotency-Key to avoid granting the same quota twice.
+     * Add data to a managed user order
+     * @description Superusers may grant data to independent customers, creating a missing finite residential order without an invoice. Adds integer bytes to a managed sub-user for package_id. Both fields are required. The caller must own a root order for this package and the target sub-user. For a new order, is_reseller=false transfers available traffic from the parent into independent child ledgers, preserving each expiration date. Insufficient parent traffic is rejected atomically. For is_reseller=true, the virtual quota does not reserve parent traffic and may exceed the parent's remaining pool; usage still requires that pool. Existing orders keep their accounting model after role changes. Use Idempotency-Key for safe retries.
      */
     post: operations["users_data_add_create"];
     delete?: never;
@@ -1273,8 +1273,8 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Subtract data from a sub-user order
-     * @description Subtracts data from the assigned quota of a managed virtual child order in integer bytes for package_id. Both fields are required. This is not a refund or a transfer back into the parent's ledger, and does not erase data_spent. The amount cannot exceed the total assigned data; reducing the quota below usage can stop the child's access. An independently purchased order is not managed through this allocation endpoint. Use Idempotency-Key for safe retries.
+     * Subtract data from a managed user order
+     * @description Superusers may remove available unexpired data from independent customers without changing usage or money. Subtracts integer bytes from a managed sub-user for package_id. Both fields are required. An independently funded order returns only its available, unexpired traffic to the parent, preserving expiration dates; the amount cannot exceed that remaining balance. For a virtual child order, this only reduces assigned quota and does not credit the shared parent pool. Neither operation erases usage: it does not erase data_spent. Use Idempotency-Key for safe retries.
      */
     post: operations["users_data_subtract_create"];
     delete?: never;

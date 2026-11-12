@@ -4,6 +4,7 @@
   "operations": 85,
   "repository": "papaproxy/api",
   "schemas": 142,
-  "sha256": "b787e51bd6b990ad492a97c3ff09d823a6d3269855fb46ddc82a02a2becaac9d",
-  "source": "openapi.yml"
+  "sha256": "d7dbafaa536ef9828b542a4eb2639693d69d8e7cbcce21534360ebc93a006d94",
+  "source": "openapi.yml",
+  "localChanges": ["Independent customer add/subtract; existing wire types unchanged"]
 }
