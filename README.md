@@ -404,3 +404,7 @@ Provider byte amounts are exact decimal **strings**, including history entries; 
 Country, region, and city methods also support `includeAsns`. Set it to `true` to populate nested ASN arrays; omitted or false uses the API's empty-array default.
 
 `locations.listAsns({ packageId, includeGeo: true })` includes country, region, and city scopes in each ASN's `geo` list. Without `includeGeo`, `geo` is empty; `country_codes` still lists the available country codes.
+
+## Local independent-customer traffic extension
+
+See [independent customer traffic](docs/independent-customer-traffic.md) for the additive backend behavior of existing data methods. This extension has not been published.

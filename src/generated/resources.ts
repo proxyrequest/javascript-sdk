@@ -3422,12 +3422,12 @@ export class UsersResource {
     );
   }
 
-  /** Add data to a sub-user order */
+  /** Add data to a managed user order */
   async addData(options: UsersAddDataOptions): Promise<UsersAddDataResponse> {
     return (await this.addDataWithResponse(options)).data;
   }
 
-  /** Add data to a sub-user order; include response metadata. */
+  /** Add data to a managed user order; include response metadata. */
   async addDataWithResponse(
     options: UsersAddDataOptions,
   ): Promise<ApiResponse<UsersAddDataResponse>> {
@@ -3452,12 +3452,12 @@ export class UsersResource {
     );
   }
 
-  /** Subtract data from a sub-user order */
+  /** Subtract data from a managed user order */
   async subtractData(options: UsersSubtractDataOptions): Promise<UsersSubtractDataResponse> {
     return (await this.subtractDataWithResponse(options)).data;
   }
 
-  /** Subtract data from a sub-user order; include response metadata. */
+  /** Subtract data from a managed user order; include response metadata. */
   async subtractDataWithResponse(
     options: UsersSubtractDataOptions,
   ): Promise<ApiResponse<UsersSubtractDataResponse>> {
