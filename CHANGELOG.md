@@ -5,6 +5,13 @@ All notable changes to this project are documented here. The format follows [Kee
 ## [Unreleased]
 
 
+## 4.4.2 (2026-11-15)
+
+- Correct the independent-customer traffic guide in the README: support was documented in SDK 4.4.1 and requires the corresponding PapaProxy API update.
+- Consolidate the pending documentation branch with the latest SDK main, retaining per-request reseller impersonation and all existing request and response contracts.
+- Synchronize package, client and generated reference version metadata for this patch release.
+
+
 ## 4.4.1 (2026-11-12)
 
 - Document administrative traffic grants and debits for independent customers through the existing add/subtract methods. This capability requires the corresponding PapaProxy API update.

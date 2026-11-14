@@ -407,4 +407,4 @@ Country, region, and city methods also support `includeAsns`. Set it to `true` t
 
 ## Local independent-customer traffic extension
 
-See [independent customer traffic](docs/independent-customer-traffic.md) for the additive backend behavior of existing data methods. This extension has not been published.
+See [independent customer traffic](docs/independent-customer-traffic.md) for the additive backend behavior of existing data methods. SDK 4.4.1 and later document this capability; it requires the corresponding PapaProxy API update.
