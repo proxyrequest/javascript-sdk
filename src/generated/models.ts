@@ -141,6 +141,7 @@ export type PaginatedUserList = components["schemas"]["PaginatedUserList"];
 export type PaginatedWebhookListList = components["schemas"]["PaginatedWebhookListList"];
 export type PasswordRecoveryResponse = components["schemas"]["PasswordRecoveryResponse"];
 export type PasswordResetInputRequest = components["schemas"]["PasswordResetInputRequest"];
+export type PasswordRotationStatusEnum = components["schemas"]["PasswordRotationStatusEnum"];
 export type PatchedCouponUpdateRequest = components["schemas"]["PatchedCouponUpdateRequest"];
 export type PatchedEndpointUpdateRequest = components["schemas"]["PatchedEndpointUpdateRequest"];
 export type PatchedOrderAutoRenewalRequest =

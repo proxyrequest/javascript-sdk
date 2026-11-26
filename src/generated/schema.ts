@@ -978,7 +978,7 @@ export interface paths {
     put?: never;
     /**
      * Rotate the password for a static rental order
-     * @description Rotate the password for an owned static rental order. Read the rental again to obtain the new credentials.
+     * @description Rotate all supported credentials in the order, or select the shared credential group of one endpoint. Supplier resets return 202. Poll the endpoint password_rotation_status and read the new credentials after success.
      */
     post: operations["orders_proxy_password_reset_create"];
     delete?: never;
@@ -2594,6 +2594,9 @@ export interface components {
       label?: string;
       readonly max_bandwidth_mbps: number | null;
       readonly order_id: string;
+      password_rotation_status?:
+        | (components["schemas"]["PasswordRotationStatusEnum"] | components["schemas"]["NullEnum"])
+        | null;
       readonly periods: components["schemas"]["Period"][];
     };
     EndpointPage: {
@@ -3974,6 +3977,11 @@ export interface components {
     PasswordResetInputRequest:
       | components["schemas"]["ResetPasswordRequest"]
       | components["schemas"]["ProxyPasswordResetRequestRequest"];
+    /**
+     * @description * `pending` - pending * `running` - running * `unknown` - unknown * `succeeded` - succeeded * `failed` - failed
+     * @enum {string}
+     */
+    PasswordRotationStatusEnum: "pending" | "running" | "unknown" | "succeeded" | "failed";
     PatchedCouponUpdateRequest: {
       /** @description Coupon code cannot be changed if already set */
       code?: string;
@@ -4449,6 +4457,9 @@ export interface components {
       label?: string;
       readonly max_bandwidth_mbps: number | null;
       readonly order_id: string;
+      password_rotation_status?:
+        | (components["schemas"]["PasswordRotationStatusEnum"] | components["schemas"]["NullEnum"])
+        | null;
       readonly periods: components["schemas"]["Period"][];
       ready: boolean;
       renewable: boolean;
@@ -11158,7 +11169,10 @@ export interface operations {
   };
   orders_proxy_password_reset_create: {
     parameters: {
-      query?: never;
+      query?: {
+        /** @description Select one credential group. */
+        endpoint_id?: string;
+      };
       header?: {
         /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
         "Accept-Language"?: string;
@@ -11172,6 +11186,15 @@ export interface operations {
     responses: {
       /** @description The operation completed successfully. */
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProxyPasswordResetResponse"];
+        };
+      };
+      /** @description Password rotation was queued. Read the rental endpoint to check its status. */
+      202: {
         headers: {
           [name: string]: unknown;
         };
@@ -13641,6 +13664,15 @@ export interface operations {
     responses: {
       /** @description The operation completed successfully. */
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProxyPasswordResetResponse"];
+        };
+      };
+      /** @description Password rotation was queued. Read the rental endpoint to check its status. */
+      202: {
         headers: {
           [name: string]: unknown;
         };

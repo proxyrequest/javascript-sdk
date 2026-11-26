@@ -3079,6 +3079,11 @@ export type OrdersQuoteCheckoutResponse = OperationResult<
 >;
 
 export interface OrdersResetProxyPasswordOptions {
+  endpointId?: OperationParameter<
+    operations["orders_proxy_password_reset_create"],
+    "query",
+    "endpoint_id"
+  >;
   id: OperationParameter<operations["orders_proxy_password_reset_create"], "path", "id">;
   acceptLanguage?: OperationParameter<
     operations["orders_proxy_password_reset_create"],
@@ -3586,6 +3591,9 @@ export class OrdersResource {
       {
         path: {
           id: options.id,
+        },
+        query: {
+          endpoint_id: options.endpointId,
         },
         headers: {
           "Accept-Language": options.acceptLanguage,

@@ -36,3 +36,23 @@ it("reuses a legacy purchase key for the header and preserves the error code", a
     idempotencyKey: requestBody.idempotency_key,
   });
 });
+
+it.each([200, 202])("returns HTTP %i for shared and provider password resets", async (status) => {
+  const endpointId = status === 202 ? "78b4ccde-49a7-4e1d-99ce-b56b875d8a11" : undefined;
+  const client = ProxyRequestClient.withApiKey("synthetic", {
+    fetch: async (input, init) => {
+      const request = new Request(input, init);
+      const url = new URL(request.url);
+      expect(request.method).toBe("POST");
+      expect(url.pathname).toBe(`/api/v1/orders/${orderId}/proxy-password/reset`);
+      expect(url.searchParams.get("endpoint_id")).toBe(endpointId ?? null);
+      return Response.json({ success: true, message: "ok" }, { status });
+    },
+  });
+  const response = await client.orders.resetProxyPasswordWithResponse({
+    id: orderId,
+    ...(endpointId ? { endpointId } : {}),
+  });
+  expect(response.statusCode).toBe(status);
+  expect(response.data.success).toBe(true);
+});

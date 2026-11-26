@@ -40,3 +40,15 @@ const invoice = await client.orders.checkout({
 Poll `orders.getRental({ id: reserved.id })` with bounded backoff. Check the invoice's fulfillment status and take only ready endpoints. A paid invoice can have pending endpoints or a partial refund. Store the invoice ID and reuse each operation's key after a timeout. If the API returns `price_changed`, obtain a fresh quote and confirm it before starting a new logical attempt.
 
 To renew selected endpoints, send `{term_id, endpoint_ids, invoice: {gateway: "wallet"}}` to `orders.quoteRenewal`. Send the same selection and the returned `total` as `expected_total` to `orders.renew` with a new operation key. Re-read the rental to confirm the new paid periods.
+
+## Rotate a proxy password
+
+Use a key with the `manage` scope. Check `endpoint.capabilities.rotate_password` before requesting rotation for the endpoint's credential group.
+
+```ts
+const rotation = await client.orders.resetProxyPasswordWithResponse({ id, endpointId });
+```
+
+HTTP 200 confirms an immediate reset. HTTP 202 means the provider reset is queued. Poll the rental until the endpoint's `password_rotation_status` is `succeeded` before reading and applying the new credentials for every IP in the group. A provider without password rotation returns HTTP 400 with code `unsupported_operation`.
+
+Calendar renewal uses the selected term and charges the wallet once per supplier group. All IPs in that group renew together.

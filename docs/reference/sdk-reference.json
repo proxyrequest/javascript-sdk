@@ -9,12 +9,12 @@
     "runtime": "Node.js 22 or later",
     "install": "npm install @proxyrequest/sdk",
     "openapi": {
-      "commit": "70b94205a9fb50325b5e1e949c136330c1b75fa6",
+      "commit": "1d36b7a78ef677ad1b67d674505119758627e9fc",
       "excludedOperations": ["sessions_destroy", "sessions_list"],
       "operations": 125,
       "repository": "papaproxy/api",
-      "schemas": 234,
-      "sha256": "160e8dae93a72e35fb734b681bd8b91c65c7880cae99d9bc1e08e43c04fcf3bc",
+      "schemas": 235,
+      "sha256": "ac6996101a9cb8a3b9a02c848a6903413a854a53647abfceaa538d4aa797b59c",
       "source": "openapi.yml"
     }
   },
@@ -9511,7 +9511,7 @@
           "operationId": "orders_proxy_password_reset_create",
           "name": "resetProxyPassword",
           "summary": "Rotate the password for a static rental order",
-          "description": "Rotate the password for an owned static rental order. Read the rental again to obtain the new credentials.",
+          "description": "Rotate all supported credentials in the order, or select the shared credential group of one endpoint. Supplier resets return 202. Poll the endpoint password_rotation_status and read the new credentials after success.",
           "httpMethod": "POST",
           "path": "/orders/{id}/proxy-password/reset",
           "signatures": [
@@ -9528,6 +9528,16 @@
             }
           ],
           "parameters": [
+            {
+              "name": "endpointId",
+              "wireName": "endpoint_id",
+              "in": "query",
+              "required": false,
+              "type": "string",
+              "description": "Select one credential group.",
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "modelRefs": []
+            },
             {
               "name": "id",
               "wireName": "id",
@@ -17181,6 +17191,13 @@
           "required": true,
           "description": "",
           "modelRefs": []
+        },
+        {
+          "name": "password_rotation_status",
+          "type": "PasswordRotationStatusEnum | NullEnum",
+          "required": false,
+          "description": "",
+          "modelRefs": ["PasswordRotationStatusEnum", "NullEnum"]
         }
       ]
     },
@@ -21467,6 +21484,12 @@
       ]
     },
     {
+      "name": "PasswordRotationStatusEnum",
+      "kind": "enum",
+      "description": "* `pending` - pending * `running` - running * `unknown` - unknown * `succeeded` - succeeded * `failed` - failed",
+      "fields": []
+    },
+    {
       "name": "PatchedCouponUpdateRequest",
       "kind": "type",
       "description": "",
@@ -23301,6 +23324,13 @@
           "required": true,
           "description": "",
           "modelRefs": []
+        },
+        {
+          "name": "password_rotation_status",
+          "type": "PasswordRotationStatusEnum | NullEnum",
+          "required": false,
+          "description": "",
+          "modelRefs": ["PasswordRotationStatusEnum", "NullEnum"]
         },
         {
           "name": "group_id",

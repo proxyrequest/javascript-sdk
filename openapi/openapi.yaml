@@ -14284,10 +14284,17 @@ paths:
   /orders/{id}/proxy-password/reset:
     post:
       operationId: orders_proxy_password_reset_create
-      description: Rotate the password for an owned static rental order. Read the
-        rental again to obtain the new credentials.
+      description: Rotate all supported credentials in the order, or select the shared
+        credential group of one endpoint. Supplier resets return 202. Poll the endpoint
+        password_rotation_status and read the new credentials after success.
       summary: Rotate the password for a static rental order
       parameters:
+      - in: query
+        name: endpoint_id
+        schema:
+          type: string
+          format: uuid
+        description: Select one credential group.
       - in: path
         name: id
         schema:
@@ -14326,6 +14333,19 @@ paths:
                     message: The operation completed successfully.
                     success: true
           description: The operation completed successfully.
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProxyPasswordResetResponse'
+              examples:
+                RotationQueued:
+                  value:
+                    message: Password rotation queued.
+                    success: true
+                  summary: Rotation queued
+          description: Password rotation was queued. Read the rental endpoint to check
+            its status.
         '400':
           content:
             application/json:
@@ -15359,6 +15379,7 @@ paths:
                       max_bandwidth_mbps: 1
                       capabilities:
                         key: value
+                      password_rotation_status: pending
                       group_id: 550e8400-e29b-41d4-a716-446655440001
                       group_size: 1
                       renewable: true
@@ -20120,6 +20141,19 @@ paths:
                     message: The operation completed successfully.
                     success: true
           description: The operation completed successfully.
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProxyPasswordResetResponse'
+              examples:
+                RotationQueued:
+                  value:
+                    message: Password rotation queued.
+                    success: true
+                  summary: Rotation queued
+          description: Password rotation was queued. Read the rental endpoint to check
+            its status.
         '400':
           content:
             application/json:
@@ -21522,6 +21556,7 @@ paths:
                       max_bandwidth_mbps: 1
                       capabilities:
                         key: value
+                      password_rotation_status: pending
           description: The operation completed successfully.
         '400':
           description: The request is malformed or violates a business rule.
@@ -21694,6 +21729,7 @@ paths:
                     max_bandwidth_mbps: 1
                     capabilities:
                       key: value
+                    password_rotation_status: pending
           description: The operation completed successfully.
         '400':
           description: The request is malformed or violates a business rule.
@@ -21935,6 +21971,7 @@ paths:
                     max_bandwidth_mbps: 1
                     capabilities:
                       key: value
+                    password_rotation_status: pending
           description: The operation completed successfully.
         '400':
           description: The request is malformed or violates a business rule.
@@ -29838,6 +29875,11 @@ components:
           additionalProperties:
             type: boolean
           readOnly: true
+        password_rotation_status:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/PasswordRotationStatusEnum'
+          - $ref: '#/components/schemas/NullEnum'
       required:
       - allowed_ips
       - capabilities
@@ -32383,6 +32425,16 @@ components:
       oneOf:
       - $ref: '#/components/schemas/ResetPasswordRequest'
       - $ref: '#/components/schemas/ProxyPasswordResetRequestRequest'
+    PasswordRotationStatusEnum:
+      enum:
+      - pending
+      - running
+      - unknown
+      - succeeded
+      - failed
+      type: string
+      description: '* `pending` - pending * `running` - running * `unknown` - unknown
+        * `succeeded` - succeeded * `failed` - failed'
     PatchedCouponUpdateRequest:
       type: object
       properties:
@@ -33447,6 +33499,11 @@ components:
           additionalProperties:
             type: boolean
           readOnly: true
+        password_rotation_status:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/PasswordRotationStatusEnum'
+          - $ref: '#/components/schemas/NullEnum'
         group_id:
           type: string
           format: uuid
