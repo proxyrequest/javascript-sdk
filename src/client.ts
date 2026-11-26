@@ -52,6 +52,8 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
   readonly invoices: ResourceCollection["invoices"];
   readonly locations: ResourceCollection["locations"];
   readonly news: ResourceCollection["news"];
+  readonly kyc: ResourceCollection["kyc"];
+  readonly staticProxies: ResourceCollection["staticProxies"];
   readonly orders: ResourceCollection["orders"];
   readonly packages: ResourceCollection["packages"];
   readonly profile: ResourceCollection["profile"];
@@ -116,6 +118,8 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
     this.invoices = resources.invoices;
     this.locations = resources.locations;
     this.news = resources.news;
+    this.kyc = resources.kyc;
+    this.staticProxies = resources.staticProxies;
     this.orders = resources.orders;
     this.packages = resources.packages;
     this.profile = resources.profile;
@@ -161,8 +165,15 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
     }
     const parameterKey = stringHeader(data.headers?.["Idempotency-Key"]);
     const controlKey = controlHeaders.get("Idempotency-Key") ?? undefined;
+    const bodyKey =
+      typeof data.body === "object" && data.body !== null && "idempotency_key" in data.body
+        ? stringHeader(data.body.idempotency_key)
+        : undefined;
     const idempotencyKey = spec.idempotent
-      ? (parameterKey ?? controlKey ?? (this.idempotency ? newIdempotencyKey() : undefined))
+      ? (parameterKey ??
+        controlKey ??
+        bodyKey ??
+        (this.idempotency ? newIdempotencyKey() : undefined))
       : undefined;
     if (spec.idempotent) controlHeaders.delete("Idempotency-Key");
     const operationHeaders = {
@@ -188,7 +199,8 @@ export class ProxyRequestClient implements ResourceClient, ResourceCollection {
           signal: timeout.signal,
           ...(spec.binary
             ? { parseAs: "arrayBuffer" as const }
-            : spec.operationId === "analytics_feed_retrieve"
+            : spec.operationId === "analytics_feed_retrieve" ||
+                spec.operationId === "static_export_retrieve"
               ? { parseAs: "text" as const }
               : {}),
         });
