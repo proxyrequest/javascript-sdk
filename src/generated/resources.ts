@@ -11,6 +11,709 @@ import type {
 } from "../internal.js";
 import type { operations } from "./schema.js";
 
+export interface KYCGetStatusOptions {
+  acceptLanguage?: OperationParameter<operations["kyc_retrieve"], "header", "Accept-Language">;
+  request?: RequestControls;
+}
+
+export type KYCGetStatusResponse = OperationResult<operations["kyc_retrieve"]>;
+
+export interface KYCCreateSessionOptions {
+  idempotencyKey: OperationParameter<
+    operations["kyc_sessions_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  acceptLanguage?: OperationParameter<
+    operations["kyc_sessions_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["kyc_sessions_create"]>;
+  request?: RequestControls;
+}
+
+export type KYCCreateSessionResponse = OperationResult<operations["kyc_sessions_create"]>;
+
+export class KYCResource {
+  readonly #client: ResourceClient;
+
+  constructor(client: ResourceClient) {
+    this.#client = client;
+  }
+
+  /** Read identity verification status */
+  async getStatus(options: KYCGetStatusOptions = {}): Promise<KYCGetStatusResponse> {
+    return (await this.getStatusWithResponse(options)).data;
+  }
+
+  /** Read identity verification status; include response metadata. */
+  async getStatusWithResponse(
+    options: KYCGetStatusOptions = {},
+  ): Promise<ApiResponse<KYCGetStatusResponse>> {
+    return this.#client._callWithResponse<KYCGetStatusResponse>(
+      {
+        operationId: "kyc_retrieve",
+        method: "GET",
+        path: "/kyc/",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Start identity verification */
+  async createSession(options: KYCCreateSessionOptions): Promise<KYCCreateSessionResponse> {
+    return (await this.createSessionWithResponse(options)).data;
+  }
+
+  /** Start identity verification; include response metadata. */
+  async createSessionWithResponse(
+    options: KYCCreateSessionOptions,
+  ): Promise<ApiResponse<KYCCreateSessionResponse>> {
+    return this.#client._callWithResponse<KYCCreateSessionResponse>(
+      {
+        operationId: "kyc_sessions_create",
+        method: "POST",
+        path: "/kyc/sessions/",
+        idempotent: true,
+      },
+      {
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+}
+
+export interface StaticProxiesListCatalogOptions {
+  limit?: OperationParameter<operations["static_catalog_retrieve"], "query", "limit">;
+  offset?: OperationParameter<operations["static_catalog_retrieve"], "query", "offset">;
+  acceptLanguage?: OperationParameter<
+    operations["static_catalog_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesListCatalogResponse = OperationResult<
+  operations["static_catalog_retrieve"]
+>;
+
+export interface StaticProxiesListEndpointsOptions {
+  limit?: OperationParameter<operations["static_endpoints_list"], "query", "limit">;
+  offset?: OperationParameter<operations["static_endpoints_list"], "query", "offset">;
+  orderId?: OperationParameter<operations["static_endpoints_list"], "query", "order_id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_endpoints_list"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesListEndpointsResponse = OperationResult<
+  operations["static_endpoints_list"]
+>;
+
+export interface StaticProxiesGetEndpointOptions {
+  id: OperationParameter<operations["static_endpoints_retrieve"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_endpoints_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesGetEndpointResponse = OperationResult<
+  operations["static_endpoints_retrieve"]
+>;
+
+export interface StaticProxiesUpdateEndpointOptions {
+  id: OperationParameter<operations["static_endpoints_partial_update"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_endpoints_partial_update"],
+    "header",
+    "Accept-Language"
+  >;
+  body?: OperationBody<operations["static_endpoints_partial_update"]>;
+  request?: RequestControls;
+}
+
+export type StaticProxiesUpdateEndpointResponse = OperationResult<
+  operations["static_endpoints_partial_update"]
+>;
+
+export interface StaticProxiesGetThroughputOptions {
+  id: OperationParameter<operations["static_endpoints_throughput_retrieve"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_endpoints_throughput_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesGetThroughputResponse = OperationResult<
+  operations["static_endpoints_throughput_retrieve"]
+>;
+
+export interface StaticProxiesExportUrlsOptions {
+  orderId?: OperationParameter<operations["static_export_retrieve"], "query", "order_id">;
+  protocol?: OperationParameter<operations["static_export_retrieve"], "query", "protocol">;
+  acceptLanguage?: OperationParameter<
+    operations["static_export_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesExportUrlsResponse = OperationResult<operations["static_export_retrieve"]>;
+
+export interface StaticProxiesListIntegrationKeysOptions {
+  acceptLanguage?: OperationParameter<
+    operations["static_integration_keys_list"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesListIntegrationKeysResponse = OperationResult<
+  operations["static_integration_keys_list"]
+>;
+
+export interface StaticProxiesCreateIntegrationKeyOptions {
+  acceptLanguage?: OperationParameter<
+    operations["static_integration_keys_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["static_integration_keys_create"]>;
+  request?: RequestControls;
+}
+
+export type StaticProxiesCreateIntegrationKeyResponse = OperationResult<
+  operations["static_integration_keys_create"]
+>;
+
+export interface StaticProxiesRevokeIntegrationKeyOptions {
+  id: OperationParameter<operations["static_integration_keys_destroy"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_integration_keys_destroy"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesRevokeIntegrationKeyResponse = OperationResult<
+  operations["static_integration_keys_destroy"]
+>;
+
+export interface StaticProxiesReserveOptions {
+  idempotencyKey?: OperationParameter<
+    operations["static_purchases_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  acceptLanguage?: OperationParameter<
+    operations["static_purchases_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body?: OperationBody<operations["static_purchases_create"]>;
+  request?: RequestControls;
+}
+
+export type StaticProxiesReserveResponse = OperationResult<operations["static_purchases_create"]>;
+
+export interface StaticProxiesListPurchasesOptions {
+  limit?: OperationParameter<operations["static_purchases_list"], "query", "limit">;
+  offset?: OperationParameter<operations["static_purchases_list"], "query", "offset">;
+  acceptLanguage?: OperationParameter<
+    operations["static_purchases_list"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesListPurchasesResponse = OperationResult<
+  operations["static_purchases_list"]
+>;
+
+export interface StaticProxiesGetPurchaseOptions {
+  id: OperationParameter<operations["static_purchases_retrieve"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_purchases_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesGetPurchaseResponse = OperationResult<
+  operations["static_purchases_retrieve"]
+>;
+
+export interface StaticProxiesCheckoutOptions {
+  idempotencyKey?: OperationParameter<
+    operations["static_purchases_checkout_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  id: OperationParameter<operations["static_purchases_checkout_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_purchases_checkout_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["static_purchases_checkout_create"]>;
+  request?: RequestControls;
+}
+
+export type StaticProxiesCheckoutResponse = OperationResult<
+  operations["static_purchases_checkout_create"]
+>;
+
+export interface StaticProxiesQuoteOfferOptions {
+  offerId: OperationParameter<operations["static_quotes_retrieve"], "path", "offer_id">;
+  acceptLanguage?: OperationParameter<
+    operations["static_quotes_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type StaticProxiesQuoteOfferResponse = OperationResult<operations["static_quotes_retrieve"]>;
+
+export class StaticProxiesResource {
+  readonly #client: ResourceClient;
+
+  constructor(client: ResourceClient) {
+    this.#client = client;
+  }
+
+  /** List static rental offers */
+  async listCatalog(
+    options: StaticProxiesListCatalogOptions = {},
+  ): Promise<StaticProxiesListCatalogResponse> {
+    return (await this.listCatalogWithResponse(options)).data;
+  }
+
+  /** List static rental offers; include response metadata. */
+  async listCatalogWithResponse(
+    options: StaticProxiesListCatalogOptions = {},
+  ): Promise<ApiResponse<StaticProxiesListCatalogResponse>> {
+    return this.#client._callWithResponse<StaticProxiesListCatalogResponse>(
+      {
+        operationId: "static_catalog_retrieve",
+        method: "GET",
+        path: "/static/catalog",
+      },
+      {
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List rented addresses */
+  async listEndpoints(
+    options: StaticProxiesListEndpointsOptions = {},
+  ): Promise<StaticProxiesListEndpointsResponse> {
+    return (await this.listEndpointsWithResponse(options)).data;
+  }
+
+  /** List rented addresses; include response metadata. */
+  async listEndpointsWithResponse(
+    options: StaticProxiesListEndpointsOptions = {},
+  ): Promise<ApiResponse<StaticProxiesListEndpointsResponse>> {
+    return this.#client._callWithResponse<StaticProxiesListEndpointsResponse>(
+      {
+        operationId: "static_endpoints_list",
+        method: "GET",
+        path: "/static/endpoints",
+      },
+      {
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+          order_id: options.orderId,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Read a rented address */
+  async getEndpoint(
+    options: StaticProxiesGetEndpointOptions,
+  ): Promise<StaticProxiesGetEndpointResponse> {
+    return (await this.getEndpointWithResponse(options)).data;
+  }
+
+  /** Read a rented address; include response metadata. */
+  async getEndpointWithResponse(
+    options: StaticProxiesGetEndpointOptions,
+  ): Promise<ApiResponse<StaticProxiesGetEndpointResponse>> {
+    return this.#client._callWithResponse<StaticProxiesGetEndpointResponse>(
+      {
+        operationId: "static_endpoints_retrieve",
+        method: "GET",
+        path: "/static/endpoints/{id}",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Update rental access */
+  async updateEndpoint(
+    options: StaticProxiesUpdateEndpointOptions,
+  ): Promise<StaticProxiesUpdateEndpointResponse> {
+    return (await this.updateEndpointWithResponse(options)).data;
+  }
+
+  /** Update rental access; include response metadata. */
+  async updateEndpointWithResponse(
+    options: StaticProxiesUpdateEndpointOptions,
+  ): Promise<ApiResponse<StaticProxiesUpdateEndpointResponse>> {
+    return this.#client._callWithResponse<StaticProxiesUpdateEndpointResponse>(
+      {
+        operationId: "static_endpoints_partial_update",
+        method: "PATCH",
+        path: "/static/endpoints/{id}",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.body === undefined ? {} : { body: options.body }),
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Read current rental speed */
+  async getThroughput(
+    options: StaticProxiesGetThroughputOptions,
+  ): Promise<StaticProxiesGetThroughputResponse> {
+    return (await this.getThroughputWithResponse(options)).data;
+  }
+
+  /** Read current rental speed; include response metadata. */
+  async getThroughputWithResponse(
+    options: StaticProxiesGetThroughputOptions,
+  ): Promise<ApiResponse<StaticProxiesGetThroughputResponse>> {
+    return this.#client._callWithResponse<StaticProxiesGetThroughputResponse>(
+      {
+        operationId: "static_endpoints_throughput_retrieve",
+        method: "GET",
+        path: "/static/endpoints/{id}/throughput",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Export proxy connection URLs */
+  async exportUrls(
+    options: StaticProxiesExportUrlsOptions = {},
+  ): Promise<StaticProxiesExportUrlsResponse> {
+    return (await this.exportUrlsWithResponse(options)).data;
+  }
+
+  /** Export proxy connection URLs; include response metadata. */
+  async exportUrlsWithResponse(
+    options: StaticProxiesExportUrlsOptions = {},
+  ): Promise<ApiResponse<StaticProxiesExportUrlsResponse>> {
+    return this.#client._callWithResponse<StaticProxiesExportUrlsResponse>(
+      {
+        operationId: "static_export_retrieve",
+        method: "GET",
+        path: "/static/export",
+      },
+      {
+        query: {
+          order_id: options.orderId,
+          protocol: options.protocol,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List static proxy integration keys */
+  async listIntegrationKeys(
+    options: StaticProxiesListIntegrationKeysOptions = {},
+  ): Promise<StaticProxiesListIntegrationKeysResponse> {
+    return (await this.listIntegrationKeysWithResponse(options)).data;
+  }
+
+  /** List static proxy integration keys; include response metadata. */
+  async listIntegrationKeysWithResponse(
+    options: StaticProxiesListIntegrationKeysOptions = {},
+  ): Promise<ApiResponse<StaticProxiesListIntegrationKeysResponse>> {
+    return this.#client._callWithResponse<StaticProxiesListIntegrationKeysResponse>(
+      {
+        operationId: "static_integration_keys_list",
+        method: "GET",
+        path: "/static/integration-keys",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Create a static proxy integration key */
+  async createIntegrationKey(
+    options: StaticProxiesCreateIntegrationKeyOptions,
+  ): Promise<StaticProxiesCreateIntegrationKeyResponse> {
+    return (await this.createIntegrationKeyWithResponse(options)).data;
+  }
+
+  /** Create a static proxy integration key; include response metadata. */
+  async createIntegrationKeyWithResponse(
+    options: StaticProxiesCreateIntegrationKeyOptions,
+  ): Promise<ApiResponse<StaticProxiesCreateIntegrationKeyResponse>> {
+    return this.#client._callWithResponse<StaticProxiesCreateIntegrationKeyResponse>(
+      {
+        operationId: "static_integration_keys_create",
+        method: "POST",
+        path: "/static/integration-keys",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Revoke a static proxy integration key */
+  async revokeIntegrationKey(
+    options: StaticProxiesRevokeIntegrationKeyOptions,
+  ): Promise<StaticProxiesRevokeIntegrationKeyResponse> {
+    return (await this.revokeIntegrationKeyWithResponse(options)).data;
+  }
+
+  /** Revoke a static proxy integration key; include response metadata. */
+  async revokeIntegrationKeyWithResponse(
+    options: StaticProxiesRevokeIntegrationKeyOptions,
+  ): Promise<ApiResponse<StaticProxiesRevokeIntegrationKeyResponse>> {
+    return this.#client._callWithResponse<StaticProxiesRevokeIntegrationKeyResponse>(
+      {
+        operationId: "static_integration_keys_destroy",
+        method: "DELETE",
+        path: "/static/integration-keys/{id}",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Reserve a new Order */
+  async reserve(options: StaticProxiesReserveOptions = {}): Promise<StaticProxiesReserveResponse> {
+    return (await this.reserveWithResponse(options)).data;
+  }
+
+  /** Reserve a new Order; include response metadata. */
+  async reserveWithResponse(
+    options: StaticProxiesReserveOptions = {},
+  ): Promise<ApiResponse<StaticProxiesReserveResponse>> {
+    return this.#client._callWithResponse<StaticProxiesReserveResponse>(
+      {
+        operationId: "static_purchases_create",
+        method: "POST",
+        path: "/static/purchases",
+        idempotent: true,
+      },
+      {
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.body === undefined ? {} : { body: options.body }),
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List static rental purchases */
+  async listPurchases(
+    options: StaticProxiesListPurchasesOptions = {},
+  ): Promise<StaticProxiesListPurchasesResponse> {
+    return (await this.listPurchasesWithResponse(options)).data;
+  }
+
+  /** List static rental purchases; include response metadata. */
+  async listPurchasesWithResponse(
+    options: StaticProxiesListPurchasesOptions = {},
+  ): Promise<ApiResponse<StaticProxiesListPurchasesResponse>> {
+    return this.#client._callWithResponse<StaticProxiesListPurchasesResponse>(
+      {
+        operationId: "static_purchases_list",
+        method: "GET",
+        path: "/static/purchases",
+      },
+      {
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Read a rental purchase */
+  async getPurchase(
+    options: StaticProxiesGetPurchaseOptions,
+  ): Promise<StaticProxiesGetPurchaseResponse> {
+    return (await this.getPurchaseWithResponse(options)).data;
+  }
+
+  /** Read a rental purchase; include response metadata. */
+  async getPurchaseWithResponse(
+    options: StaticProxiesGetPurchaseOptions,
+  ): Promise<ApiResponse<StaticProxiesGetPurchaseResponse>> {
+    return this.#client._callWithResponse<StaticProxiesGetPurchaseResponse>(
+      {
+        operationId: "static_purchases_retrieve",
+        method: "GET",
+        path: "/static/purchases/{id}",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Check out a rental reservation */
+  async checkout(options: StaticProxiesCheckoutOptions): Promise<StaticProxiesCheckoutResponse> {
+    return (await this.checkoutWithResponse(options)).data;
+  }
+
+  /** Check out a rental reservation; include response metadata. */
+  async checkoutWithResponse(
+    options: StaticProxiesCheckoutOptions,
+  ): Promise<ApiResponse<StaticProxiesCheckoutResponse>> {
+    return this.#client._callWithResponse<StaticProxiesCheckoutResponse>(
+      {
+        operationId: "static_purchases_checkout_create",
+        method: "POST",
+        path: "/static/purchases/{id}/checkout",
+        idempotent: true,
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Quote an address bundle */
+  async quoteOffer(
+    options: StaticProxiesQuoteOfferOptions,
+  ): Promise<StaticProxiesQuoteOfferResponse> {
+    return (await this.quoteOfferWithResponse(options)).data;
+  }
+
+  /** Quote an address bundle; include response metadata. */
+  async quoteOfferWithResponse(
+    options: StaticProxiesQuoteOfferOptions,
+  ): Promise<ApiResponse<StaticProxiesQuoteOfferResponse>> {
+    return this.#client._callWithResponse<StaticProxiesQuoteOfferResponse>(
+      {
+        operationId: "static_quotes_retrieve",
+        method: "GET",
+        path: "/static/quotes/{offer_id}",
+      },
+      {
+        path: {
+          offer_id: options.offerId,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+}
+
 export interface APIKeysListOptions {
   limit?: OperationParameter<operations["api_keys_list"], "query", "limit">;
   offset?: OperationParameter<operations["api_keys_list"], "query", "offset">;
@@ -1267,6 +1970,18 @@ export interface InvoicesGetPaymentLinkOptions {
 
 export type InvoicesGetPaymentLinkResponse = OperationResult<operations["invoices_pay_retrieve"]>;
 
+export interface InvoicesQuoteOptions {
+  acceptLanguage?: OperationParameter<
+    operations["invoices_quote_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["invoices_quote_create"]>;
+  request?: RequestControls;
+}
+
+export type InvoicesQuoteResponse = OperationResult<operations["invoices_quote_create"]>;
+
 export class InvoicesResource {
   readonly #client: ResourceClient;
 
@@ -1449,6 +2164,31 @@ export class InvoicesResource {
       },
     );
   }
+
+  /** Quote a purchase without creating an invoice */
+  async quote(options: InvoicesQuoteOptions): Promise<InvoicesQuoteResponse> {
+    return (await this.quoteWithResponse(options)).data;
+  }
+
+  /** Quote a purchase without creating an invoice; include response metadata. */
+  async quoteWithResponse(
+    options: InvoicesQuoteOptions,
+  ): Promise<ApiResponse<InvoicesQuoteResponse>> {
+    return this.#client._callWithResponse<InvoicesQuoteResponse>(
+      {
+        operationId: "invoices_quote_create",
+        method: "POST",
+        path: "/invoices/quote",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
 }
 
 export interface LocationsListAsnsOptions {
@@ -1457,6 +2197,8 @@ export interface LocationsListAsnsOptions {
   global?: OperationParameter<operations["locations_asn_list"], "query", "global">;
   includeGeo?: OperationParameter<operations["locations_asn_list"], "query", "include_geo">;
   limit?: OperationParameter<operations["locations_asn_list"], "query", "limit">;
+  maxCount?: OperationParameter<operations["locations_asn_list"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_asn_list"], "query", "min_count">;
   name?: OperationParameter<operations["locations_asn_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_asn_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_asn_list"], "query", "ordering">;
@@ -1477,6 +2219,8 @@ export interface LocationsListCitiesOptions {
   countryCode?: OperationParameter<operations["locations_cities_list"], "query", "country__code">;
   includeAsns?: OperationParameter<operations["locations_cities_list"], "query", "include_asns">;
   limit?: OperationParameter<operations["locations_cities_list"], "query", "limit">;
+  maxCount?: OperationParameter<operations["locations_cities_list"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_cities_list"], "query", "min_count">;
   name?: OperationParameter<operations["locations_cities_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_cities_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_cities_list"], "query", "ordering">;
@@ -1500,6 +2244,8 @@ export interface LocationsGetCityOptions {
     "query",
     "include_asns"
   >;
+  maxCount?: OperationParameter<operations["locations_cities_retrieve"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_cities_retrieve"], "query", "min_count">;
   packageId: OperationParameter<operations["locations_cities_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_cities_retrieve"],
@@ -1550,6 +2296,8 @@ export interface LocationsListCountriesOptions {
   code?: OperationParameter<operations["locations_countries_list"], "query", "code">;
   includeAsns?: OperationParameter<operations["locations_countries_list"], "query", "include_asns">;
   limit?: OperationParameter<operations["locations_countries_list"], "query", "limit">;
+  maxCount?: OperationParameter<operations["locations_countries_list"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_countries_list"], "query", "min_count">;
   name?: OperationParameter<operations["locations_countries_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_countries_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_countries_list"], "query", "ordering">;
@@ -1574,6 +2322,8 @@ export interface LocationsGetCountryOptions {
     "query",
     "include_asns"
   >;
+  maxCount?: OperationParameter<operations["locations_countries_retrieve"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_countries_retrieve"], "query", "min_count">;
   packageId: OperationParameter<operations["locations_countries_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_countries_retrieve"],
@@ -1591,6 +2341,8 @@ export interface LocationsListIspsOptions {
   code?: OperationParameter<operations["locations_isps_list"], "query", "code">;
   countryCode?: OperationParameter<operations["locations_isps_list"], "query", "country__code">;
   limit?: OperationParameter<operations["locations_isps_list"], "query", "limit">;
+  maxCount?: OperationParameter<operations["locations_isps_list"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_isps_list"], "query", "min_count">;
   name?: OperationParameter<operations["locations_isps_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_isps_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_isps_list"], "query", "ordering">;
@@ -1611,6 +2363,8 @@ export interface LocationsListRegionsOptions {
   countryCode?: OperationParameter<operations["locations_regions_list"], "query", "country__code">;
   includeAsns?: OperationParameter<operations["locations_regions_list"], "query", "include_asns">;
   limit?: OperationParameter<operations["locations_regions_list"], "query", "limit">;
+  maxCount?: OperationParameter<operations["locations_regions_list"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_regions_list"], "query", "min_count">;
   name?: OperationParameter<operations["locations_regions_list"], "query", "name">;
   offset?: OperationParameter<operations["locations_regions_list"], "query", "offset">;
   ordering?: OperationParameter<operations["locations_regions_list"], "query", "ordering">;
@@ -1633,6 +2387,8 @@ export interface LocationsGetRegionOptions {
     "query",
     "include_asns"
   >;
+  maxCount?: OperationParameter<operations["locations_regions_retrieve"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_regions_retrieve"], "query", "min_count">;
   packageId: OperationParameter<operations["locations_regions_retrieve"], "query", "package_id">;
   acceptLanguage?: OperationParameter<
     operations["locations_regions_retrieve"],
@@ -1643,6 +2399,61 @@ export interface LocationsGetRegionOptions {
 }
 
 export type LocationsGetRegionResponse = OperationResult<operations["locations_regions_retrieve"]>;
+
+export interface LocationsListZipcodesOptions {
+  asnCode?: OperationParameter<operations["locations_zipcodes_list"], "query", "asn__code">;
+  cityCode?: OperationParameter<operations["locations_zipcodes_list"], "query", "city__code">;
+  code?: OperationParameter<operations["locations_zipcodes_list"], "query", "code">;
+  countryCode?: OperationParameter<operations["locations_zipcodes_list"], "query", "country__code">;
+  ispCode?: OperationParameter<operations["locations_zipcodes_list"], "query", "isp__code">;
+  limit?: OperationParameter<operations["locations_zipcodes_list"], "query", "limit">;
+  maxCount?: OperationParameter<operations["locations_zipcodes_list"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_zipcodes_list"], "query", "min_count">;
+  offset?: OperationParameter<operations["locations_zipcodes_list"], "query", "offset">;
+  ordering?: OperationParameter<operations["locations_zipcodes_list"], "query", "ordering">;
+  packageId: OperationParameter<operations["locations_zipcodes_list"], "query", "package_id">;
+  regionCode?: OperationParameter<operations["locations_zipcodes_list"], "query", "region__code">;
+  search?: OperationParameter<operations["locations_zipcodes_list"], "query", "search">;
+  acceptLanguage?: OperationParameter<
+    operations["locations_zipcodes_list"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type LocationsListZipcodesResponse = OperationResult<operations["locations_zipcodes_list"]>;
+
+export interface LocationsGetZipcodeOptions {
+  asnCode?: OperationParameter<operations["locations_zipcodes_retrieve"], "query", "asn__code">;
+  cityCode?: OperationParameter<operations["locations_zipcodes_retrieve"], "query", "city__code">;
+  code?: OperationParameter<operations["locations_zipcodes_retrieve"], "query", "code">;
+  countryCode?: OperationParameter<
+    operations["locations_zipcodes_retrieve"],
+    "query",
+    "country__code"
+  >;
+  id: OperationParameter<operations["locations_zipcodes_retrieve"], "path", "id">;
+  ispCode?: OperationParameter<operations["locations_zipcodes_retrieve"], "query", "isp__code">;
+  maxCount?: OperationParameter<operations["locations_zipcodes_retrieve"], "query", "max_count">;
+  minCount?: OperationParameter<operations["locations_zipcodes_retrieve"], "query", "min_count">;
+  packageId: OperationParameter<operations["locations_zipcodes_retrieve"], "query", "package_id">;
+  regionCode?: OperationParameter<
+    operations["locations_zipcodes_retrieve"],
+    "query",
+    "region__code"
+  >;
+  acceptLanguage?: OperationParameter<
+    operations["locations_zipcodes_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type LocationsGetZipcodeResponse = OperationResult<
+  operations["locations_zipcodes_retrieve"]
+>;
 
 export class LocationsResource {
   readonly #client: ResourceClient;
@@ -1673,6 +2484,8 @@ export class LocationsResource {
           global: options.global,
           include_geo: options.includeGeo,
           limit: options.limit,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           name: options.name,
           offset: options.offset,
           ordering: options.ordering,
@@ -1708,6 +2521,8 @@ export class LocationsResource {
           country__code: options.countryCode,
           include_asns: options.includeAsns,
           limit: options.limit,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           name: options.name,
           offset: options.offset,
           ordering: options.ordering,
@@ -1744,6 +2559,8 @@ export class LocationsResource {
         },
         query: {
           include_asns: options.includeAsns,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           package_id: options.packageId,
         },
         headers: {
@@ -1843,6 +2660,8 @@ export class LocationsResource {
           code: options.code,
           include_asns: options.includeAsns,
           limit: options.limit,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           name: options.name,
           offset: options.offset,
           ordering: options.ordering,
@@ -1878,6 +2697,8 @@ export class LocationsResource {
         },
         query: {
           include_asns: options.includeAsns,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           package_id: options.packageId,
         },
         headers: {
@@ -1908,6 +2729,8 @@ export class LocationsResource {
           code: options.code,
           country__code: options.countryCode,
           limit: options.limit,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           name: options.name,
           offset: options.offset,
           ordering: options.ordering,
@@ -1943,6 +2766,8 @@ export class LocationsResource {
           country__code: options.countryCode,
           include_asns: options.includeAsns,
           limit: options.limit,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           name: options.name,
           offset: options.offset,
           ordering: options.ordering,
@@ -1978,7 +2803,88 @@ export class LocationsResource {
         },
         query: {
           include_asns: options.includeAsns,
+          max_count: options.maxCount,
+          min_count: options.minCount,
           package_id: options.packageId,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List available ZIP codes */
+  async listZipcodes(
+    options: LocationsListZipcodesOptions,
+  ): Promise<LocationsListZipcodesResponse> {
+    return (await this.listZipcodesWithResponse(options)).data;
+  }
+
+  /** List available ZIP codes; include response metadata. */
+  async listZipcodesWithResponse(
+    options: LocationsListZipcodesOptions,
+  ): Promise<ApiResponse<LocationsListZipcodesResponse>> {
+    return this.#client._callWithResponse<LocationsListZipcodesResponse>(
+      {
+        operationId: "locations_zipcodes_list",
+        method: "GET",
+        path: "/locations/zipcodes",
+      },
+      {
+        query: {
+          asn__code: options.asnCode,
+          city__code: options.cityCode,
+          code: options.code,
+          country__code: options.countryCode,
+          isp__code: options.ispCode,
+          limit: options.limit,
+          max_count: options.maxCount,
+          min_count: options.minCount,
+          offset: options.offset,
+          ordering: options.ordering,
+          package_id: options.packageId,
+          region__code: options.regionCode,
+          search: options.search,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Get an available ZIP code */
+  async getZipcode(options: LocationsGetZipcodeOptions): Promise<LocationsGetZipcodeResponse> {
+    return (await this.getZipcodeWithResponse(options)).data;
+  }
+
+  /** Get an available ZIP code; include response metadata. */
+  async getZipcodeWithResponse(
+    options: LocationsGetZipcodeOptions,
+  ): Promise<ApiResponse<LocationsGetZipcodeResponse>> {
+    return this.#client._callWithResponse<LocationsGetZipcodeResponse>(
+      {
+        operationId: "locations_zipcodes_retrieve",
+        method: "GET",
+        path: "/locations/zipcodes/{id}",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        query: {
+          asn__code: options.asnCode,
+          city__code: options.cityCode,
+          code: options.code,
+          country__code: options.countryCode,
+          isp__code: options.ispCode,
+          max_count: options.maxCount,
+          min_count: options.minCount,
+          package_id: options.packageId,
+          region__code: options.regionCode,
         },
         headers: {
           "Accept-Language": options.acceptLanguage,
@@ -2090,11 +2996,274 @@ export interface OrdersResetPasswordOptions {
     "header",
     "Accept-Language"
   >;
-  body: OperationBody<operations["reset_password_create"]>;
+  body?: OperationBody<operations["reset_password_create"]>;
   request?: RequestControls;
 }
 
 export type OrdersResetPasswordResponse = OperationResult<operations["reset_password_create"]>;
+
+export interface OrdersGetCalendarRenewalOptions {
+  id: OperationParameter<operations["orders_auto_renewal_retrieve"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_auto_renewal_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersGetCalendarRenewalResponse = OperationResult<
+  operations["orders_auto_renewal_retrieve"]
+>;
+
+export interface OrdersSetCalendarRenewalOptions {
+  id: OperationParameter<operations["orders_auto_renewal_update"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_auto_renewal_update"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["orders_auto_renewal_update"]>;
+  request?: RequestControls;
+}
+
+export type OrdersSetCalendarRenewalResponse = OperationResult<
+  operations["orders_auto_renewal_update"]
+>;
+
+export interface OrdersCancelReservationOptions {
+  id: OperationParameter<operations["orders_cancel_reservation_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_cancel_reservation_create"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersCancelReservationResponse = OperationResult<
+  operations["orders_cancel_reservation_create"]
+>;
+
+export interface OrdersCheckoutOptions {
+  idempotencyKey?: OperationParameter<
+    operations["orders_checkout_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  id: OperationParameter<operations["orders_checkout_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_checkout_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["orders_checkout_create"]>;
+  request?: RequestControls;
+}
+
+export type OrdersCheckoutResponse = OperationResult<operations["orders_checkout_create"]>;
+
+export interface OrdersQuoteCheckoutOptions {
+  id: OperationParameter<operations["orders_checkout_quote_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_checkout_quote_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["orders_checkout_quote_create"]>;
+  request?: RequestControls;
+}
+
+export type OrdersQuoteCheckoutResponse = OperationResult<
+  operations["orders_checkout_quote_create"]
+>;
+
+export interface OrdersResetProxyPasswordOptions {
+  id: OperationParameter<operations["orders_proxy_password_reset_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_proxy_password_reset_create"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersResetProxyPasswordResponse = OperationResult<
+  operations["orders_proxy_password_reset_create"]
+>;
+
+export interface OrdersRenewOptions {
+  idempotencyKey?: OperationParameter<
+    operations["orders_renew_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  id: OperationParameter<operations["orders_renew_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_renew_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["orders_renew_create"]>;
+  request?: RequestControls;
+}
+
+export type OrdersRenewResponse = OperationResult<operations["orders_renew_create"]>;
+
+export interface OrdersQuoteRenewalOptions {
+  id: OperationParameter<operations["orders_renew_quote_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_renew_quote_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["orders_renew_quote_create"]>;
+  request?: RequestControls;
+}
+
+export type OrdersQuoteRenewalResponse = OperationResult<operations["orders_renew_quote_create"]>;
+
+export interface OrdersGetRentalOptions {
+  id: OperationParameter<operations["orders_rental_retrieve"], "path", "id">;
+  limit?: OperationParameter<operations["orders_rental_retrieve"], "query", "limit">;
+  offset?: OperationParameter<operations["orders_rental_retrieve"], "query", "offset">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_rental_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersGetRentalResponse = OperationResult<operations["orders_rental_retrieve"]>;
+
+export interface OrdersListReplacementsOptions {
+  id: OperationParameter<operations["orders_replacement_requests_retrieve"], "path", "id">;
+  limit?: OperationParameter<operations["orders_replacement_requests_retrieve"], "query", "limit">;
+  offset?: OperationParameter<
+    operations["orders_replacement_requests_retrieve"],
+    "query",
+    "offset"
+  >;
+  acceptLanguage?: OperationParameter<
+    operations["orders_replacement_requests_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersListReplacementsResponse = OperationResult<
+  operations["orders_replacement_requests_retrieve"]
+>;
+
+export interface OrdersRequestReplacementOptions {
+  idempotencyKey?: OperationParameter<
+    operations["orders_replacement_requests_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  id: OperationParameter<operations["orders_replacement_requests_create"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_replacement_requests_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body: OperationBody<operations["orders_replacement_requests_create"]>;
+  request?: RequestControls;
+}
+
+export type OrdersRequestReplacementResponse = OperationResult<
+  operations["orders_replacement_requests_create"]
+>;
+
+export interface OrdersGetAvailabilityOptions {
+  allocationMode?: OperationParameter<
+    operations["orders_availability_retrieve"],
+    "query",
+    "allocation_mode"
+  >;
+  cityId?: OperationParameter<operations["orders_availability_retrieve"], "query", "city_id">;
+  countryCode?: OperationParameter<
+    operations["orders_availability_retrieve"],
+    "query",
+    "country_code"
+  >;
+  networkClass?: OperationParameter<
+    operations["orders_availability_retrieve"],
+    "query",
+    "network_class"
+  >;
+  operator?: OperationParameter<operations["orders_availability_retrieve"], "query", "operator">;
+  packageId?: OperationParameter<operations["orders_availability_retrieve"], "query", "package_id">;
+  regionId?: OperationParameter<operations["orders_availability_retrieve"], "query", "region_id">;
+  termId?: OperationParameter<operations["orders_availability_retrieve"], "query", "term_id">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_availability_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersGetAvailabilityResponse = OperationResult<
+  operations["orders_availability_retrieve"]
+>;
+
+export interface OrdersListCatalogOptions {
+  limit?: OperationParameter<operations["orders_catalog_retrieve"], "query", "limit">;
+  offset?: OperationParameter<operations["orders_catalog_retrieve"], "query", "offset">;
+  acceptLanguage?: OperationParameter<
+    operations["orders_catalog_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersListCatalogResponse = OperationResult<operations["orders_catalog_retrieve"]>;
+
+export interface OrdersListProductsOptions {
+  acceptLanguage?: OperationParameter<
+    operations["orders_products_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type OrdersListProductsResponse = OperationResult<operations["orders_products_retrieve"]>;
+
+export interface OrdersReserveOptions {
+  idempotencyKey?: OperationParameter<
+    operations["orders_purchase_create"],
+    "header",
+    "Idempotency-Key"
+  >;
+  acceptLanguage?: OperationParameter<
+    operations["orders_purchase_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body?: OperationBody<operations["orders_purchase_create"]>;
+  request?: RequestControls;
+}
+
+export type OrdersReserveResponse = OperationResult<operations["orders_purchase_create"]>;
+
+export interface OrdersQuotePurchaseOptions {
+  acceptLanguage?: OperationParameter<
+    operations["orders_purchase_quote_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body?: OperationBody<operations["orders_purchase_quote_create"]>;
+  request?: RequestControls;
+}
+
+export type OrdersQuotePurchaseResponse = OperationResult<
+  operations["orders_purchase_quote_create"]
+>;
 
 export class OrdersResource {
   readonly #client: ResourceClient;
@@ -2224,14 +3393,16 @@ export class OrdersResource {
     );
   }
 
-  /** Reset an order's proxy password */
-  async resetPassword(options: OrdersResetPasswordOptions): Promise<OrdersResetPasswordResponse> {
+  /** Confirm an account password reset or rotate an order's proxy password */
+  async resetPassword(
+    options: OrdersResetPasswordOptions = {},
+  ): Promise<OrdersResetPasswordResponse> {
     return (await this.resetPasswordWithResponse(options)).data;
   }
 
-  /** Reset an order's proxy password; include response metadata. */
+  /** Confirm an account password reset or rotate an order's proxy password; include response metadata. */
   async resetPasswordWithResponse(
-    options: OrdersResetPasswordOptions,
+    options: OrdersResetPasswordOptions = {},
   ): Promise<ApiResponse<OrdersResetPasswordResponse>> {
     return this.#client._callWithResponse<OrdersResetPasswordResponse>(
       {
@@ -2243,7 +3414,476 @@ export class OrdersResource {
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
+        ...(options.body === undefined ? {} : { body: options.body }),
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Read static calendar renewal settings */
+  async getCalendarRenewal(
+    options: OrdersGetCalendarRenewalOptions,
+  ): Promise<OrdersGetCalendarRenewalResponse> {
+    return (await this.getCalendarRenewalWithResponse(options)).data;
+  }
+
+  /** Read static calendar renewal settings; include response metadata. */
+  async getCalendarRenewalWithResponse(
+    options: OrdersGetCalendarRenewalOptions,
+  ): Promise<ApiResponse<OrdersGetCalendarRenewalResponse>> {
+    return this.#client._callWithResponse<OrdersGetCalendarRenewalResponse>(
+      {
+        operationId: "orders_auto_renewal_retrieve",
+        method: "GET",
+        path: "/orders/{id}/auto-renewal",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Set static calendar renewal settings */
+  async setCalendarRenewal(
+    options: OrdersSetCalendarRenewalOptions,
+  ): Promise<OrdersSetCalendarRenewalResponse> {
+    return (await this.setCalendarRenewalWithResponse(options)).data;
+  }
+
+  /** Set static calendar renewal settings; include response metadata. */
+  async setCalendarRenewalWithResponse(
+    options: OrdersSetCalendarRenewalOptions,
+  ): Promise<ApiResponse<OrdersSetCalendarRenewalResponse>> {
+    return this.#client._callWithResponse<OrdersSetCalendarRenewalResponse>(
+      {
+        operationId: "orders_auto_renewal_update",
+        method: "PUT",
+        path: "/orders/{id}/auto-renewal",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
         body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Cancel an unissued reservation */
+  async cancelReservation(
+    options: OrdersCancelReservationOptions,
+  ): Promise<OrdersCancelReservationResponse> {
+    return (await this.cancelReservationWithResponse(options)).data;
+  }
+
+  /** Cancel an unissued reservation; include response metadata. */
+  async cancelReservationWithResponse(
+    options: OrdersCancelReservationOptions,
+  ): Promise<ApiResponse<OrdersCancelReservationResponse>> {
+    return this.#client._callWithResponse<OrdersCancelReservationResponse>(
+      {
+        operationId: "orders_cancel_reservation_create",
+        method: "POST",
+        path: "/orders/{id}/cancel-reservation",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Check out a rental reservation */
+  async checkout(options: OrdersCheckoutOptions): Promise<OrdersCheckoutResponse> {
+    return (await this.checkoutWithResponse(options)).data;
+  }
+
+  /** Check out a rental reservation; include response metadata. */
+  async checkoutWithResponse(
+    options: OrdersCheckoutOptions,
+  ): Promise<ApiResponse<OrdersCheckoutResponse>> {
+    return this.#client._callWithResponse<OrdersCheckoutResponse>(
+      {
+        operationId: "orders_checkout_create",
+        method: "POST",
+        path: "/orders/{id}/checkout",
+        idempotent: true,
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Quote order checkout */
+  async quoteCheckout(options: OrdersQuoteCheckoutOptions): Promise<OrdersQuoteCheckoutResponse> {
+    return (await this.quoteCheckoutWithResponse(options)).data;
+  }
+
+  /** Quote order checkout; include response metadata. */
+  async quoteCheckoutWithResponse(
+    options: OrdersQuoteCheckoutOptions,
+  ): Promise<ApiResponse<OrdersQuoteCheckoutResponse>> {
+    return this.#client._callWithResponse<OrdersQuoteCheckoutResponse>(
+      {
+        operationId: "orders_checkout_quote_create",
+        method: "POST",
+        path: "/orders/{id}/checkout/quote",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Rotate the password for a static rental order */
+  async resetProxyPassword(
+    options: OrdersResetProxyPasswordOptions,
+  ): Promise<OrdersResetProxyPasswordResponse> {
+    return (await this.resetProxyPasswordWithResponse(options)).data;
+  }
+
+  /** Rotate the password for a static rental order; include response metadata. */
+  async resetProxyPasswordWithResponse(
+    options: OrdersResetProxyPasswordOptions,
+  ): Promise<ApiResponse<OrdersResetProxyPasswordResponse>> {
+    return this.#client._callWithResponse<OrdersResetProxyPasswordResponse>(
+      {
+        operationId: "orders_proxy_password_reset_create",
+        method: "POST",
+        path: "/orders/{id}/proxy-password/reset",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Renew an order */
+  async renew(options: OrdersRenewOptions): Promise<OrdersRenewResponse> {
+    return (await this.renewWithResponse(options)).data;
+  }
+
+  /** Renew an order; include response metadata. */
+  async renewWithResponse(options: OrdersRenewOptions): Promise<ApiResponse<OrdersRenewResponse>> {
+    return this.#client._callWithResponse<OrdersRenewResponse>(
+      {
+        operationId: "orders_renew_create",
+        method: "POST",
+        path: "/orders/{id}/renew",
+        idempotent: true,
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Quote order renewal */
+  async quoteRenewal(options: OrdersQuoteRenewalOptions): Promise<OrdersQuoteRenewalResponse> {
+    return (await this.quoteRenewalWithResponse(options)).data;
+  }
+
+  /** Quote order renewal; include response metadata. */
+  async quoteRenewalWithResponse(
+    options: OrdersQuoteRenewalOptions,
+  ): Promise<ApiResponse<OrdersQuoteRenewalResponse>> {
+    return this.#client._callWithResponse<OrdersQuoteRenewalResponse>(
+      {
+        operationId: "orders_renew_quote_create",
+        method: "POST",
+        path: "/orders/{id}/renew/quote",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Read order rental */
+  async getRental(options: OrdersGetRentalOptions): Promise<OrdersGetRentalResponse> {
+    return (await this.getRentalWithResponse(options)).data;
+  }
+
+  /** Read order rental; include response metadata. */
+  async getRentalWithResponse(
+    options: OrdersGetRentalOptions,
+  ): Promise<ApiResponse<OrdersGetRentalResponse>> {
+    return this.#client._callWithResponse<OrdersGetRentalResponse>(
+      {
+        operationId: "orders_rental_retrieve",
+        method: "GET",
+        path: "/orders/{id}/rental",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List order replacement requests */
+  async listReplacements(
+    options: OrdersListReplacementsOptions,
+  ): Promise<OrdersListReplacementsResponse> {
+    return (await this.listReplacementsWithResponse(options)).data;
+  }
+
+  /** List order replacement requests; include response metadata. */
+  async listReplacementsWithResponse(
+    options: OrdersListReplacementsOptions,
+  ): Promise<ApiResponse<OrdersListReplacementsResponse>> {
+    return this.#client._callWithResponse<OrdersListReplacementsResponse>(
+      {
+        operationId: "orders_replacement_requests_retrieve",
+        method: "GET",
+        path: "/orders/{id}/replacement-requests",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Request an IP replacement */
+  async requestReplacement(
+    options: OrdersRequestReplacementOptions,
+  ): Promise<OrdersRequestReplacementResponse> {
+    return (await this.requestReplacementWithResponse(options)).data;
+  }
+
+  /** Request an IP replacement; include response metadata. */
+  async requestReplacementWithResponse(
+    options: OrdersRequestReplacementOptions,
+  ): Promise<ApiResponse<OrdersRequestReplacementResponse>> {
+    return this.#client._callWithResponse<OrdersRequestReplacementResponse>(
+      {
+        operationId: "orders_replacement_requests_create",
+        method: "POST",
+        path: "/orders/{id}/replacement-requests",
+        idempotent: true,
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Available static rental locations */
+  async getAvailability(
+    options: OrdersGetAvailabilityOptions = {},
+  ): Promise<OrdersGetAvailabilityResponse> {
+    return (await this.getAvailabilityWithResponse(options)).data;
+  }
+
+  /** Available static rental locations; include response metadata. */
+  async getAvailabilityWithResponse(
+    options: OrdersGetAvailabilityOptions = {},
+  ): Promise<ApiResponse<OrdersGetAvailabilityResponse>> {
+    return this.#client._callWithResponse<OrdersGetAvailabilityResponse>(
+      {
+        operationId: "orders_availability_retrieve",
+        method: "GET",
+        path: "/orders/availability",
+      },
+      {
+        query: {
+          allocation_mode: options.allocationMode,
+          city_id: options.cityId,
+          country_code: options.countryCode,
+          network_class: options.networkClass,
+          operator: options.operator,
+          package_id: options.packageId,
+          region_id: options.regionId,
+          term_id: options.termId,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List static rental offers */
+  async listCatalog(options: OrdersListCatalogOptions = {}): Promise<OrdersListCatalogResponse> {
+    return (await this.listCatalogWithResponse(options)).data;
+  }
+
+  /** List static rental offers; include response metadata. */
+  async listCatalogWithResponse(
+    options: OrdersListCatalogOptions = {},
+  ): Promise<ApiResponse<OrdersListCatalogResponse>> {
+    return this.#client._callWithResponse<OrdersListCatalogResponse>(
+      {
+        operationId: "orders_catalog_retrieve",
+        method: "GET",
+        path: "/orders/catalog",
+      },
+      {
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Available proxy products */
+  async listProducts(options: OrdersListProductsOptions = {}): Promise<OrdersListProductsResponse> {
+    return (await this.listProductsWithResponse(options)).data;
+  }
+
+  /** Available proxy products; include response metadata. */
+  async listProductsWithResponse(
+    options: OrdersListProductsOptions = {},
+  ): Promise<ApiResponse<OrdersListProductsResponse>> {
+    return this.#client._callWithResponse<OrdersListProductsResponse>(
+      {
+        operationId: "orders_products_retrieve",
+        method: "GET",
+        path: "/orders/products",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Reserve a new Order */
+  async reserve(options: OrdersReserveOptions = {}): Promise<OrdersReserveResponse> {
+    return (await this.reserveWithResponse(options)).data;
+  }
+
+  /** Reserve a new Order; include response metadata. */
+  async reserveWithResponse(
+    options: OrdersReserveOptions = {},
+  ): Promise<ApiResponse<OrdersReserveResponse>> {
+    return this.#client._callWithResponse<OrdersReserveResponse>(
+      {
+        operationId: "orders_purchase_create",
+        method: "POST",
+        path: "/orders/purchase",
+        idempotent: true,
+      },
+      {
+        headers: {
+          "Idempotency-Key": options.idempotencyKey,
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.body === undefined ? {} : { body: options.body }),
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Quote a static rental selection */
+  async quotePurchase(
+    options: OrdersQuotePurchaseOptions = {},
+  ): Promise<OrdersQuotePurchaseResponse> {
+    return (await this.quotePurchaseWithResponse(options)).data;
+  }
+
+  /** Quote a static rental selection; include response metadata. */
+  async quotePurchaseWithResponse(
+    options: OrdersQuotePurchaseOptions = {},
+  ): Promise<ApiResponse<OrdersQuotePurchaseResponse>> {
+    return this.#client._callWithResponse<OrdersQuotePurchaseResponse>(
+      {
+        operationId: "orders_purchase_quote_create",
+        method: "POST",
+        path: "/orders/purchase/quote",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.body === undefined ? {} : { body: options.body }),
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );
@@ -2396,7 +4036,7 @@ export interface ProfileConfirmTwoFactorOptions {
     "header",
     "Accept-Language"
   >;
-  body: OperationBody<operations["profile_2fa_confirm_create"]>;
+  body?: OperationBody<operations["profile_2fa_confirm_create"]>;
   request?: RequestControls;
 }
 
@@ -2410,7 +4050,7 @@ export interface ProfileDisableTwoFactorOptions {
     "header",
     "Accept-Language"
   >;
-  body: OperationBody<operations["profile_2fa_disable_create"]>;
+  body?: OperationBody<operations["profile_2fa_disable_create"]>;
   request?: RequestControls;
 }
 
@@ -2481,6 +4121,33 @@ export interface ProfileConnectGoogleOptions {
 }
 
 export type ProfileConnectGoogleResponse = OperationResult<operations["profileConnectGoogle"]>;
+
+export interface ProfileRegenerateTwoFactorCodesOptions {
+  acceptLanguage?: OperationParameter<
+    operations["profile_2fa_regenerate_create"],
+    "header",
+    "Accept-Language"
+  >;
+  body?: OperationBody<operations["profile_2fa_regenerate_create"]>;
+  request?: RequestControls;
+}
+
+export type ProfileRegenerateTwoFactorCodesResponse = OperationResult<
+  operations["profile_2fa_regenerate_create"]
+>;
+
+export interface ProfileListLoginHistoryOptions {
+  limit?: OperationParameter<operations["profileLoginHistory"], "query", "limit">;
+  offset?: OperationParameter<operations["profileLoginHistory"], "query", "offset">;
+  acceptLanguage?: OperationParameter<
+    operations["profileLoginHistory"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type ProfileListLoginHistoryResponse = OperationResult<operations["profileLoginHistory"]>;
 
 export class ProfileResource {
   readonly #client: ResourceClient;
@@ -2562,16 +4229,16 @@ export class ProfileResource {
     );
   }
 
-  /** Confirm two-factor authentication */
+  /** Manage two-factor authentication */
   async confirmTwoFactor(
-    options: ProfileConfirmTwoFactorOptions,
+    options: ProfileConfirmTwoFactorOptions = {},
   ): Promise<ProfileConfirmTwoFactorResponse> {
     return (await this.confirmTwoFactorWithResponse(options)).data;
   }
 
-  /** Confirm two-factor authentication; include response metadata. */
+  /** Manage two-factor authentication; include response metadata. */
   async confirmTwoFactorWithResponse(
-    options: ProfileConfirmTwoFactorOptions,
+    options: ProfileConfirmTwoFactorOptions = {},
   ): Promise<ApiResponse<ProfileConfirmTwoFactorResponse>> {
     return this.#client._callWithResponse<ProfileConfirmTwoFactorResponse>(
       {
@@ -2583,22 +4250,22 @@ export class ProfileResource {
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
-        body: options.body,
+        ...(options.body === undefined ? {} : { body: options.body }),
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );
   }
 
-  /** Disable two-factor authentication */
+  /** Manage two-factor authentication */
   async disableTwoFactor(
-    options: ProfileDisableTwoFactorOptions,
+    options: ProfileDisableTwoFactorOptions = {},
   ): Promise<ProfileDisableTwoFactorResponse> {
     return (await this.disableTwoFactorWithResponse(options)).data;
   }
 
-  /** Disable two-factor authentication; include response metadata. */
+  /** Manage two-factor authentication; include response metadata. */
   async disableTwoFactorWithResponse(
-    options: ProfileDisableTwoFactorOptions,
+    options: ProfileDisableTwoFactorOptions = {},
   ): Promise<ApiResponse<ProfileDisableTwoFactorResponse>> {
     return this.#client._callWithResponse<ProfileDisableTwoFactorResponse>(
       {
@@ -2610,20 +4277,20 @@ export class ProfileResource {
         headers: {
           "Accept-Language": options.acceptLanguage,
         },
-        body: options.body,
+        ...(options.body === undefined ? {} : { body: options.body }),
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );
   }
 
-  /** Prepare two-factor authentication */
+  /** Manage two-factor authentication */
   async setupTwoFactor(
     options: ProfileSetupTwoFactorOptions = {},
   ): Promise<ProfileSetupTwoFactorResponse> {
     return (await this.setupTwoFactorWithResponse(options)).data;
   }
 
-  /** Prepare two-factor authentication; include response metadata. */
+  /** Manage two-factor authentication; include response metadata. */
   async setupTwoFactorWithResponse(
     options: ProfileSetupTwoFactorOptions = {},
   ): Promise<ApiResponse<ProfileSetupTwoFactorResponse>> {
@@ -2643,14 +4310,14 @@ export class ProfileResource {
     );
   }
 
-  /** Get two-factor status */
+  /** Get two-factor authentication status */
   async getTwoFactorStatus(
     options: ProfileGetTwoFactorStatusOptions = {},
   ): Promise<ProfileGetTwoFactorStatusResponse> {
     return (await this.getTwoFactorStatusWithResponse(options)).data;
   }
 
-  /** Get two-factor status; include response metadata. */
+  /** Get two-factor authentication status; include response metadata. */
   async getTwoFactorStatusWithResponse(
     options: ProfileGetTwoFactorStatusOptions = {},
   ): Promise<ApiResponse<ProfileGetTwoFactorStatusResponse>> {
@@ -2742,6 +4409,63 @@ export class ProfileResource {
           "Accept-Language": options.acceptLanguage,
         },
         body: options.body,
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Manage two-factor authentication */
+  async regenerateTwoFactorCodes(
+    options: ProfileRegenerateTwoFactorCodesOptions = {},
+  ): Promise<ProfileRegenerateTwoFactorCodesResponse> {
+    return (await this.regenerateTwoFactorCodesWithResponse(options)).data;
+  }
+
+  /** Manage two-factor authentication; include response metadata. */
+  async regenerateTwoFactorCodesWithResponse(
+    options: ProfileRegenerateTwoFactorCodesOptions = {},
+  ): Promise<ApiResponse<ProfileRegenerateTwoFactorCodesResponse>> {
+    return this.#client._callWithResponse<ProfileRegenerateTwoFactorCodesResponse>(
+      {
+        operationId: "profile_2fa_regenerate_create",
+        method: "POST",
+        path: "/profile/2fa/regenerate",
+      },
+      {
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.body === undefined ? {} : { body: options.body }),
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** List your recent successful sign-ins */
+  async listLoginHistory(
+    options: ProfileListLoginHistoryOptions = {},
+  ): Promise<ProfileListLoginHistoryResponse> {
+    return (await this.listLoginHistoryWithResponse(options)).data;
+  }
+
+  /** List your recent successful sign-ins; include response metadata. */
+  async listLoginHistoryWithResponse(
+    options: ProfileListLoginHistoryOptions = {},
+  ): Promise<ApiResponse<ProfileListLoginHistoryResponse>> {
+    return this.#client._callWithResponse<ProfileListLoginHistoryResponse>(
+      {
+        operationId: "profileLoginHistory",
+        method: "GET",
+        path: "/profile/login-history",
+      },
+      {
+        query: {
+          limit: options.limit,
+          offset: options.offset,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
         ...(options.request === undefined ? {} : { request: options.request }),
       },
     );
@@ -3278,6 +5002,21 @@ export interface UsersResetPasswordOptions {
 
 export type UsersResetPasswordResponse = OperationResult<operations["users_password_create"]>;
 
+export interface UsersSetConnectionLimitOptions {
+  id: OperationParameter<operations["users_package_connection_limit_update"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["users_package_connection_limit_update"],
+    "header",
+    "Accept-Language"
+  >;
+  body?: OperationBody<operations["users_package_connection_limit_update"]>;
+  request?: RequestControls;
+}
+
+export type UsersSetConnectionLimitResponse = OperationResult<
+  operations["users_package_connection_limit_update"]
+>;
+
 export class UsersResource {
   readonly #client: ResourceClient;
 
@@ -3574,6 +5313,36 @@ export class UsersResource {
       },
     );
   }
+
+  /** Set a managed user's package connection limit */
+  async setConnectionLimit(
+    options: UsersSetConnectionLimitOptions,
+  ): Promise<UsersSetConnectionLimitResponse> {
+    return (await this.setConnectionLimitWithResponse(options)).data;
+  }
+
+  /** Set a managed user's package connection limit; include response metadata. */
+  async setConnectionLimitWithResponse(
+    options: UsersSetConnectionLimitOptions,
+  ): Promise<ApiResponse<UsersSetConnectionLimitResponse>> {
+    return this.#client._callWithResponse<UsersSetConnectionLimitResponse>(
+      {
+        operationId: "users_package_connection_limit_update",
+        method: "PATCH",
+        path: "/users/{id}/connection-limit",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.body === undefined ? {} : { body: options.body }),
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
 }
 
 export interface WebhooksListOptions {
@@ -3611,6 +5380,35 @@ export interface WebhooksDeleteOptions {
 }
 
 export type WebhooksDeleteResponse = OperationResult<operations["webhooks_destroy"]>;
+
+export interface WebhooksGetStaticEventsOptions {
+  id: OperationParameter<operations["webhooks_static_events_retrieve"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["webhooks_static_events_retrieve"],
+    "header",
+    "Accept-Language"
+  >;
+  request?: RequestControls;
+}
+
+export type WebhooksGetStaticEventsResponse = OperationResult<
+  operations["webhooks_static_events_retrieve"]
+>;
+
+export interface WebhooksSetStaticEventsOptions {
+  id: OperationParameter<operations["webhooks_static_events_partial_update"], "path", "id">;
+  acceptLanguage?: OperationParameter<
+    operations["webhooks_static_events_partial_update"],
+    "header",
+    "Accept-Language"
+  >;
+  body?: OperationBody<operations["webhooks_static_events_partial_update"]>;
+  request?: RequestControls;
+}
+
+export type WebhooksSetStaticEventsResponse = OperationResult<
+  operations["webhooks_static_events_partial_update"]
+>;
 
 export class WebhooksResource {
   readonly #client: ResourceClient;
@@ -3728,9 +5526,70 @@ export class WebhooksResource {
       },
     );
   }
+
+  /** Read static rental event subscriptions */
+  async getStaticEvents(
+    options: WebhooksGetStaticEventsOptions,
+  ): Promise<WebhooksGetStaticEventsResponse> {
+    return (await this.getStaticEventsWithResponse(options)).data;
+  }
+
+  /** Read static rental event subscriptions; include response metadata. */
+  async getStaticEventsWithResponse(
+    options: WebhooksGetStaticEventsOptions,
+  ): Promise<ApiResponse<WebhooksGetStaticEventsResponse>> {
+    return this.#client._callWithResponse<WebhooksGetStaticEventsResponse>(
+      {
+        operationId: "webhooks_static_events_retrieve",
+        method: "GET",
+        path: "/webhooks/{id}/static-events",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
+
+  /** Replace static rental event subscriptions */
+  async setStaticEvents(
+    options: WebhooksSetStaticEventsOptions,
+  ): Promise<WebhooksSetStaticEventsResponse> {
+    return (await this.setStaticEventsWithResponse(options)).data;
+  }
+
+  /** Replace static rental event subscriptions; include response metadata. */
+  async setStaticEventsWithResponse(
+    options: WebhooksSetStaticEventsOptions,
+  ): Promise<ApiResponse<WebhooksSetStaticEventsResponse>> {
+    return this.#client._callWithResponse<WebhooksSetStaticEventsResponse>(
+      {
+        operationId: "webhooks_static_events_partial_update",
+        method: "PATCH",
+        path: "/webhooks/{id}/static-events",
+      },
+      {
+        path: {
+          id: options.id,
+        },
+        headers: {
+          "Accept-Language": options.acceptLanguage,
+        },
+        ...(options.body === undefined ? {} : { body: options.body }),
+        ...(options.request === undefined ? {} : { request: options.request }),
+      },
+    );
+  }
 }
 
 export interface ResourceCollection {
+  readonly kyc: KYCResource;
+  readonly staticProxies: StaticProxiesResource;
   readonly apiKeys: APIKeysResource;
   readonly affiliates: AffiliatesResource;
   readonly analytics: AnalyticsResource;
@@ -3753,6 +5612,8 @@ export interface ResourceCollection {
 
 export function createResourceCollection(client: ResourceClient): ResourceCollection {
   return {
+    kyc: new KYCResource(client),
+    staticProxies: new StaticProxiesResource(client),
     apiKeys: new APIKeysResource(client),
     affiliates: new AffiliatesResource(client),
     analytics: new AnalyticsResource(client),

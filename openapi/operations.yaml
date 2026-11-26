@@ -1,4 +1,6 @@
 resources:
+  KYC: {attribute: kyc, class_name: KYCResource}
+  Static proxies: {attribute: static_proxies, class_name: StaticProxiesResource}
   API Keys: {attribute: api_keys, class_name: APIKeysResource}
   Affiliates: {attribute: affiliates, class_name: AffiliatesResource}
   Analytics: {attribute: analytics, class_name: AnalyticsResource}
@@ -102,3 +104,43 @@ operations:
   webhooks_create: create
   webhooks_retrieve: get
   webhooks_destroy: delete
+  invoices_quote_create: quote
+  kyc_retrieve: get_status
+  kyc_sessions_create: create_session
+  locations_zipcodes_list: list_zipcodes
+  locations_zipcodes_retrieve: get_zipcode
+  orders_auto_renewal_retrieve: get_calendar_renewal
+  orders_auto_renewal_update: set_calendar_renewal
+  orders_cancel_reservation_create: cancel_reservation
+  orders_checkout_create: checkout
+  orders_checkout_quote_create: quote_checkout
+  orders_proxy_password_reset_create: reset_proxy_password
+  orders_renew_create: renew
+  orders_renew_quote_create: quote_renewal
+  orders_rental_retrieve: get_rental
+  orders_replacement_requests_retrieve: list_replacements
+  orders_replacement_requests_create: request_replacement
+  orders_availability_retrieve: get_availability
+  orders_catalog_retrieve: list_catalog
+  orders_products_retrieve: list_products
+  orders_purchase_create: reserve
+  orders_purchase_quote_create: quote_purchase
+  profile_2fa_regenerate_create: regenerate_two_factor_codes
+  profileLoginHistory: list_login_history
+  static_catalog_retrieve: list_catalog
+  static_endpoints_list: list_endpoints
+  static_endpoints_retrieve: get_endpoint
+  static_endpoints_partial_update: update_endpoint
+  static_endpoints_throughput_retrieve: get_throughput
+  static_export_retrieve: export_urls
+  static_integration_keys_list: list_integration_keys
+  static_integration_keys_create: create_integration_key
+  static_integration_keys_destroy: revoke_integration_key
+  static_purchases_create: reserve
+  static_purchases_list: list_purchases
+  static_purchases_retrieve: get_purchase
+  static_purchases_checkout_create: checkout
+  static_quotes_retrieve: quote_offer
+  users_package_connection_limit_update: set_connection_limit
+  webhooks_static_events_retrieve: get_static_events
+  webhooks_static_events_partial_update: set_static_events

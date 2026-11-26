@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
-import { excludedOperations } from "../scripts/sdk-schema.js";
+import { excludedOperations, loadSdkSchema } from "../scripts/sdk-schema.js";
 import { createResourceCollection } from "../src/generated/resources.js";
 
 const root = resolve(import.meta.dirname, "..");
@@ -58,7 +58,8 @@ describe("generated SDK contract", () => {
     expect(Object.keys(resources)).toHaveLength(Object.keys(configuration.resources).length);
     expect(resources).not.toHaveProperty("sessions");
     expect(new Set(supported)).toEqual(new Set(Object.keys(configuration.operations)));
-    for (const pathItem of Object.values(schema.paths)) {
+    const sdkSchema = (await loadSdkSchema()) as unknown as typeof schema;
+    for (const pathItem of Object.values(sdkSchema.paths)) {
       for (const operation of Object.values(pathItem)) {
         if (operation.operationId === undefined || operation.tags?.[0] === undefined) continue;
         if (excludedOperations.some((id) => id === operation.operationId)) continue;

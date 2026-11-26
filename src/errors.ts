@@ -19,6 +19,7 @@ export class ProxyRequestError extends Error {
 export interface ApiErrorOptions {
   kind: ErrorKind;
   statusCode?: number;
+  code?: string;
   detail?: string;
   fieldErrors?: Record<string, string[]>;
   requestId?: string;
@@ -35,6 +36,7 @@ export class ApiError extends ProxyRequestError {
   override readonly name = "ApiError";
   readonly kind: ErrorKind;
   readonly statusCode: number | undefined;
+  readonly code: string | undefined;
   readonly detail: string | undefined;
   readonly fieldErrors: Readonly<Record<string, string[]>>;
   readonly requestId: string | undefined;
@@ -50,6 +52,7 @@ export class ApiError extends ProxyRequestError {
     super(message);
     this.kind = options.kind;
     this.statusCode = options.statusCode;
+    this.code = options.code;
     this.detail = options.detail;
     this.fieldErrors = options.fieldErrors ?? {};
     this.requestId = options.requestId;
@@ -80,6 +83,7 @@ export class ApiError extends ProxyRequestError {
   ): ApiError {
     const payload = decodeJson(rawBody);
     const detail = errorDetail(payload);
+    const code = isRecord(payload) && typeof payload.code === "string" ? payload.code : undefined;
     const kind = kindForStatus(statusCode);
     const requestId = header(headers, "x-request-id", "x-correlation-id");
     const retryAfter = numberHeader(headers, "retry-after");
@@ -88,6 +92,7 @@ export class ApiError extends ProxyRequestError {
     return new ApiError(detail ?? `ProxyRequest API returned HTTP ${statusCode}.`, {
       kind,
       statusCode,
+      ...(code === undefined ? {} : { code }),
       ...(detail === undefined ? {} : { detail }),
       fieldErrors: fieldErrors(payload),
       ...(requestId === undefined ? {} : { requestId }),
@@ -119,6 +124,7 @@ export class ApiError extends ProxyRequestError {
     return new ApiError(this.message, {
       kind: this.kind,
       ...(this.statusCode === undefined ? {} : { statusCode: this.statusCode }),
+      ...(this.code === undefined ? {} : { code: this.code }),
       ...(this.detail === undefined ? {} : { detail: this.detail }),
       fieldErrors: { ...this.fieldErrors },
       ...(this.requestId === undefined ? {} : { requestId: this.requestId }),

@@ -1,10 +1,9 @@
 {
-  "commit": "19f5f67335bbd888e9454914eca4a59acfce270c",
+  "commit": "70b94205a9fb50325b5e1e949c136330c1b75fa6",
   "excludedOperations": ["sessions_destroy", "sessions_list"],
-  "operations": 85,
+  "operations": 125,
   "repository": "papaproxy/api",
-  "schemas": 142,
-  "sha256": "d7dbafaa536ef9828b542a4eb2639693d69d8e7cbcce21534360ebc93a006d94",
-  "source": "openapi.yml",
-  "localChanges": ["Independent customer add/subtract; existing wire types unchanged"]
+  "schemas": 234,
+  "sha256": "160e8dae93a72e35fb734b681bd8b91c65c7880cae99d9bc1e08e43c04fcf3bc",
+  "source": "openapi.yml"
 }

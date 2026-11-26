@@ -53,6 +53,9 @@ export function sdkSchema(source: OpenAPI3): OpenAPI3 {
       const id = operation.operationId;
       if (!id || seen.has(id)) throw new Error(`Missing or duplicate operationId: ${id}`);
       seen.add(id);
+      if (operation.tags?.[0] === "MFA") {
+        operation.tags = [id === "login_otp_create" ? "Authorization" : "Profile"];
+      }
       if (excludedOperations.some((excluded) => excluded === id)) delete item[method];
     }
     if (!methods.some((method) => item[method])) delete document.paths?.[path];

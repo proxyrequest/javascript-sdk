@@ -455,6 +455,66 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/invoices/quote": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Quote a purchase without creating an invoice
+     * @description Calculate a purchase without creating an invoice or charging money. For bandwidth access, select pricing_plan_id. Same speed extends the remaining term; higher speed credits unused paid periods and starts a new term. Downgrades require expired access. An upgrade must use wallet payment and the returned quote_token within 60 seconds. If unused credit exceeds the new price, select a longer term. Prices and credits are integer minor currency units; each day is 24 hours.
+     */
+    post: operations["invoices_quote_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/kyc/": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read identity verification status
+     * @description Read the authenticated account's verification state in the server-selected environment. Provider evidence and credentials are never returned.
+     */
+    get: operations["kyc_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/kyc/sessions/": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Start identity verification
+     * @description Create or resume a provider-hosted verification session for the authenticated account. Supply a stable Idempotency-Key; the server selects the user and environment.
+     */
+    post: operations["kyc_sessions_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/locations/asn": {
     parameters: {
       query?: never;
@@ -655,6 +715,46 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/locations/zipcodes": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List available ZIP codes
+     * @description Returns active ZIP codes observed in the selected package provider dictionaries. All geographic and network filters intersect actual provider combinations. Counts are dictionary node counts, not live health.
+     */
+    get: operations["locations_zipcodes_list"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/locations/zipcodes/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get an available ZIP code
+     * @description Returns a ZIP code from the selected package coverage. Unavailable or excluded ZIP codes return 404.
+     */
+    get: operations["locations_zipcodes_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/login": {
     parameters: {
       query?: never;
@@ -706,7 +806,7 @@ export interface paths {
     put?: never;
     /**
      * Complete two-factor sign-in
-     * @description Exchanges a single-use sign-in challenge and authenticator code for account tokens.
+     * @description Exchange a single-use sign-in challenge and authenticator or recovery code for access and refresh tokens.
      */
     post: operations["login_otp_create"];
     delete?: never;
@@ -771,7 +871,7 @@ export interface paths {
     post?: never;
     /**
      * Delete a sub-user order
-     * @description Removes an order in the caller's permitted scope. This is destructive, not a payment refund. Deleting a virtual child order does not credit its quota to the shared ledger. Independently purchased sub-user orders have a legacy parent-order data-counter adjustment; do not treat it as a guaranteed restoration of usable ledger balance.
+     * @description Removes an order in the caller's permitted scope. This is destructive, not a payment refund. Deleting a virtual child order does not credit its quota to the shared ledger. An independently funded sub-user order returns only its unspent, unexpired traffic to the parent before deletion, preserving each ledger expiration date. A metered order returns 202 while its authorization and remaining usage are being settled.
      */
     delete: operations["orders_destroy"];
     options?: never;
@@ -781,6 +881,294 @@ export interface paths {
      * @description Updates only the auto-renewal threshold and top-up amount for an active order owned by the authenticated account. Set both values to zero to disable it.
      */
     patch: operations["orders_partial_update"];
+    trace?: never;
+  };
+  "/orders/{id}/auto-renewal": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read static calendar renewal settings
+     * @description Return wallet-backed renewal settings and the latest attempt for an owned static rental.
+     */
+    get: operations["orders_auto_renewal_retrieve"];
+    /**
+     * Set static calendar renewal settings
+     * @description Enable automatic wallet renewal for the selected active term, or disable future attempts.
+     */
+    put: operations["orders_auto_renewal_update"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/cancel-reservation": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Cancel an unissued reservation
+     * @description Release the authenticated customer's reservation only before an invoice is created or any assignment is issued. Repeated cancellation is safe.
+     */
+    post: operations["orders_cancel_reservation_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/checkout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Check out a rental reservation
+     * @description Create one shared billing invoice for this reservation using the selected gateway, coupon and billing details. A repeated request returns the existing invoice.
+     */
+    post: operations["orders_checkout_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/checkout/quote": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Quote order checkout
+     * @description Preview the billing price and the external IP groups fixed in this reservation.
+     */
+    post: operations["orders_checkout_quote_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/proxy-password/reset": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Rotate the password for a static rental order
+     * @description Rotate the password for an owned static rental order. Read the rental again to obtain the new credentials.
+     */
+    post: operations["orders_proxy_password_reset_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/renew": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Renew an order
+     * @description Create an invoice on this order for selected IPs or all eligible IPs. The idempotency key prevents repeated charges.
+     */
+    post: operations["orders_renew_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/renew/quote": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Quote order renewal
+     * @description Preview the complete price for a renewal, including billing adjustments, without creating an invoice.
+     */
+    post: operations["orders_renew_quote_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/rental": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read order rental
+     * @description Read owned IPs, paid rental periods and invoice history. Pagination applies to IPs. Integration keys must also have the credentials scope to receive secrets.
+     */
+    get: operations["orders_rental_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/{id}/replacement-requests": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List order replacement requests
+     * @description Read replacement requests for an owned static rental order, including per-IP status. Results are paginated.
+     */
+    get: operations["orders_replacement_requests_retrieve"];
+    put?: never;
+    /**
+     * Request an IP replacement
+     * @description Submit distinct active endpoints from one owned order and a reason for administrator approval. A custom reason is limited to 255 characters. Pending requests do not reserve inventory or change the paid rental period.
+     */
+    post: operations["orders_replacement_requests_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/availability": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Available static rental locations
+     * @description List visible purchasable packages, rental terms, countries, regions, cities and Mobile operators. Filter by package_id and network_class (isp, dc or mobile). Counts deduplicate endpoints and include capacity and port constraints; checkout rechecks inventory atomically.
+     */
+    get: operations["orders_availability_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/catalog": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List static rental offers
+     * @description Browse available whole-bundle prices, rental terms and optional country restrictions. Prices are in currency minor units; renewal prices apply per IP.
+     */
+    get: operations["orders_catalog_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/products": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Available proxy products
+     * @description Return legacy enabled product types plus networks with purchasable packages and real stock. Networks are residential, isp, datacenter and mobile; unavailable or unconfigured networks are omitted. Mobile requires lease-aware gateway support.
+     */
+    get: operations["orders_products_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/purchase": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Reserve a new Order
+     * @description Reserve one package and one common rental term in one order for 15 minutes. Checkout creates the invoice separately. Include Idempotency-Key or the legacy idempotency_key.
+     */
+    post: operations["orders_purchase_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/orders/purchase/quote": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Quote a static rental selection
+     * @description Calculate one all-units quantity tier across all items in one package and term without reserving or charging. Overlapping geographic and operator scopes cannot double-count inventory. Supports the compatible single-location form. Proxy location is separate from billing country.
+     */
+    post: operations["orders_purchase_quote_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   "/packages": {
@@ -839,7 +1227,7 @@ export interface paths {
     post?: never;
     /**
      * Delete the current account
-     * @description Permanently deletes the authenticated customer account. Superusers and reseller sub-accounts cannot delete themselves with this operation.
+     * @description Permanently deletes the authenticated customer account. Superusers and reseller sub-accounts cannot delete themselves with this operation. An account with outstanding proxy accounting returns 202 and is disabled immediately.
      */
     delete: operations["profile_destroy"];
     options?: never;
@@ -861,8 +1249,8 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Confirm two-factor authentication
-     * @description Activates the pending authenticator after verifying its code and revokes previous JWTs.
+     * Manage two-factor authentication
+     * @description Prepare or confirm an authenticator, disable it, or replace recovery codes. Changes revoke previous authentication proofs. Setup returns an SVG QR code and recovery codes are returned once.
      */
     post: operations["profile_2fa_confirm_create"];
     delete?: never;
@@ -881,10 +1269,30 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Disable two-factor authentication
-     * @description Requires the primary factor and current authenticator code, then revokes previous JWTs.
+     * Manage two-factor authentication
+     * @description Prepare or confirm an authenticator, disable it, or replace recovery codes. Changes revoke previous authentication proofs. Setup returns an SVG QR code and recovery codes are returned once.
      */
     post: operations["profile_2fa_disable_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/2fa/regenerate": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Manage two-factor authentication
+     * @description Prepare or confirm an authenticator, disable it, or replace recovery codes. Changes revoke previous authentication proofs. Setup returns an SVG QR code and recovery codes are returned once.
+     */
+    post: operations["profile_2fa_regenerate_create"];
     delete?: never;
     options?: never;
     head?: never;
@@ -901,8 +1309,8 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Prepare two-factor authentication
-     * @description Confirms the primary factor and prepares a pending secret without disabling current protection.
+     * Manage two-factor authentication
+     * @description Prepare or confirm an authenticator, disable it, or replace recovery codes. Changes revoke previous authentication proofs. Setup returns an SVG QR code and recovery codes are returned once.
      */
     post: operations["profile_2fa_setup_create"];
     delete?: never;
@@ -919,8 +1327,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get two-factor status
-     * @description Returns whether TOTP two-factor authentication is enabled for the authenticated account.
+     * Get two-factor authentication status
+     * @description Return the current factor state, primary-factor availability and remaining recovery-code count.
      */
     get: operations["profile_2fa_status_retrieve"];
     put?: never;
@@ -945,6 +1353,26 @@ export interface paths {
      * @description Verifies the current password, applies the new password, and keeps the current authenticated session active.
      */
     post: operations["profile_change_password_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/profile/login-history": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List your recent successful sign-ins
+     * @description Returns only the authenticated user's latest personal sign-ins, newest first. At most 50 records are retained per account. Refreshes, API key requests, failed attempts and impersonation are excluded. Client metadata is descriptive, not proof of identity; location is present only when supplied by trusted Cloudflare edges.
+     */
+    get: operations["profileLoginHistory"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1081,8 +1509,8 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Reset an order's proxy password
-     * @description Rotates the proxy password for the order identified by order_id. Existing proxy connection strings stop working after the rotation; use the updated proxy password for all new connections.
+     * Confirm an account password reset or rotate an order's proxy password
+     * @description Recover a login password using a valid reset token, or send order_id with authentication to rotate a proxy password for an owned order. Static rental clients can use the order-scoped password reset operation.
      */
     post: operations["reset_password_create"];
     delete?: never;
@@ -1171,6 +1599,238 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/static/catalog": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List static rental offers
+     * @description Browse available whole-bundle prices, rental terms and optional country restrictions. Prices are in currency minor units; renewal prices apply per IP.
+     */
+    get: operations["static_catalog_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/endpoints": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List rented addresses
+     * @description List only the authenticated customer's endpoints, their connection ports and paid periods. Optionally filter by order_id; limit and offset control pagination.
+     */
+    get: operations["static_endpoints_list"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/endpoints/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read a rented address
+     * @description Read the connection endpoints, access settings and rental periods for one owned address.
+     */
+    get: operations["static_endpoints_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Update rental access
+     * @description Change the label, active status or allowed client IP/CIDR networks. The next node configuration update applies the policy to new and existing connections.
+     */
+    patch: operations["static_endpoints_partial_update"];
+    trace?: never;
+  };
+  "/static/endpoints/{id}/throughput": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read current rental speed
+     * @description Read combined live upload/download speed from the short-lived accounting projection. Missing or expired observations return available=false and null values; no historical usage quota is tracked.
+     */
+    get: operations["static_endpoints_throughput_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/export": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Export proxy connection URLs
+     * @description Download active HTTP or SOCKS5 connection URLs including credentials. Select protocol=http or socks5 and optionally order_id. At most 10000 rentals can be exported at once; responses must not be cached.
+     */
+    get: operations["static_export_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/integration-keys": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List static proxy integration keys
+     * @description Read the current account's delegated key names, scopes and IP restrictions.
+     */
+    get: operations["static_integration_keys_list"];
+    put?: never;
+    /**
+     * Create a static proxy integration key
+     * @description Create a delegated key with explicit static rental scopes. The credential is returned once.
+     */
+    post: operations["static_integration_keys_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/integration-keys/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Revoke a static proxy integration key
+     * @description Delete a key owned by the authenticated account and reject subsequent requests made with it.
+     */
+    delete: operations["static_integration_keys_destroy"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/purchases": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List static rental purchases
+     * @description List the current account's reservations and rentals without connection credentials.
+     */
+    get: operations["static_purchases_list"];
+    put?: never;
+    /**
+     * Reserve a new Order
+     * @description Reserve one package and one common rental term in one order for 15 minutes. Checkout creates the invoice separately. Include Idempotency-Key or the legacy idempotency_key.
+     */
+    post: operations["static_purchases_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/purchases/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read a rental purchase
+     * @description Inspect the authenticated customer's reservation, immutable pricing snapshot, invoice and fulfillment status. Paid rentals start after listener acknowledgement.
+     */
+    get: operations["static_purchases_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/purchases/{id}/checkout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Check out a rental reservation
+     * @description Create one shared billing invoice for this reservation using the selected gateway, coupon and billing details. A repeated request returns the existing invoice.
+     */
+    post: operations["static_purchases_checkout_create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/static/quotes/{offer_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Quote an address bundle
+     * @description Read the current rental terms and full bundle price before reserving inventory. The quote itself does not reserve addresses or charge the account.
+     */
+    get: operations["static_quotes_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/users": {
     parameters: {
       query?: never;
@@ -1180,7 +1840,7 @@ export interface paths {
     };
     /**
      * List users in the current account
-     * @description Returns users visible to the caller. Resellers see their sub-users, regular customers see only themselves, and administrators can see all users.
+     * @description Returns users visible to the caller. Resellers see their sub-users, regular customers see themselves and their direct sub-users, and administrators can see all users.
      */
     get: operations["users_list"];
     put?: never;
@@ -1211,7 +1871,7 @@ export interface paths {
     post?: never;
     /**
      * Delete a user
-     * @description Deletes a user that the authenticated account is allowed to manage.
+     * @description Deletes a user that the authenticated account is allowed to manage. An account with outstanding proxy accounting returns 202 and is disabled immediately.
      */
     delete: operations["users_destroy"];
     options?: never;
@@ -1221,6 +1881,26 @@ export interface paths {
      * @description Updates selected fields for a visible user and returns the latest account state.
      */
     patch: operations["users_partial_update"];
+    trace?: never;
+  };
+  "/users/{id}/connection-limit": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Set a managed user's package connection limit
+     * @description Updates the connection limit for package_id on a direct sub-user. Use -1 to inherit the package limit, or 1 through 1000000 for a custom limit. Other packages retain their effective limits, including when converting a legacy user-wide override. Administrators may manage any user's traffic package.
+     */
+    patch: operations["users_package_connection_limit_update"];
     trace?: never;
   };
   "/users/{id}/data/add": {
@@ -1254,7 +1934,7 @@ export interface paths {
     put?: never;
     /**
      * Reset a user's remaining data
-     * @description Atomically resets remaining data to zero for package_id, including zero or negative balances. Supply package_id only; data is not accepted. System administrators may reset any user; other accounts may reset only their direct children. Purchased root orders have their ledger balances cleared; virtual child orders have their quota set to usage without changing the parent's pool. Usage history and invoices are preserved. Unlimited packages are rejected. Use Idempotency-Key for safe retries so a repeated request cannot clear a subsequent top-up.
+     * @description Atomically resets remaining data to zero for package_id, including zero or negative balances. Supply package_id only; data is not accepted. System administrators may reset any user; other accounts may reset only their direct children. Independently funded sub-user orders first return their unspent, unexpired traffic to the parent with the same deadlines. Top-level purchased orders have their ledger balances cleared; virtual child orders have their quota set to usage without changing the parent's pool. Usage history and invoices are preserved. Unlimited packages are rejected. Use Idempotency-Key for safe retries so a repeated request cannot clear a subsequent top-up.
      */
     post: operations["users_data_reset_create"];
     delete?: never;
@@ -1371,12 +2051,36 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/webhooks/{id}/static-events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Read static rental event subscriptions
+     * @description Return the static event types selected for the owned user webhook.
+     */
+    get: operations["webhooks_static_events_retrieve"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Replace static rental event subscriptions
+     * @description Replace the set of static rental event types delivered to the owned user webhook. An empty list disables static events.
+     */
+    patch: operations["webhooks_static_events_partial_update"];
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     AddDataRequest: {
-      /** @description Positive integer bytes to add to the child's assigned quota. Does not reserve parent data; may exceed the parent's remaining pool. */
+      /** @description Positive integer bytes. Independent child orders receive traffic debited from the parent. Reseller virtual quotas do not reserve parent data and may exceed the parent's remaining pool. */
       data: number;
       /**
        * Format: uuid
@@ -1423,6 +2127,11 @@ export interface components {
     AffiliateStatsResponse: {
       results: components["schemas"]["AffiliateStatsPoint"][];
     };
+    /**
+     * @description * `dedicated` - dedicated * `shared` - shared
+     * @enum {string}
+     */
+    AllocationModeEnum: "dedicated" | "shared";
     APIKeyCreate: {
       allowed_ips?: string[];
       /** Format: date-time */
@@ -1451,10 +2160,99 @@ export interface components {
       /** Format: date-time */
       readonly updated: string;
     };
+    AutoRenewalSettingsRequest: {
+      enabled: boolean;
+      /** Format: uuid */
+      term_id?: string | null;
+    };
+    AutoRenewalStatus: {
+      enabled: boolean;
+      /** Format: date-time */
+      last_attempt_at: string | null;
+      last_error:
+        | (components["schemas"]["LastErrorEnum"] | components["schemas"]["NullEnum"])
+        | null;
+      /** Format: uuid */
+      term_id: string | null;
+    };
+    AvailabilityResponse: {
+      available: number;
+      cities: components["schemas"]["LocationOption"][];
+      countries: components["schemas"]["LocationOption"][];
+      currency: string;
+      operators: components["schemas"]["LocationOption"][];
+      regions: components["schemas"]["LocationOption"][];
+      terms: components["schemas"]["RentalTermOption"][];
+    };
+    BandwidthPlan: {
+      duration_days: number;
+      /** Format: uuid */
+      id: string;
+      price_minor: number;
+      speed_mbps: number;
+    };
+    BandwidthPurchase: {
+      credit_minor: number;
+      /** Format: date-time */
+      credited_to_wallet_at: string | null;
+      duration_days: number;
+      operation: string;
+      service_value_minor: number;
+      speed_mbps: number;
+    };
+    /** @enum {unknown} */
+    BlankEnum: "";
+    CartLine: {
+      location: components["schemas"]["LocationSelection"];
+      operator?: string;
+      quantity: number;
+    };
+    CartLineRequest: {
+      location: components["schemas"]["LocationSelectionRequest"];
+      operator?: string;
+      quantity: number;
+    };
+    CatalogOffer: {
+      allocation_mode: components["schemas"]["AllocationModeEnum"];
+      country_code: string;
+      duration_kind: components["schemas"]["DurationKindEnum"];
+      duration_value: number;
+      /** Format: uuid */
+      id: string;
+      max_bandwidth_mbps: number | null;
+      name: string;
+      network_class: components["schemas"]["NetworkClassEnum"];
+      /** Format: uuid */
+      package_id: string;
+      price_cents: number;
+      quantity: number;
+      renewal_price_cents: number;
+      /** Format: uuid */
+      term_id: string;
+      term_name: string;
+    };
+    CatalogPage: {
+      count: number;
+      /** Format: uri */
+      next: string | null;
+      /** Format: uri */
+      previous: string | null;
+      results: components["schemas"]["CatalogOffer"][];
+    };
     ChangePasswordRequest: {
       new_password1: string;
       new_password2: string;
       old_password: string;
+    };
+    /**
+     * @description * `public_api` - Public API * `admin_panel` - Admin panel * `unknown` - Unknown
+     * @enum {string}
+     */
+    ChannelEnum: "public_api" | "admin_panel" | "unknown";
+    CheckoutQuote: {
+      currency: string;
+      groups: components["schemas"]["PurchaseGroup"][];
+      total: number;
     };
     /**
      * @description * `not_required` - Not required * `initializing` - Initializing * `ready` - Ready * `failed` - Failed
@@ -1466,6 +2264,8 @@ export interface components {
       readonly asns: components["schemas"]["LocationCodeName"][];
       /** @description Raw city code as it appears in the source data. los_angeles paris */
       code: string;
+      /** @description Node count in Rust search mode. */
+      readonly count: number;
       readonly country: components["schemas"]["LocationCountrySummary"];
       id?: string;
       readonly isps: components["schemas"]["LocationCodeName"][];
@@ -1512,6 +2312,8 @@ export interface components {
        * @description Two-letter ISO 3166-1 alpha-2 country code. Must be unique. us de fr
        */
       code: string;
+      /** @description Node count in Rust search mode. */
+      readonly count: number;
       id?: string;
       readonly isps: components["schemas"]["LocationCodeName"][];
       /** @description English display name of the country used across the admin and API responses. */
@@ -1722,6 +2524,16 @@ export interface components {
        */
       value: number;
     };
+    /**
+     * @description * `shared` - shared * `per_endpoint` - per_endpoint
+     * @enum {string}
+     */
+    CredentialModeEnum: "shared" | "per_endpoint";
+    /**
+     * @description * `btc` - btc * `eth` - eth * `usdt` - usdt
+     * @enum {string}
+     */
+    CryptoCurrencyEnum: "btc" | "eth" | "usdt";
     /** @description A purchased data bucket, not a complete transaction history. Finite purchases with an expiration have separate buckets. Compatible non-expiring top-ups and unlimited packages may reuse an existing bucket. */
     DataLedger: {
       /** Format: date-time */
@@ -1763,9 +2575,40 @@ export interface components {
       start: string;
       timezone: string;
     };
+    /**
+     * @description * `hours` - hours * `calendar_months` - calendar_months
+     * @enum {string}
+     */
+    DurationKindEnum: "hours" | "calendar_months";
     EnabledResponse: {
       enabled: boolean;
     };
+    Endpoint: {
+      readonly allowed_ips: string[];
+      readonly capabilities: {
+        [key: string]: boolean;
+      };
+      readonly connections: components["schemas"]["StaticConnection"][];
+      id?: string;
+      is_active?: boolean;
+      label?: string;
+      readonly max_bandwidth_mbps: number | null;
+      readonly order_id: string;
+      readonly periods: components["schemas"]["Period"][];
+    };
+    EndpointPage: {
+      count: number;
+      /** Format: uri */
+      next: string | null;
+      /** Format: uri */
+      previous: string | null;
+      results: components["schemas"]["Endpoint"][];
+    };
+    /**
+     * @description * `production` - production * `staging` - staging
+     * @enum {string}
+     */
+    EnvironmentEnum: "production" | "staging";
     FeedRecord: {
       asn: string;
       city: string;
@@ -1855,6 +2698,44 @@ export interface components {
       credential: string;
       password: string;
     };
+    /**
+     * @description * `residential` - residential * `isp` - isp * `datacenter` - datacenter * `mobile` - mobile
+     * @enum {string}
+     */
+    IdEnum: "residential" | "isp" | "datacenter" | "mobile";
+    IntegrationKey: {
+      readonly allowed_ips: string[];
+      /** Format: date-time */
+      readonly created: string;
+      id?: string;
+      readonly scopes: components["schemas"]["ScopesEnum"][];
+      /** @description Descriptive label that identifies the purpose or owner of this API key. Mobile App Dashboard Integration CI Pipeline */
+      title: string;
+    };
+    IntegrationKeyCreated: {
+      readonly allowed_ips: string[];
+      /** Format: date-time */
+      readonly created: string;
+      id?: string;
+      readonly key: string;
+      readonly scopes: components["schemas"]["ScopesEnum"][];
+      /** @description Descriptive label that identifies the purpose or owner of this API key. Mobile App Dashboard Integration CI Pipeline */
+      title: string;
+    };
+    IntegrationKeyRequestRequest: {
+      allowed_ips?: string[];
+      scopes: components["schemas"]["ScopesEnum"][];
+      title: string;
+    };
+    IntentRequest: {
+      items?: components["schemas"]["CartLineRequest"][];
+      location?: components["schemas"]["LocationSelectionRequest"];
+      /** Format: uuid */
+      offer_id?: string;
+      quantity?: number;
+      /** Format: uuid */
+      term_id?: string;
+    };
     Invoice: {
       /**
        * Balance Top Up (cents)
@@ -1862,6 +2743,7 @@ export interface components {
        * @description The balance to top up for the user. Must be zero or positive.
        */
       balance?: number;
+      readonly bandwidth_purchase: components["schemas"]["BandwidthPurchase"] | null;
       checkout_status?: components["schemas"]["CheckoutStatusEnum"];
       company_address?: string;
       company_city?: string;
@@ -1895,9 +2777,10 @@ export interface components {
       readonly fx_quoted_at: string | null;
       /**
        * Payment Gateway
-       * @description The payment gateway used for processing the payment. * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail
+       * @description The payment gateway used for processing the payment. * `revolut` - Revolut * `paypal` - PayPal * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail
+       * @default stripe
        */
-      gateway?: components["schemas"]["InvoiceGatewayEnum"];
+      gateway: components["schemas"]["InvoiceGatewayEnum"];
       id?: string;
       /** @description A unique identifier for the invoice, generated automatically. */
       internal_id?: string;
@@ -1933,9 +2816,12 @@ export interface components {
       /** @description Provider-side hosted checkout identifier used for reconciliation. */
       provider_checkout_id?: string;
       /** @description Provider-side payment or transaction identifier used for reconciliation. */
-      provider_payment_id?: string;
+      provider_payment_id: string;
       /** @description The number of proxies to assign. */
       quantity?: number;
+      readonly rental_kind: string;
+      readonly rental_order: string | null;
+      readonly rental_status: string;
       /** @description Payment state. A paid package invoice funds an order; a paid balance invoice credits money. Confirm the resulting order before delivering access, because fulfillment can recover asynchronously. Creating an invoice with status=paid requires a superuser. This read field is not a public status-update or refund endpoint. * `pending` - Pending * `paid` - Paid * `unpaid` - Unpaid * `error` - Error */
       status?: components["schemas"]["InvoiceStatusEnum"];
       /** @description The type of invoice, indicating the type of proxy service. Options include: RESIDENTIAL: Residential proxies. STATIC: Static proxies. * `static` - Static * `residential` - Residential * `balance` - Balance */
@@ -1952,18 +2838,18 @@ export interface components {
       vat?: number;
     };
     /**
-     * @description * `crypto` - crypto * `credit_card` - credit_card * `wallet` - wallet * `manual` - manual * `stripe` - stripe * `coinbase` - coinbase * `cryptomus` - cryptomus * `coingate` - coingate * `whitepay` - whitepay * `wayforpay` - wayforpay * `usegateway` - usegateway * `binance` - binance * `anymoney` - anymoney * `coinpayments` - coinpayments * `checkoutcom` - checkoutcom * `nowpayments` - nowpayments * `btcpay` - btcpay * `braintree` - braintree * `monobank` - monobank * `liqpay` - liqpay * `iyzico` - iyzico * `paytr` - paytr * `payu` - payu * `tpay` - tpay * `przelewy24` - przelewy24 * `gopay` - gopay * `comgate` - comgate * `monei` - monei * `redsys` - redsys * `payplug` - payplug * `mollie` - mollie * `unzer` - unzer * `payone` - payone * `nexi_xpay` - nexi_xpay * `halyk_epay` - halyk_epay * `kaspi_pay` - kaspi_pay * `vipps_mobilepay` - vipps_mobilepay * `paytrail` - paytrail
+     * @description * `revolut` - revolut * `paypal` - paypal * `coinbase` - coinbase * `cryptomus` - cryptomus * `stripe` - stripe * `coingate` - coingate * `wallet` - wallet * `manual` - manual * `whitepay` - whitepay * `wayforpay` - wayforpay * `usegateway` - usegateway * `binance` - binance * `anymoney` - anymoney * `coinpayments` - coinpayments * `checkoutcom` - checkoutcom * `nowpayments` - nowpayments * `btcpay` - btcpay * `braintree` - braintree * `monobank` - monobank * `liqpay` - liqpay * `iyzico` - iyzico * `paytr` - paytr * `payu` - payu * `tpay` - tpay * `przelewy24` - przelewy24 * `gopay` - gopay * `comgate` - comgate * `monei` - monei * `redsys` - redsys * `payplug` - payplug * `mollie` - mollie * `unzer` - unzer * `payone` - payone * `nexi_xpay` - nexi_xpay * `halyk_epay` - halyk_epay * `kaspi_pay` - kaspi_pay * `vipps_mobilepay` - vipps_mobilepay * `paytrail` - paytrail * `crypto` - crypto * `credit_card` - credit_card
      * @enum {string}
      */
     InvoiceCreateRequestGatewayEnum:
-      | "crypto"
-      | "credit_card"
-      | "wallet"
-      | "manual"
-      | "stripe"
+      | "revolut"
+      | "paypal"
       | "coinbase"
       | "cryptomus"
+      | "stripe"
       | "coingate"
+      | "wallet"
+      | "manual"
       | "whitepay"
       | "wayforpay"
       | "usegateway"
@@ -1994,6 +2880,8 @@ export interface components {
       | "kaspi_pay"
       | "vipps_mobilepay"
       | "paytrail"
+      | "crypto"
+      | "credit_card"
       | (string & {});
     InvoiceCreateRequestRequest: {
       /** @description Account balance amount to purchase, in the smallest currency unit. Use for a wallet top-up without package_id, not for buying proxy data. */
@@ -2015,6 +2903,10 @@ export interface components {
        * @description Package to purchase. Required for package purchases.
        */
       package_id?: string;
+      /** @description Regional payer data: first_name, last_name, identity_number, address, city, country, phone. Required keys depend on the provider. */
+      payer_details?: {
+        [key: string]: string;
+      };
       /** @description ISO 4217 currency charged by a regional fiat provider. */
       payment_currency?: string;
       /**
@@ -2022,8 +2914,15 @@ export interface components {
        * @description Optional final invoice total in the smallest currency unit, including tax and discounts. Zero is allowed for a free product purchase. For a balance invoice, this is also the balance credit, must satisfy the balance top-up limits, and takes precedence over amount. Only superusers or active superuser API keys may supply it, including zero and during API-key impersonation; coupon_code cannot be supplied with price_total.
        */
       price_total?: number;
+      /**
+       * Format: uuid
+       * @description Required for bandwidth pricing: active plan from the package catalogue. Defines Mbps, duration in 24-hour days and price; omit data/amount/quantity/expires.
+       */
+      pricing_plan_id?: string;
       /** @description Number of static proxies to purchase. */
       quantity?: number;
+      /** @description For an active bandwidth upgrade, pass the signed token from POST /invoices/quote/. Valid for 60 seconds and bound to the buyer, plan and current access. Upgrades require wallet payment. */
+      quote_token?: string;
       /**
        * @description Initial invoice status. Defaults to pending. Setting paid requires a superuser or an active superuser's API key, including requests using X-Impersonate-User. Other authenticated users receive a 403 response. * `pending` - pending * `paid` - paid
        * @default pending
@@ -2041,10 +2940,12 @@ export interface components {
      */
     InvoiceCreateRequestStatusEnum: "pending" | "paid";
     /**
-     * @description * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail
+     * @description * `revolut` - Revolut * `paypal` - PayPal * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail
      * @enum {string}
      */
     InvoiceGatewayEnum:
+      | "revolut"
+      | "paypal"
       | "coinbase"
       | "cryptomus"
       | "stripe"
@@ -2082,6 +2983,45 @@ export interface components {
       | "vipps_mobilepay"
       | "paytrail"
       | (string & {});
+    InvoicePurchaseQuoteRequestRequest: {
+      /** @description Account balance amount to purchase, in the smallest currency unit. Use for a wallet top-up without package_id, not for buying proxy data. */
+      amount?: number;
+      company_name?: string;
+      company_registration_number?: string;
+      company_vat_number?: string;
+      connection_limit?: number;
+      country_code?: string;
+      coupon_code?: string;
+      crypto_currency?: string;
+      /** @description Residential proxy data to purchase, in integer bytes (1 GiB = 1073741824). Use 0 for an unlimited Residential package; its fixed price is not multiplied by volume. Required with package_id for a residential purchase. A paid purchase funds the recipient's order; it is not a virtual allocation from a parent pool. */
+      data?: number;
+      /** @description Optional future expiration as a Unix timestamp in seconds, not milliseconds. Otherwise a positive package billing cycle determines the purchased data's expiration from the payment date; a zero cycle has no automatic expiration. A later purchase does not extend earlier finite, expiring ledgers. */
+      expires?: number;
+      gateway: components["schemas"]["InvoiceCreateRequestGatewayEnum"];
+      /**
+       * Format: uuid
+       * @description Package to purchase. Required for package purchases.
+       */
+      package_id?: string;
+      /** @description Regional payer data: first_name, last_name, identity_number, address, city, country, phone. Required keys depend on the provider. */
+      payer_details?: {
+        [key: string]: string;
+      };
+      /** @description ISO 4217 currency charged by a regional fiat provider. */
+      payment_currency?: string;
+      /**
+       * Format: uuid
+       * @description Required for bandwidth pricing: active plan from the package catalogue. Defines Mbps, duration in 24-hour days and price; omit data/amount/quantity/expires.
+       */
+      pricing_plan_id?: string;
+      /** @description Number of static proxies to purchase. */
+      quantity?: number;
+      /**
+       * Format: uuid
+       * @description Account receiving the purchase. Omit for your own account. Sending user_id requires is_reseller; a reseller can target its own sub-user, while a superuser with is_reseller can target another account. Do not send your own ID.
+       */
+      user_id?: string;
+    };
     /** @description Full invoice in package-based deployments; short invoice otherwise. Invoice creation always returns the full Invoice representation. */
     InvoiceRead: components["schemas"]["Invoice"] | components["schemas"]["InvoiceShort"];
     InvoiceShort: {
@@ -2182,6 +3122,8 @@ export interface components {
        * @description Unique internal code used to identify this ISP in location vocabulary entries and provider routing rules. comcast att deutsche_telekom
        */
       code: string;
+      /** @description Node count in Rust search mode. */
+      readonly count: number;
       /**
        * ISP Name
        * @description Full display name of the Internet Service Provider. Comcast Cable Communications AT&T Services
@@ -2189,10 +3131,25 @@ export interface components {
       name: string;
     };
     /**
+     * @description * `purchase` - purchase * `renewal` - renewal
+     * @enum {string}
+     */
+    KindEnum: "purchase" | "renewal";
+    /**
+     * @description * `sumsub` - sumsub * `stripe` - stripe * `veriff` - veriff * `idenfy` - idenfy * `jumio` - jumio * `trulioo` - trulioo
+     * @enum {string}
+     */
+    KycProviderEnum: "sumsub" | "stripe" | "veriff" | "idenfy" | "jumio" | "trulioo";
+    /**
      * @description * `en` - EN * `de` - DE * `fr` - FR * `it` - IT * `ru` - RU
      * @enum {string}
      */
     LanguageEnum: "en" | "de" | "fr" | "it" | "ru";
+    /**
+     * @description * `insufficient_balance` - insufficient_balance * `term_unavailable` - term_unavailable * `payment_unavailable` - payment_unavailable
+     * @enum {string}
+     */
+    LastErrorEnum: "insufficient_balance" | "term_unavailable" | "payment_unavailable";
     /**
      * @description * `standard` - Standard * `silver` - Silver * `gold` - Gold * `diamond` - Diamond
      * @enum {string}
@@ -2205,23 +3162,82 @@ export interface components {
     };
     LocationASNRecord: {
       code: string;
+      /** @description Node count in Rust search mode; unknown quantities are zero. */
+      readonly count: number;
       country_codes: string[];
       geo: components["schemas"]["LocationASNGeoItem"][];
       name: string;
     };
     LocationCodeName: {
       code: string;
+      /** @description Node count in Rust search mode; unknown quantities are zero. */
+      readonly count: number;
       name: string;
     };
     LocationCountrySummary: {
       code: string;
+      /** @description Node count in Rust search mode; unknown quantities are zero. */
+      readonly count: number;
       name: string;
       original_name?: string;
     };
+    LocationOption: {
+      count: number;
+      id: string;
+      label: string;
+      region_id?: string;
+      value: string;
+    };
     LocationRegionSummary: {
       code: string;
+      /** @description Node count in Rust search mode; unknown quantities are zero. */
+      readonly count: number;
       name: string;
       original_name?: string;
+    };
+    LocationSelection: {
+      /** Format: uuid */
+      city_id?: string | null;
+      country_code: string;
+      operator?: string;
+      /** Format: uuid */
+      region_id?: string | null;
+    };
+    LocationSelectionRequest: {
+      /** Format: uuid */
+      city_id?: string | null;
+      country_code: string;
+      operator?: string;
+      /** Format: uuid */
+      region_id?: string | null;
+    };
+    LoginHistory: {
+      /** Format: date-time */
+      readonly authenticated_at: string;
+      readonly browser: string;
+      readonly cf_ray: string;
+      readonly channel: components["schemas"]["ChannelEnum"];
+      readonly client_hints: {
+        [key: string]: string;
+      };
+      readonly device: string;
+      readonly id: number;
+      readonly ip_address: string | null;
+      readonly ip_source: string;
+      readonly language: string;
+      readonly location: {
+        [key: string]: string | null;
+      };
+      readonly method: components["schemas"]["MethodEnum"];
+      readonly mfa_verified: boolean;
+      readonly operating_system: string;
+      readonly request_host: string;
+      readonly request_id: string;
+      readonly request_method: string;
+      readonly request_path: string;
+      /** Format: uuid */
+      readonly user: string;
+      readonly user_agent: string;
     };
     LoginRequestRequest: {
       /**
@@ -2275,6 +3291,54 @@ export interface components {
     MessageResponse: {
       detail: string;
     };
+    /**
+     * @description * `password` - Password * `google` - Google * `registration` - Registration * `unknown` - Unknown
+     * @enum {string}
+     */
+    MethodEnum: "password" | "google" | "registration" | "unknown";
+    MFAActionRequest: {
+      code?: string;
+      confirmed?: boolean;
+      credential?: string;
+      password?: string;
+    };
+    MFAError: {
+      code: string;
+      fields: {
+        [key: string]: unknown;
+      };
+      message: string;
+    };
+    MFAResponse: {
+      can_reset?: boolean;
+      enabled?: boolean;
+      has_password?: boolean;
+      otpauth_url?: string;
+      qr_svg?: string;
+      recovery_codes?: string[];
+      recovery_codes_remaining?: number;
+      requires_reauth?: boolean;
+      secret?: string;
+      self?: boolean;
+    };
+    MFATokenPair: {
+      access: string;
+      refresh: string;
+    };
+    /**
+     * @description * `grouped` - grouped * `individual` - individual
+     * @enum {string}
+     */
+    ModeEnum: "grouped" | "individual";
+    /**
+     * @description * `isp` - isp * `dc` - dc
+     * @enum {string}
+     */
+    NetworkClassEnum: "isp" | "dc";
+    NetworkMetadata: {
+      id: components["schemas"]["IdEnum"];
+      package_ids: string[];
+    };
     News: {
       /** @description The content of the news item. HTML is allowed. */
       content: string;
@@ -2300,6 +3364,7 @@ export interface components {
        * @description When this percentage of the data allowance has been consumed, the order is automatically renewed if the user has sufficient balance. Set to 0 to disable auto-renewal. 80 → renew when 80% of data is used
        */
       auto_renewal_percentage?: number;
+      readonly connection_limit: number;
       /** Format: date-time */
       readonly created: string;
       /**
@@ -2320,6 +3385,12 @@ export interface components {
        * Format: date-time
        */
       readonly data_updated: string;
+      /**
+       * Format: date-time
+       * @description Date and time when this order expires and access is revoked. Leave blank for orders that do not expire.
+       */
+      expires?: string | null;
+      readonly fulfillment_kind: string;
       id?: string;
       readonly is_auto_renewal: boolean;
       /**
@@ -2347,6 +3418,12 @@ export interface components {
        * @description Timestamp of the last proxy password change. Read-only — updated automatically whenever the password is rotated.
        */
       proxy_password_reset?: string | null;
+      readonly rental_status: string | null;
+      /**
+       * Speed Limit (Mbit/s)
+       * @description Bandwidth cap in Mbit/s applied across all connections for a user on this package. Set to 0 for unlimited.
+       */
+      speed_limit?: number;
       /** Format: date-time */
       readonly updated: string;
     };
@@ -2361,6 +3438,7 @@ export interface components {
        * @description When this percentage of the data allowance has been consumed, the order is automatically renewed if the user has sufficient balance. Set to 0 to disable auto-renewal. 80 → renew when 80% of data is used
        */
       auto_renewal_percentage?: number;
+      readonly connection_limit: number;
       /**
        * Data Allowance (bytes)
        * Format: int64
@@ -2384,6 +3462,7 @@ export interface components {
        * @description Date and time when this order expires and access is revoked. Leave blank for orders that do not expire.
        */
       expires?: string | null;
+      readonly fulfillment_kind: string;
       id?: string;
       /**
        * Active
@@ -2416,13 +3495,28 @@ export interface components {
        * @description Timestamp of the last proxy password change. Read-only — updated automatically whenever the password is rotated.
        */
       proxy_password_reset?: string | null;
+      readonly rental_status: string | null;
+      /**
+       * Speed Limit (Mbit/s)
+       * @description Bandwidth cap in Mbit/s applied across all connections for a user on this package. Set to 0 for unlimited.
+       */
+      speed_limit?: number;
       /** Format: uuid */
       user_id: string;
     };
     OTPChallenge: {
       challenge: string;
       expires_in: number;
-      status: string;
+      status: components["schemas"]["OTPChallengeStatusEnum"];
+    };
+    /**
+     * @description * `otp_required` - otp_required
+     * @enum {string}
+     */
+    OTPChallengeStatusEnum: "otp_required";
+    OTPVerifyRequest: {
+      challenge: string;
+      code: string;
     };
     OverallPoint: {
       data: number;
@@ -2446,6 +3540,7 @@ export interface components {
     Package: {
       /** @description Lowercase alphanumeric identifier used internally for package resolution and proxy username routing. Cannot be changed without affecting active connections. residential01 bizpro */
       alias: string;
+      readonly bandwidth_plans: components["schemas"]["BandwidthPlan"][];
       /**
        * Billing Cycle (days)
        * @description Number of days before purchased data expires. Set to -1 for data that never expires. 30 monthly -1 never expires
@@ -2506,7 +3601,7 @@ export interface components {
       /** @description Display order in the UI. Lower values appear first. */
       order?: number;
       readonly price_requires_configuration: boolean;
-      /** @description Pricing model applied when customers purchase data on this package. Fixed a fixed price per data amount — 10 GB for $10, 50 GB for $50 Range tiered pricing where the unit price decreases as quantity increases * `fixed` - Fixed * `range` - Range */
+      /** @description Pricing model applied when customers purchase data on this package. Fixed a fixed price per data amount — 10 GB for $10, 50 GB for $50 Range tiered pricing where the unit price decreases as quantity increases * `fixed` - Fixed * `range` - Range * `bandwidth` - Bandwidth */
       pricing?: components["schemas"]["PricingEnum"];
       /** @description Unit customers purchase — determines how the billing model amounts are interpreted. * `data` - Data * `proxy` - Proxy */
       pricing_unit?: components["schemas"]["PricingUnitEnum"];
@@ -2530,6 +3625,7 @@ export interface components {
     PackageShort: {
       /** @description Lowercase alphanumeric identifier used internally for package resolution and proxy username routing. Cannot be changed without affecting active connections. residential01 bizpro */
       alias: string;
+      readonly connection_limit: number;
       id?: string;
       /**
        * Unlimited Data
@@ -2705,6 +3801,21 @@ export interface components {
       previous?: string | null;
       results: components["schemas"]["LocationASNRecord"][];
     };
+    PaginatedLoginHistoryList: {
+      /** @example 1 */
+      count: number;
+      /**
+       * Format: uri
+       * @example null
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example null
+       */
+      previous?: string | null;
+      results: components["schemas"]["LoginHistory"][];
+    };
     PaginatedNewsList: {
       /** @example 1 */
       count: number;
@@ -2764,6 +3875,21 @@ export interface components {
        */
       previous?: string | null;
       results: components["schemas"]["Package"][];
+    };
+    PaginatedPostalList: {
+      /** @example 1 */
+      count: number;
+      /**
+       * Format: uri
+       * @example null
+       */
+      next?: string | null;
+      /**
+       * Format: uri
+       * @example null
+       */
+      previous?: string | null;
+      results: components["schemas"]["Postal"][];
     };
     PaginatedProviderDataBalanceList: {
       /** @example 1 */
@@ -2845,6 +3971,9 @@ export interface components {
       email: string;
       message: string;
     };
+    PasswordResetInputRequest:
+      | components["schemas"]["ResetPasswordRequest"]
+      | components["schemas"]["ProxyPasswordResetRequestRequest"];
     PatchedCouponUpdateRequest: {
       /** @description Coupon code cannot be changed if already set */
       code?: string;
@@ -2882,6 +4011,11 @@ export interface components {
        */
       value?: number;
     };
+    PatchedEndpointUpdateRequest: {
+      allowed_ips?: string[];
+      is_active?: boolean;
+      label?: string;
+    };
     PatchedOrderAutoRenewalRequest: {
       auto_renewal_data?: number;
       auto_renewal_percentage?: number;
@@ -2908,9 +4042,18 @@ export interface components {
       state?: string;
       zip?: string;
     };
+    PatchedStaticWebhookSubscriptionRequest: {
+      static_events?: components["schemas"]["StaticEventsEnum"][];
+    };
     PatchedTelegramConnectionUpdateRequest: {
       locale?: string;
       timezone?: string;
+    };
+    PatchedUserPackageConnectionLimitRequest: {
+      /** @description Concurrent connections for this package only. Use -1 to inherit the package limit. */
+      connection_limit?: number;
+      /** Format: uuid */
+      package_id?: string;
     };
     /** @description Optional fields accepted when updating part of an existing customer account. */
     PatchedUserUpdateRequest: {
@@ -2975,16 +4118,50 @@ export interface components {
        */
       payment_url: string;
     };
+    Period: {
+      duration_kind: string;
+      duration_value: number;
+      /** Format: date-time */
+      ends_at: string;
+      id?: string;
+      readonly invoice_id: string;
+      /** Format: int64 */
+      price_cents: number;
+      /** Format: date-time */
+      starts_at: string;
+    };
+    Postal: {
+      readonly cities: components["schemas"]["PostalPlace"][];
+      code: string;
+      readonly count: number;
+      readonly country: components["schemas"]["PostalPlace"];
+      id?: string;
+      readonly regions: components["schemas"]["PostalPlace"][];
+    };
+    PostalPlace: {
+      code: string;
+      id: string;
+      name: string;
+    };
     /**
-     * @description * `fixed` - Fixed * `range` - Range
+     * @description * `fixed` - Fixed * `range` - Range * `bandwidth` - Bandwidth
      * @enum {string}
      */
-    PricingEnum: "fixed" | "range";
+    PricingEnum: "fixed" | "range" | "bandwidth";
     /**
      * @description * `data` - Data * `proxy` - Proxy
      * @enum {string}
      */
     PricingUnitEnum: "data" | "proxy";
+    Products: {
+      networks: components["schemas"]["NetworkMetadata"][];
+      products: components["schemas"]["ProductsEnum"][];
+    };
+    /**
+     * @description * `residential` - residential * `static` - static
+     * @enum {string}
+     */
+    ProductsEnum: "residential" | "static";
     /**
      * @description * `http` - http * `socks5` - socks5 * `auto` - auto
      * @enum {string}
@@ -3035,6 +4212,11 @@ export interface components {
      * @enum {string}
      */
     ProviderEnum: "discord" | "google" | "meta" | "twitter";
+    /**
+     * @description * `http` - http * `socks5` - socks5 * `auto` - auto
+     * @enum {string}
+     */
+    ProxyGenerationConnectionProtocolEnum: "http" | "socks5" | "auto";
     ProxyGenerationConnectionRequest: {
       /**
        * @description Connection string format.
@@ -3049,7 +4231,7 @@ export interface components {
        * @description Proxy protocol. * `http` - http * `socks5` - socks5 * `auto` - auto
        * @default http
        */
-      protocol: components["schemas"]["ProtocolEnum"];
+      protocol: components["schemas"]["ProxyGenerationConnectionProtocolEnum"];
     };
     ProxyGenerationSessionRequest: {
       /**
@@ -3075,6 +4257,12 @@ export interface components {
       pool?: string;
       /** @description Target region or state code. */
       region?: string;
+      /** @description Postal code; requires a concrete country. Leading zeros are preserved. */
+      zip?: string;
+    };
+    ProxyPasswordResetRequestRequest: {
+      /** Format: uuid */
+      order_id: string;
     };
     ProxyPasswordResetResponse: {
       message: string;
@@ -3085,6 +4273,65 @@ export interface components {
      * @enum {string}
      */
     ProxyTypeEnum: "static" | "residential";
+    PurchaseGroup: {
+      /** Format: uuid */
+      id: string;
+      mode: components["schemas"]["ModeEnum"];
+      quantity: number;
+    };
+    PurchaseMutationRequest: {
+      idempotency_key?: string;
+      items?: components["schemas"]["CartLineRequest"][];
+      location?: components["schemas"]["LocationSelectionRequest"];
+      /** Format: uuid */
+      offer_id?: string;
+      quantity?: number;
+      /** Format: uuid */
+      term_id?: string;
+    };
+    PurchaseQuoteResponse: {
+      base_price: number;
+      credit_minor?: number;
+      currency: string;
+      discount_amount?: number;
+      due_minor?: number;
+      duration_days?: number;
+      /** Format: date-time */
+      ends_at?: string;
+      operation?: string;
+      /** Format: uuid */
+      pricing_plan_id?: string;
+      quote_token?: string;
+      quote_valid_for_seconds?: number | null;
+      service_value_minor?: number;
+      speed_mbps?: number;
+      /** Format: date-time */
+      starts_at?: string;
+      total: number;
+      vat_amount: number;
+    };
+    PurchaseResponse: {
+      fulfilled?: number;
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      invoice_id: string | null;
+      /** Format: uuid */
+      order_id: string | null;
+      pending?: number;
+      refunded?: number;
+      refunded_cents?: number;
+      requested?: number;
+      /** Format: date-time */
+      reserved_until: string | null;
+      snapshot: components["schemas"]["RentalQuote"];
+      status: components["schemas"]["StaticRentalStatusEnum"];
+    };
+    /**
+     * @description * `not_working` - not_working * `slow_speed` - slow_speed * `blocked` - blocked * `other` - other
+     * @enum {string}
+     */
+    ReasonEnum: "not_working" | "slow_speed" | "blocked" | "other";
     /** @description Password recovery with enhanced security and comprehensive error handling. */
     RecoverPasswordRequest: {
       /**
@@ -3100,6 +4347,8 @@ export interface components {
       readonly asns: components["schemas"]["LocationCodeName"][];
       /** @description Raw region code as it appears in the source data. Used together with country to form a unique identifier. california ile_de_france */
       code: string;
+      /** @description Node count in Rust search mode. */
+      readonly count: number;
       readonly country: components["schemas"]["LocationCountrySummary"];
       id?: string;
       /**
@@ -3113,6 +4362,238 @@ export interface components {
       /** @description Native-language name of the region as it appears in the source data. */
       original_name?: string;
     };
+    /** @description Invoice transport validation with an explicitly composed application command. */
+    RenewalCheckoutRequest: {
+      company_name?: string;
+      company_registration_number?: string;
+      company_vat_number?: string;
+      country_code?: string;
+      coupon_code?: string;
+      crypto_currency?: components["schemas"]["CryptoCurrencyEnum"];
+      gateway: components["schemas"]["InvoiceCreateRequestGatewayEnum"];
+      payment_currency?: string;
+    };
+    RenewalQuote: {
+      currency: string;
+      endpoint_ids: string[];
+      quantity: number;
+      total: number;
+    };
+    RenewalRequestRequest: {
+      /** @default false */
+      all_endpoints: boolean;
+      endpoint_ids?: string[];
+      expected_total?: number;
+      idempotency_key?: string;
+      invoice: components["schemas"]["RenewalCheckoutRequest"];
+      /** Format: uuid */
+      term_id: string;
+    };
+    RenewalSelectionRequest: {
+      /** @default false */
+      all_endpoints: boolean;
+      endpoint_ids?: string[];
+      invoice: components["schemas"]["RenewalCheckoutRequest"];
+      /** Format: uuid */
+      term_id: string;
+    };
+    RentalDetail: {
+      capabilities: {
+        [key: string]: boolean;
+      };
+      count: number;
+      credential_mode: components["schemas"]["CredentialModeEnum"];
+      fulfilled?: number;
+      gateways?: components["schemas"]["RentalGateway"][];
+      groups: components["schemas"]["RentalDetailGroup"][];
+      /** Format: uuid */
+      invoice_id: string | null;
+      invoices: components["schemas"]["RentalDetailInvoice"][];
+      mobile?: boolean;
+      /** Format: uri */
+      next: string | null;
+      /** Format: uuid */
+      order_id: string;
+      /** Format: uuid */
+      package_id: string;
+      package_name: string;
+      pending?: number;
+      /** Format: uri */
+      previous: string | null;
+      proxy_password?: string;
+      refunded?: number;
+      refunded_cents?: number;
+      renewable_count: number;
+      requested?: number;
+      /** Format: date-time */
+      reserved_until: string | null;
+      results: components["schemas"]["RentalDetailEndpoint"][];
+      snapshot: components["schemas"]["RentalQuote"];
+      status: components["schemas"]["StaticRentalStatusEnum"];
+      terms: components["schemas"]["RentalDetailTerm"][];
+      /** Format: uuid */
+      user_id: string;
+      username?: string;
+    };
+    RentalDetailEndpoint: {
+      readonly allowed_ips: string[];
+      readonly capabilities: {
+        [key: string]: boolean;
+      };
+      readonly connections: components["schemas"]["StaticConnection"][];
+      /** Format: uuid */
+      group_id: string | null;
+      group_size: number;
+      id?: string;
+      is_active?: boolean;
+      label?: string;
+      readonly max_bandwidth_mbps: number | null;
+      readonly order_id: string;
+      readonly periods: components["schemas"]["Period"][];
+      ready: boolean;
+      renewable: boolean;
+    };
+    RentalDetailGroup: {
+      endpoint_ids: string[];
+      /** Format: uuid */
+      id: string;
+      mode: components["schemas"]["ModeEnum"];
+      quantity: number;
+    };
+    RentalDetailInvoice: {
+      /** Format: date-time */
+      created: string;
+      currency: string;
+      failed: number;
+      failure_reason: string | null;
+      fulfilled?: number;
+      /** Format: date-time */
+      fulfillment_deadline: string | null;
+      fulfillment_status:
+        | components["schemas"]["StaticRentalStatusEnum"]
+        | components["schemas"]["BlankEnum"];
+      /** Format: uuid */
+      id: string;
+      kind: components["schemas"]["KindEnum"];
+      pending?: number;
+      price_total: number;
+      refunded?: number;
+      refunded_cents?: number;
+      requested?: number;
+      status: components["schemas"]["StaticRentalInvoiceStatusEnum"];
+    };
+    RentalDetailTerm: {
+      duration_kind: components["schemas"]["DurationKindEnum"];
+      duration_value: number;
+      /** Format: uuid */
+      id: string;
+      name: string;
+      renewal_price_cents: number;
+    };
+    RentalGateway: {
+      host: string;
+      port: number;
+      protocol: components["schemas"]["RentalGatewayProtocolEnum"];
+    };
+    /**
+     * @description * `http` - http * `socks5` - socks5
+     * @enum {string}
+     */
+    RentalGatewayProtocolEnum: "http" | "socks5" | (string & {});
+    RentalQuote: {
+      allocation_mode: string;
+      commission_rate: string;
+      commission_type: string;
+      country_code: string;
+      currency: string;
+      duration_kind: components["schemas"]["DurationKindEnum"];
+      duration_value: number;
+      endpoint_ids?: string[];
+      hold_hours: number;
+      items?: components["schemas"]["CartLine"][];
+      location?: components["schemas"]["LocationSelection"];
+      min_quantity?: number;
+      network_class: string;
+      /** Format: uuid */
+      offer_id?: string;
+      price_cents: number;
+      quantity: number;
+      /** Format: uuid */
+      term_id: string;
+      /** Format: uuid */
+      tier_id?: string;
+      unit_price_cents?: number;
+      version: number;
+    };
+    RentalTermOption: {
+      allocation_mode: string;
+      available: number;
+      duration_kind: components["schemas"]["DurationKindEnum"];
+      duration_value: number;
+      /** Format: uuid */
+      id: string;
+      name: string;
+      network_class: string;
+      /** Format: uuid */
+      package_id: string;
+      price_tiers: {
+        [key: string]: unknown;
+      }[];
+      term_name: string;
+    };
+    ReplacementItem: {
+      comment: string;
+      /** Format: uuid */
+      endpoint_id: string;
+      error: string;
+      /** Format: uuid */
+      id: string;
+      replacement_ip: string | null;
+      source_ip: string;
+      state: components["schemas"]["ReplacementItemStateEnum"];
+    };
+    /**
+     * @description * `pending` - pending * `needs_manual` - needs_manual * `provisioning` - provisioning * `completed` - completed * `ineligible` - ineligible * `rejected` - rejected
+     * @enum {string}
+     */
+    ReplacementItemStateEnum:
+      | "pending"
+      | "needs_manual"
+      | "provisioning"
+      | "completed"
+      | "ineligible"
+      | "rejected";
+    ReplacementPage: {
+      count: number;
+      /** Format: uri */
+      next: string | null;
+      /** Format: uri */
+      previous: string | null;
+      results: components["schemas"]["ReplacementResponse"][];
+    };
+    ReplacementRequestRequest: {
+      /** @default  */
+      details: string;
+      endpoint_ids: string[];
+      idempotency_key?: string;
+      reason: components["schemas"]["ReasonEnum"];
+    };
+    ReplacementResponse: {
+      comment: string;
+      /** Format: date-time */
+      created: string;
+      details: string;
+      /** Format: uuid */
+      id: string;
+      items: components["schemas"]["ReplacementItem"][];
+      /** Format: uuid */
+      order_id: string;
+      reason: components["schemas"]["ReasonEnum"];
+      status: components["schemas"]["StaticReplacementStatusEnum"];
+    };
+    ReservationCancellation: {
+      status: components["schemas"]["StaticCancellationStatusEnum"];
+    };
     ResetDataRequest: {
       /**
        * Format: uuid
@@ -3120,9 +4601,18 @@ export interface components {
        */
       package_id: string;
     };
+    /** @description Password reset confirmation with enhanced security validation. */
     ResetPasswordRequest: {
-      /** Format: uuid */
-      order_id: string;
+      /** @description New password */
+      new_password1: string;
+      /** @description Confirm new password */
+      new_password2: string;
+      /** @description Password reset token */
+      token: string;
+      /** @description Cloudflare Turnstile security token */
+      turnstile_token?: string;
+      /** @description Base64 encoded user ID */
+      uidb64: string;
     };
     Reward: {
       /** Balance (cents) */
@@ -3154,6 +4644,21 @@ export interface components {
      * @enum {string}
      */
     RewardStatusEnum: "pending" | "paid" | "review" | "cancelled";
+    /**
+     * @description * `read` - read * `credentials` - credentials * `manage` - manage * `billing` - billing
+     * @enum {string}
+     */
+    ScopesEnum: "read" | "credentials" | "manage" | "billing";
+    SessionInputRequest: {
+      provider: components["schemas"]["KycProviderEnum"];
+    };
+    SessionOutput: {
+      /** Format: uuid */
+      session_id: string;
+      status: string;
+      /** Format: uri */
+      verification_url: string;
+    };
     SettingsCrypto: {
       currencies: string[];
     };
@@ -3218,15 +4723,142 @@ export interface components {
     SocialAccountState: {
       can_unlink: boolean;
       linked: boolean;
-      provider: components["schemas"]["ProviderEnum"];
+      provider: components["schemas"]["SocialAccountStateProviderEnum"];
       unlink_block_reason: string;
     };
+    /**
+     * @description * `discord` - discord * `google` - google * `meta` - meta * `twitter` - twitter
+     * @enum {string}
+     */
+    SocialAccountStateProviderEnum: "discord" | "google" | "meta" | "twitter";
+    StaticASN: {
+      code: string;
+      /** Format: uuid */
+      id: string;
+      name: string;
+    };
+    /**
+     * @description * `expired` - expired
+     * @enum {string}
+     */
+    StaticCancellationStatusEnum: "expired";
+    /** @description Invoice transport validation with an explicitly composed application command. */
+    StaticCheckoutRequest: {
+      company_name?: string;
+      company_registration_number?: string;
+      company_vat_number?: string;
+      country_code?: string;
+      coupon_code?: string;
+      crypto_currency?: components["schemas"]["CryptoCurrencyEnum"];
+      expected_total?: number;
+      gateway: components["schemas"]["InvoiceCreateRequestGatewayEnum"];
+      idempotency_key?: string;
+      payment_currency?: string;
+    };
+    StaticConnection: {
+      /** Format: uuid */
+      address_id: string;
+      asn: components["schemas"]["StaticASN"] | null;
+      /** Format: uuid */
+      assignment_id: string;
+      host: string;
+      http_port: number | null;
+      password?: string;
+      socks_port: number | null;
+      source_ip: string;
+      state: components["schemas"]["StaticConnectionStateEnum"];
+      username?: string;
+    };
+    /**
+     * @description * `active` - active * `held` - held * `provisioning` - provisioning
+     * @enum {string}
+     */
+    StaticConnectionStateEnum: "active" | "held" | "provisioning";
+    /**
+     * @description * `static.rental.fulfillment_finished` - static.rental.fulfillment_finished * `static.endpoint.replaced` - static.endpoint.replaced * `static.endpoint.expired` - static.endpoint.expired * `static.rental.refunded` - static.rental.refunded * `static.rental.auto_renewal_failed` - static.rental.auto_renewal_failed
+     * @enum {string}
+     */
+    StaticEventsEnum:
+      | "static.rental.fulfillment_finished"
+      | "static.endpoint.replaced"
+      | "static.endpoint.expired"
+      | "static.rental.refunded"
+      | "static.rental.auto_renewal_failed";
+    StaticMutationError: {
+      code: string;
+      detail?: string;
+      non_field_errors?: string[];
+    };
+    StaticPurchasePage: {
+      count: number;
+      /** Format: uri */
+      next: string | null;
+      /** Format: uri */
+      previous: string | null;
+      results: components["schemas"]["PurchaseResponse"][];
+    };
+    /**
+     * @description * `pending` - Pending * `paid` - Paid * `unpaid` - Unpaid * `error` - Error * `cancelled` - cancelled * `failed` - failed
+     * @enum {string}
+     */
+    StaticRentalInvoiceStatusEnum: "pending" | "paid" | "unpaid" | "error" | "cancelled" | "failed";
+    /**
+     * @description * `reserved` - reserved * `provisioning` - provisioning * `fulfilled` - fulfilled * `expired` - expired * `paid_unfulfilled` - paid_unfulfilled * `partially_fulfilled` - partially_fulfilled * `partially_refunded` - partially_refunded * `refunded` - refunded
+     * @enum {string}
+     */
+    StaticRentalStatusEnum:
+      | "reserved"
+      | "provisioning"
+      | "fulfilled"
+      | "expired"
+      | "paid_unfulfilled"
+      | "partially_fulfilled"
+      | "partially_refunded"
+      | "refunded";
+    /**
+     * @description * `pending` - pending * `rejected` - rejected * `needs_manual` - needs_manual * `processing` - processing * `ineligible` - ineligible * `partial` - partial * `completed` - completed
+     * @enum {string}
+     */
+    StaticReplacementStatusEnum:
+      | "pending"
+      | "rejected"
+      | "needs_manual"
+      | "processing"
+      | "ineligible"
+      | "partial"
+      | "completed";
+    StaticWebhookSubscription: {
+      static_events: components["schemas"]["StaticEventsEnum"][];
+    };
+    Status: {
+      available_providers: components["schemas"]["KycProviderEnum"][];
+      environment: components["schemas"]["EnvironmentEnum"];
+      kyc_passed: boolean;
+      retry_allowed: boolean;
+      /** Format: date-time */
+      revoked_at: string | null;
+      source: string;
+      status: components["schemas"]["StatusStatusEnum"];
+      /** Format: date-time */
+      verified_at: string | null;
+    };
+    /**
+     * @description * `not_started` - not_started * `pending` - pending * `requires_input` - requires_input * `verified` - verified * `rejected` - rejected * `revoked` - revoked
+     * @enum {string}
+     */
+    StatusStatusEnum:
+      | "not_started"
+      | "pending"
+      | "requires_input"
+      | "verified"
+      | "rejected"
+      | "revoked";
     SubtractDataRequest: {
-      /** @description Positive integer bytes to remove from assigned quota, not from usage. Cannot exceed total assigned data. Does not credit the parent's pool. */
+      /** @description Positive integer bytes. Independent orders return available traffic to the parent without extending expiry. Virtual orders only reduce assigned quota. Usage is preserved in both models. */
       data: number;
       /**
        * Format: uuid
-       * @description Package of the managed virtual child order.
+       * @description Package of the managed sub-user order.
        */
       package_id: string;
     };
@@ -3256,6 +4888,7 @@ export interface components {
       split_char: string;
       username: string;
       value_char: string;
+      zip: string;
     };
     TelegramConnectionResponse: {
       available: boolean;
@@ -3275,6 +4908,17 @@ export interface components {
       /** Format: date-time */
       expires_at: string;
       status: string;
+    };
+    Throughput: {
+      available: boolean;
+      bytes_per_second: number | null;
+      /** Format: double */
+      mbps: number | null;
+      observed_at_unix_ms?: number;
+      partial?: boolean;
+      stats: {
+        [key: string]: number;
+      } | null;
     };
     TokenPairResponse: {
       /** @description Long-lived token used to request a new access token. */
@@ -3333,6 +4977,14 @@ export interface components {
       qr_png_base64?: string;
       secret: string;
     };
+    UsageClosureResponse: {
+      status: components["schemas"]["UsageClosureResponseStatusEnum"];
+    };
+    /**
+     * @description * `closing` - closing
+     * @enum {string}
+     */
+    UsageClosureResponseStatusEnum: "closing";
     /** @description Customer account with contact details, security settings, package data, referral information, and managed sub-users visible to the caller. */
     User: {
       address?: string;
@@ -3388,6 +5040,7 @@ export interface components {
        * @description Designates that this user has all permissions without explicitly assigning them.
        */
       is_superuser?: boolean;
+      readonly kyc_passed?: boolean;
       language?: components["schemas"]["LanguageEnum"];
       last_name?: string;
       /** @description The user's package orders, including inactive orders. Each order contains its own data allowance, usage, ledgers, and proxy credentials. An empty list means the user has no orders. */
@@ -3412,7 +5065,7 @@ export interface components {
       state?: string;
       /** @description Number of sub-users managed by this reseller */
       readonly sub_users: number;
-      /** @description Value must contain only letters, numbers, and underscores. It must not start or end with an underscore. */
+      /** @description At least 3 characters. Spaces and control characters are not allowed. */
       username: string;
       zip?: string;
     };
@@ -3430,7 +5083,7 @@ export interface components {
       connection_limit?: number;
       /** @description User's country of residence. */
       country?: string;
-      /** @description Initial integer-byte data amount. With package_id, a normal sub-user receives a virtual quota from the caller's existing root order; is_top_level=true provisions a separate paid purchase. Omit both data and package_id to create identity without package access. */
+      /** @description Initial integer-byte data amount. With package_id, a normal sub-user receives traffic from the caller's root order: ordinary callers transfer available balance, while resellers grant a virtual quota; is_top_level=true provisions a separate paid purchase. Omit both data and package_id to create identity without package access. */
       data?: number;
       /**
        * Format: email
@@ -3455,6 +5108,8 @@ export interface components {
       meta?: {
         [key: string]: unknown;
       };
+      /** @description Connection limit for the initially assigned sub-user package only. Use -1 for package settings. Requires package_id and positive data; cannot be combined with connection_limit or is_top_level=true. */
+      package_connection_limit?: number;
       /**
        * Format: uuid
        * @description ProxyRequest package UUID to assign to the user. Headless integrations resolve it from their local product mapping.
@@ -3464,7 +5119,7 @@ export interface components {
       password: string;
       /** @description User's state or province. */
       state?: string;
-      /** @description Unique username for the account. Must be 4-128 characters. */
+      /** @description Unique username for the account. Must be 3-128 characters. */
       username: string;
       /** @description User's postal/ZIP code. */
       zip?: string;
@@ -3613,6 +5268,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3628,6 +5285,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3643,6 +5302,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3686,6 +5347,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3701,6 +5364,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3716,6 +5381,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3754,6 +5421,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3769,6 +5438,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3784,6 +5455,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3842,6 +5515,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3857,6 +5532,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3872,6 +5549,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3887,6 +5566,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3902,6 +5583,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3949,6 +5632,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3964,6 +5649,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3979,6 +5666,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -3994,6 +5683,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4057,6 +5748,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4072,6 +5765,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4087,6 +5782,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4102,6 +5799,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4169,6 +5868,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4184,6 +5885,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4199,6 +5902,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4214,6 +5919,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4284,6 +5991,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4299,6 +6008,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4314,6 +6025,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4329,6 +6042,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4384,6 +6099,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4399,6 +6116,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4414,6 +6133,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4429,6 +6150,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4472,6 +6195,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4487,6 +6212,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4502,6 +6229,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4546,6 +6275,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4561,6 +6292,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4576,6 +6309,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4619,6 +6354,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4634,6 +6371,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4649,6 +6388,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4664,6 +6405,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4679,6 +6422,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4729,6 +6474,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4744,6 +6491,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4759,6 +6508,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4809,6 +6560,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4824,6 +6577,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4839,6 +6594,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4854,6 +6611,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4897,6 +6656,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4912,6 +6673,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4927,6 +6690,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4942,6 +6707,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -4993,6 +6760,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5008,6 +6777,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5023,6 +6794,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5038,6 +6811,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5055,6 +6830,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5100,6 +6877,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5115,6 +6894,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5130,6 +6911,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5145,6 +6928,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5160,6 +6945,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5177,6 +6964,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5228,6 +7017,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5243,6 +7034,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5258,6 +7051,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5273,6 +7068,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5290,6 +7087,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5341,6 +7140,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5356,6 +7157,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5371,6 +7174,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5386,6 +7191,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5430,6 +7237,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5445,6 +7254,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5460,6 +7271,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5498,6 +7311,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5513,6 +7328,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5528,6 +7345,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5564,6 +7383,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5579,6 +7400,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5594,6 +7417,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5638,6 +7463,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5653,6 +7480,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5668,6 +7497,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5706,6 +7537,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5721,6 +7554,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5736,6 +7571,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5748,7 +7585,7 @@ export interface operations {
   invoices_list: {
     parameters: {
       query?: {
-        /** @description The payment gateway used for processing the payment. * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail */
+        /** @description The payment gateway used for processing the payment. * `revolut` - Revolut * `paypal` - PayPal * `coinbase` - Coinbase * `cryptomus` - Cryptomus * `stripe` - Stripe * `coingate` - Coingate * `wallet` - Wallet * `manual` - Manual * `whitepay` - Whitepay * `wayforpay` - WayForPay * `usegateway` - UseGateway * `binance` - Binance Pay * `anymoney` - Any.Money * `coinpayments` - CoinPayments * `checkoutcom` - Checkout.com * `nowpayments` - NOWPayments * `btcpay` - BTCPay Server * `braintree` - Braintree * `monobank` - monobank * `liqpay` - LiqPay * `iyzico` - iyzico * `paytr` - PayTR * `payu` - PayU * `tpay` - Tpay * `przelewy24` - Przelewy24 * `gopay` - GoPay * `comgate` - Comgate * `monei` - MONEI * `redsys` - Redsys * `payplug` - PayPlug * `mollie` - Mollie * `unzer` - Unzer * `payone` - PAYONE * `nexi_xpay` - Nexi XPay * `halyk_epay` - Halyk ePay * `kaspi_pay` - Kaspi Pay * `vipps_mobilepay` - Vipps MobilePay * `paytrail` - Paytrail */
         gateway?:
           | "anymoney"
           | "binance"
@@ -5772,12 +7609,14 @@ export interface operations {
           | "nexi_xpay"
           | "nowpayments"
           | "payone"
+          | "paypal"
           | "payplug"
           | "paytr"
           | "paytrail"
           | "payu"
           | "przelewy24"
           | "redsys"
+          | "revolut"
           | "stripe"
           | "tpay"
           | "unzer"
@@ -5829,6 +7668,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5844,6 +7685,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5859,6 +7702,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5909,6 +7754,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5924,6 +7771,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5939,6 +7788,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -5954,6 +7805,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6013,6 +7866,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6028,6 +7883,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6043,6 +7900,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6058,6 +7917,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6103,6 +7964,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6118,6 +7981,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6133,6 +7998,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6148,6 +8015,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6163,6 +8032,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6180,6 +8051,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6221,6 +8094,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6236,6 +8111,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6251,6 +8128,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6266,6 +8145,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6307,6 +8188,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6322,6 +8205,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6337,6 +8222,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6352,6 +8239,243 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  invoices_quote_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["InvoicePurchaseQuoteRequestRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["InvoicePurchaseQuoteRequestRequest"];
+        "multipart/form-data": components["schemas"]["InvoicePurchaseQuoteRequestRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PurchaseQuoteResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  kyc_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Current verification state. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Status"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  kyc_sessions_create: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        "Idempotency-Key": string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SessionInputRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["SessionInputRequest"];
+        "multipart/form-data": components["schemas"]["SessionInputRequest"];
+      };
+    };
+    responses: {
+      /** @description Verification session and short-lived hosted URL. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SessionOutput"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6366,16 +8490,20 @@ export interface operations {
       query: {
         code?: string;
         country__code?: string;
-        /** @description Set to true to return only globally targetable ASNs. */
+        /** @description Set to true to return only globally targetable ASNs when country__code is absent. A country filter takes precedence. */
         global?: boolean;
         /** @description Include geographic scopes for each ASN. By default geo is an empty list. */
         include_geo?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         name?: string;
         /** @description The initial index from which to return the results. */
         offset?: number;
-        /** @description Which field to use when ordering the results. */
+        /** @description Comma-separated fields: code, name. Prefix a field with - for descending order. Unsupported fields are ignored. Name ordering follows the catalog collation. */
         ordering?: string;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
@@ -6394,6 +8522,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6408,6 +8540,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6423,6 +8557,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6438,6 +8574,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6456,10 +8611,14 @@ export interface operations {
         include_asns?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         name?: string;
         /** @description The initial index from which to return the results. */
         offset?: number;
-        /** @description Which field to use when ordering the results. */
+        /** @description Comma-separated fields: id, code, name. Prefix a field with - for descending order. Unsupported fields are ignored. Name ordering follows the catalog collation. */
         ordering?: string;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
@@ -6479,6 +8638,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6493,6 +8656,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6508,6 +8673,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6523,6 +8690,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6537,6 +8723,10 @@ export interface operations {
       query: {
         /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
         include_asns?: boolean;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
       };
@@ -6554,6 +8744,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6568,6 +8762,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6583,6 +8779,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6598,6 +8796,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6613,6 +8813,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6631,7 +8850,7 @@ export interface operations {
         name?: string;
         /** @description The initial index from which to return the results. */
         offset?: number;
-        /** @description Which field to use when ordering the results. */
+        /** @description Comma-separated fields: id, code, name. Prefix a field with - for descending order. Unsupported fields are ignored. Name ordering follows the catalog collation. */
         ordering?: string;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
@@ -6650,6 +8869,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6664,6 +8887,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6679,6 +8904,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6694,6 +8921,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6723,6 +8969,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6737,6 +8987,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6752,6 +9004,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6767,6 +9021,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6782,6 +9038,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6799,10 +9074,14 @@ export interface operations {
         include_asns?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         name?: string;
         /** @description The initial index from which to return the results. */
         offset?: number;
-        /** @description Which field to use when ordering the results. */
+        /** @description Comma-separated fields: id, code, name, original_name. Prefix a field with - for descending order. Unsupported fields are ignored. Name ordering follows the catalog collation. */
         ordering?: string;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
@@ -6821,6 +9100,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6835,6 +9118,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6850,6 +9135,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6865,6 +9152,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6879,6 +9185,10 @@ export interface operations {
       query: {
         /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
         include_asns?: boolean;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
       };
@@ -6896,6 +9206,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -6910,6 +9224,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6925,6 +9241,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6940,6 +9258,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6955,6 +9275,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -6971,10 +9310,14 @@ export interface operations {
         country__code?: string;
         /** @description Number of results to return per page. */
         limit?: number;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         name?: string;
         /** @description The initial index from which to return the results. */
         offset?: number;
-        /** @description Which field to use when ordering the results. */
+        /** @description Comma-separated fields: code, name. Prefix a field with - for descending order. Unsupported fields are ignored. Name ordering follows the catalog collation. */
         ordering?: string;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
@@ -6993,6 +9336,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7007,6 +9354,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7022,6 +9371,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7037,6 +9388,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7055,10 +9425,14 @@ export interface operations {
         include_asns?: boolean;
         /** @description Number of results to return per page. */
         limit?: number;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         name?: string;
         /** @description The initial index from which to return the results. */
         offset?: number;
-        /** @description Which field to use when ordering the results. */
+        /** @description Comma-separated fields: id, code, name, original_name, iso31662. Prefix a field with - for descending order. Unsupported fields are ignored. Name ordering follows the catalog collation. */
         ordering?: string;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
@@ -7077,6 +9451,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7091,6 +9469,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7106,6 +9486,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7121,6 +9503,25 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7135,6 +9536,10 @@ export interface operations {
       query: {
         /** @description The asns field is always present and defaults to an empty array. Pass include_asns=true to include available autonomous system numbers. This option does not affect the standalone /locations/asn endpoint or the compact proxy-node response format. */
         include_asns?: boolean;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
         /** @description Package whose targeting availability should be returned. */
         package_id: string;
       };
@@ -7152,6 +9557,10 @@ export interface operations {
       /** @description The operation completed successfully. */
       200: {
         headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
           [name: string]: unknown;
         };
         content: {
@@ -7166,6 +9575,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7181,6 +9592,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7196,6 +9609,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7211,6 +9626,280 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  locations_zipcodes_list: {
+    parameters: {
+      query: {
+        /** @description ASN in the same observed combination. */
+        asn__code?: string;
+        /** @description City code in the same observed combination. */
+        city__code?: string;
+        /** @description Postal identifier; case, spaces and hyphens are normalized. Leading zeros are preserved. */
+        code?: string;
+        /** @description Country code of an observed provider ZIP combination. */
+        country__code?: string;
+        /** @description ISP in the same observed combination. */
+        isp__code?: string;
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+        /** @description Which field to use when ordering the results. */
+        ordering?: string;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
+        /** @description Region code in the same observed combination. */
+        region__code?: string;
+        /** @description Case-insensitive partial search across zip code fields: `code` and `normalized_code`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
+        search?: string;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaginatedPostalList"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  locations_zipcodes_retrieve: {
+    parameters: {
+      query: {
+        /** @description ASN in the same observed combination. */
+        asn__code?: string;
+        /** @description City code in the same observed combination. */
+        city__code?: string;
+        /** @description Postal identifier; case, spaces and hyphens are normalized. Leading zeros are preserved. */
+        code?: string;
+        /** @description Country code of an observed provider ZIP combination. */
+        country__code?: string;
+        /** @description ISP in the same observed combination. */
+        isp__code?: string;
+        /** @description Inclusive maximum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        max_count?: number;
+        /** @description Inclusive minimum node count in the published location dictionary. Either bound may be omitted. Decimal digits only, with surrounding whitespace ignored; empty values, signs, fractions, overflow and min_count > max_count return 400. Unknown counts are zero. Filters primary records before ordering/pagination; nested networks, parents and ASN geo are unchanged. A detail outside the range returns 404. Counts describe dictionary membership, not live node health. */
+        min_count?: number;
+        /** @description Package whose targeting availability should be returned. */
+        package_id: string;
+        /** @description Region code in the same observed combination. */
+        region__code?: string;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          /** @description Location search responses use no-store. */
+          "Cache-Control"?: string;
+          /** @description Published dictionary generation used for this response. */
+          "X-Locations-Generation"?: string;
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Postal"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Location search is unavailable or its published index is not ready. Retry later. */
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7264,6 +9953,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7317,6 +10008,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7332,6 +10025,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7353,9 +10048,9 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["VerifyOTPRequest"];
-        "application/x-www-form-urlencoded": components["schemas"]["VerifyOTPRequest"];
-        "multipart/form-data": components["schemas"]["VerifyOTPRequest"];
+        "application/json": components["schemas"]["OTPVerifyRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["OTPVerifyRequest"];
+        "multipart/form-data": components["schemas"]["OTPVerifyRequest"];
       };
     };
     responses: {
@@ -7365,22 +10060,43 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["TokenPairResponse"];
+          "application/json": components["schemas"]["MFATokenPair"];
         };
       };
-      /** @description The request is malformed or violates a business rule. */
       400: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      429: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
         };
       };
     };
@@ -7423,6 +10139,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7438,6 +10156,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7453,6 +10173,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7506,6 +10228,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7521,6 +10245,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7536,6 +10262,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7579,6 +10307,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7594,6 +10324,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7609,6 +10341,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7624,6 +10358,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7652,6 +10388,17 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
+      /** @description Deletion is pending accounting settlement. Access is disabled in PostgreSQL and proxy authorization revocation is retried until dispatched. */
+      202: {
+        headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UsageClosureResponse"];
+        };
+      };
       /** @description No response body */
       204: {
         headers: {
@@ -7669,6 +10416,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7684,6 +10433,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7699,6 +10450,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7714,6 +10467,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7729,6 +10484,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7746,6 +10503,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7797,6 +10556,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7812,6 +10573,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7827,6 +10590,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7842,6 +10607,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7859,6 +10626,1569 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_auto_renewal_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AutoRenewalStatus"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_auto_renewal_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AutoRenewalSettingsRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["AutoRenewalSettingsRequest"];
+        "multipart/form-data": components["schemas"]["AutoRenewalSettingsRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AutoRenewalStatus"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_cancel_reservation_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReservationCancellation"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_checkout_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Existing clients can send idempotency_key in the JSON body. */
+        "Idempotency-Key"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StaticCheckoutRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["StaticCheckoutRequest"];
+        "multipart/form-data": components["schemas"]["StaticCheckoutRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Invoice"];
+        };
+      };
+      /** @description The resource or action result was created successfully. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Invoice"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticMutationError"];
+        };
+      };
+      /** @description The upstream payment provider could not initialize checkout. */
+      502: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            gateway: string;
+            /** Format: uuid */
+            invoice_id: string;
+            non_field_errors: string[];
+            retryable: boolean;
+          };
+        };
+      };
+    };
+  };
+  orders_checkout_quote_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StaticCheckoutRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["StaticCheckoutRequest"];
+        "multipart/form-data": components["schemas"]["StaticCheckoutRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CheckoutQuote"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_proxy_password_reset_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProxyPasswordResetResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_renew_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Existing clients can send idempotency_key in the JSON body. */
+        "Idempotency-Key"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RenewalRequestRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["RenewalRequestRequest"];
+        "multipart/form-data": components["schemas"]["RenewalRequestRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Invoice"];
+        };
+      };
+      /** @description The resource or action result was created successfully. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Invoice"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticMutationError"];
+        };
+      };
+      /** @description The upstream payment provider could not initialize checkout. */
+      502: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            gateway: string;
+            /** Format: uuid */
+            invoice_id: string;
+            non_field_errors: string[];
+            retryable: boolean;
+          };
+        };
+      };
+    };
+  };
+  orders_renew_quote_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RenewalSelectionRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["RenewalSelectionRequest"];
+        "multipart/form-data": components["schemas"]["RenewalSelectionRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RenewalQuote"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_rental_retrieve: {
+    parameters: {
+      query?: {
+        /** @description Page size, up to 1000. Defaults to 100. */
+        limit?: number;
+        /** @description Zero-based position of the first result. */
+        offset?: number;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RentalDetail"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_replacement_requests_retrieve: {
+    parameters: {
+      query?: {
+        /** @description Page size, up to 1000. Defaults to 100. */
+        limit?: number;
+        /** @description Zero-based position of the first result. */
+        offset?: number;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReplacementPage"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_replacement_requests_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Existing clients can send idempotency_key in the JSON body. */
+        "Idempotency-Key"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReplacementRequestRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["ReplacementRequestRequest"];
+        "multipart/form-data": components["schemas"]["ReplacementRequestRequest"];
+      };
+    };
+    responses: {
+      /** @description The resource or action result was created successfully. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReplacementResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticMutationError"];
+        };
+      };
+    };
+  };
+  orders_availability_retrieve: {
+    parameters: {
+      query?: {
+        /** @description * `dedicated` - dedicated * `shared` - shared */
+        allocation_mode?: "dedicated" | "shared";
+        city_id?: string;
+        country_code?: string;
+        /** @description * `isp` - isp * `dc` - dc * `mobile` - mobile */
+        network_class?: "isp" | "dc" | "mobile";
+        operator?: string;
+        package_id?: string;
+        region_id?: string;
+        term_id?: string;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AvailabilityResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_catalog_retrieve: {
+    parameters: {
+      query?: {
+        /** @description Page size, up to 1000. Defaults to 100. */
+        limit?: number;
+        /** @description Zero-based position of the first result. */
+        offset?: number;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CatalogPage"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_products_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Products"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  orders_purchase_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Existing clients can send idempotency_key in the JSON body. */
+        "Idempotency-Key"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PurchaseMutationRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PurchaseMutationRequest"];
+        "multipart/form-data": components["schemas"]["PurchaseMutationRequest"];
+      };
+    };
+    responses: {
+      /** @description The resource or action result was created successfully. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PurchaseResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticMutationError"];
+        };
+      };
+    };
+  };
+  orders_purchase_quote_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["IntentRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["IntentRequest"];
+        "multipart/form-data": components["schemas"]["IntentRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RentalQuote"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7911,6 +12241,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7926,6 +12258,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7941,6 +12275,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -7991,6 +12327,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8006,6 +12344,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8021,6 +12361,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8061,6 +12403,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8076,6 +12420,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8091,6 +12437,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8114,6 +12462,15 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
+      /** @description Deletion is pending accounting settlement. Access is disabled in PostgreSQL and proxy authorization revocation is retried until dispatched. */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UsageClosureResponse"];
+        };
+      };
       /** @description No response body */
       204: {
         headers: {
@@ -8129,6 +12486,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8144,6 +12503,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8159,6 +12520,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8176,6 +12539,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8224,6 +12589,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8239,6 +12606,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8254,6 +12623,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8271,6 +12642,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8290,11 +12663,11 @@ export interface operations {
       path?: never;
       cookie?: never;
     };
-    requestBody: {
+    requestBody?: {
       content: {
-        "application/json": components["schemas"]["TwoFactorConfirmRequest"];
-        "application/x-www-form-urlencoded": components["schemas"]["TwoFactorConfirmRequest"];
-        "multipart/form-data": components["schemas"]["TwoFactorConfirmRequest"];
+        "application/json": components["schemas"]["MFAActionRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["MFAActionRequest"];
+        "multipart/form-data": components["schemas"]["MFAActionRequest"];
       };
     };
     responses: {
@@ -8304,52 +12677,52 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["EnabledResponse"];
+          "application/json": components["schemas"]["MFAResponse"];
         };
       };
-      /** @description The request is malformed or violates a business rule. */
       400: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
         };
       };
-      /** @description Authentication credentials are missing, expired, or invalid. */
       401: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
         };
       };
-      /** @description The authenticated account cannot perform this operation. */
       403: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      429: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
         };
       };
     };
@@ -8364,11 +12737,11 @@ export interface operations {
       path?: never;
       cookie?: never;
     };
-    requestBody: {
+    requestBody?: {
       content: {
-        "application/json": components["schemas"]["TwoFactorDisableRequest"];
-        "application/x-www-form-urlencoded": components["schemas"]["TwoFactorDisableRequest"];
-        "multipart/form-data": components["schemas"]["TwoFactorDisableRequest"];
+        "application/json": components["schemas"]["MFAActionRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["MFAActionRequest"];
+        "multipart/form-data": components["schemas"]["MFAActionRequest"];
       };
     };
     responses: {
@@ -8378,52 +12751,126 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["EnabledResponse"];
+          "application/json": components["schemas"]["MFAResponse"];
         };
       };
-      /** @description The request is malformed or violates a business rule. */
       400: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
         };
       };
-      /** @description Authentication credentials are missing, expired, or invalid. */
       401: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
         };
       };
-      /** @description The authenticated account cannot perform this operation. */
       403: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      429: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+    };
+  };
+  profile_2fa_regenerate_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["MFAActionRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["MFAActionRequest"];
+        "multipart/form-data": components["schemas"]["MFAActionRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAResponse"];
+        };
+      };
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      429: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
         };
       };
     };
@@ -8440,9 +12887,9 @@ export interface operations {
     };
     requestBody?: {
       content: {
-        "application/json": components["schemas"]["TwoFactorSetupRequestRequest"];
-        "application/x-www-form-urlencoded": components["schemas"]["TwoFactorSetupRequestRequest"];
-        "multipart/form-data": components["schemas"]["TwoFactorSetupRequestRequest"];
+        "application/json": components["schemas"]["MFAActionRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["MFAActionRequest"];
+        "multipart/form-data": components["schemas"]["MFAActionRequest"];
       };
     };
     responses: {
@@ -8452,52 +12899,52 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["TwoFactorSetupResponse"];
+          "application/json": components["schemas"]["MFAResponse"];
         };
       };
-      /** @description The request is malformed or violates a business rule. */
       400: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
         };
       };
-      /** @description Authentication credentials are missing, expired, or invalid. */
       401: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
         };
       };
-      /** @description The authenticated account cannot perform this operation. */
       403: {
         headers: {
           "Content-Language": components["headers"]["ContentLanguage"];
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            detail?: string;
-            non_field_errors?: string[];
-          } & {
-            [key: string]: string | string[];
-          };
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      429: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
+        };
+      };
+      503: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MFAError"];
         };
       };
     };
@@ -8520,7 +12967,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["EnabledResponse"];
+          "application/json": components["schemas"]["MFAResponse"];
         };
       };
       /** @description The request is malformed or violates a business rule. */
@@ -8531,6 +12978,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8546,6 +12995,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8561,6 +13012,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8605,6 +13058,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8620,6 +13075,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8635,6 +13092,87 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  profileLoginHistory: {
+    parameters: {
+      query?: {
+        /** @description Number of results to return per page. */
+        limit?: number;
+        /** @description The initial index from which to return the results. */
+        offset?: number;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaginatedLoginHistoryList"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8673,6 +13211,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8688,6 +13228,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8703,6 +13245,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8747,6 +13291,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8762,6 +13308,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8777,6 +13325,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8820,6 +13370,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8835,6 +13387,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8850,6 +13404,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8894,6 +13450,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8909,6 +13467,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8924,6 +13484,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8939,6 +13501,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -8983,6 +13547,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9027,6 +13593,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9042,6 +13610,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9061,11 +13631,11 @@ export interface operations {
       path?: never;
       cookie?: never;
     };
-    requestBody: {
+    requestBody?: {
       content: {
-        "application/json": components["schemas"]["ResetPasswordRequest"];
-        "application/x-www-form-urlencoded": components["schemas"]["ResetPasswordRequest"];
-        "multipart/form-data": components["schemas"]["ResetPasswordRequest"];
+        "application/json": components["schemas"]["PasswordResetInputRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PasswordResetInputRequest"];
+        "multipart/form-data": components["schemas"]["PasswordResetInputRequest"];
       };
     };
     responses: {
@@ -9086,6 +13656,42 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9101,6 +13707,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9150,6 +13758,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9165,6 +13775,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9180,6 +13792,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9222,6 +13836,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9237,6 +13853,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9252,6 +13870,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9290,6 +13910,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9305,6 +13927,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9320,6 +13944,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9335,6 +13961,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9379,6 +14007,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9394,6 +14024,1267 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_catalog_retrieve: {
+    parameters: {
+      query?: {
+        /** @description Page size, up to 1000. Defaults to 100. */
+        limit?: number;
+        /** @description Zero-based position of the first result. */
+        offset?: number;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CatalogPage"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_endpoints_list: {
+    parameters: {
+      query?: {
+        /** @description Page size, up to 1000. Defaults to 100. */
+        limit?: number;
+        /** @description Zero-based position of the first result. */
+        offset?: number;
+        /** @description Filter by rental order ID. */
+        order_id?: string;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EndpointPage"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_endpoints_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Endpoint"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_endpoints_partial_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedEndpointUpdateRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedEndpointUpdateRequest"];
+        "multipart/form-data": components["schemas"]["PatchedEndpointUpdateRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Endpoint"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_endpoints_throughput_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Throughput"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_export_retrieve: {
+    parameters: {
+      query?: {
+        /** @description Filter by rental order ID. */
+        order_id?: string;
+        protocol?: "http" | "socks5";
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_integration_keys_list: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IntegrationKey"][];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_integration_keys_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["IntegrationKeyRequestRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["IntegrationKeyRequestRequest"];
+        "multipart/form-data": components["schemas"]["IntegrationKeyRequestRequest"];
+      };
+    };
+    responses: {
+      /** @description The resource or action result was created successfully. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IntegrationKeyCreated"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_integration_keys_destroy: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_purchases_list: {
+    parameters: {
+      query?: {
+        /** @description Page size. Default 100, maximum 1000. */
+        limit?: number;
+        /** @description Number of results to skip. */
+        offset?: number;
+      };
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticPurchasePage"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_purchases_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Existing clients can send idempotency_key in the JSON body. */
+        "Idempotency-Key"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PurchaseMutationRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PurchaseMutationRequest"];
+        "multipart/form-data": components["schemas"]["PurchaseMutationRequest"];
+      };
+    };
+    responses: {
+      /** @description The resource or action result was created successfully. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PurchaseResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticMutationError"];
+        };
+      };
+    };
+  };
+  static_purchases_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PurchaseResponse"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  static_purchases_checkout_create: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+        /** @description Stable key for one logical mutation. Existing clients can send idempotency_key in the JSON body. */
+        "Idempotency-Key"?: string;
+      };
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StaticCheckoutRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["StaticCheckoutRequest"];
+        "multipart/form-data": components["schemas"]["StaticCheckoutRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Invoice"];
+        };
+      };
+      /** @description The resource or action result was created successfully. */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Invoice"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      409: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticMutationError"];
+        };
+      };
+      /** @description The upstream payment provider could not initialize checkout. */
+      502: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            gateway: string;
+            /** Format: uuid */
+            invoice_id: string;
+            non_field_errors: string[];
+            retryable: boolean;
+          };
+        };
+      };
+    };
+  };
+  static_quotes_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        offer_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RentalQuote"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9416,7 +15307,7 @@ export interface operations {
         ordering?: string;
         /** @description Filters the visible user list to accounts that have at least one stored order for this package UUID. Orders are matched regardless of whether they are active or expired; this filter never expands the caller's normal account scope. */
         package__id?: string;
-        /** @description Case-insensitive partial search across user fields: `email`, `username`, `first_name`, and `last_name`. Separate multiple terms with spaces or commas; every term must match at least one listed field. */
+        /** @description Case-insensitive partial search across user fields: `email`, `username`, `first_name`, `last_name`, and `id`. Separate multiple terms with spaces or commas; every term must match at least one listed field. User IDs accept full UUIDs or hyphen-insensitive fragments of at least four hexadecimal characters. */
         search?: string;
         username?: string;
       };
@@ -9446,6 +15337,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9461,6 +15354,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9476,6 +15371,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9526,6 +15423,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9541,6 +15440,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9556,6 +15457,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9571,6 +15474,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9614,6 +15519,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9629,6 +15536,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9644,6 +15553,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9659,6 +15570,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9687,6 +15600,17 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
+      /** @description Deletion is pending accounting settlement. Access is disabled in PostgreSQL and proxy authorization revocation is retried until dispatched. */
+      202: {
+        headers: {
+          /** @description True when the response was replayed from a prior request. */
+          "Idempotency-Replayed"?: "true";
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UsageClosureResponse"];
+        };
+      };
       /** @description No response body */
       204: {
         headers: {
@@ -9704,6 +15628,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9719,6 +15645,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9734,6 +15662,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9749,6 +15679,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9764,6 +15696,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9781,6 +15715,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9832,6 +15768,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9847,6 +15785,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9862,6 +15802,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9877,6 +15819,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9894,6 +15838,108 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  users_package_connection_limit_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        /** @description A UUID string identifying this user. */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedUserPackageConnectionLimitRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedUserPackageConnectionLimitRequest"];
+        "multipart/form-data": components["schemas"]["PatchedUserPackageConnectionLimitRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Order"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9945,6 +15991,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9960,6 +16008,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9975,6 +16025,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -9990,6 +16042,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10005,6 +16059,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10056,6 +16112,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10071,6 +16129,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10086,6 +16146,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10101,6 +16163,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10116,6 +16180,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10167,6 +16233,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10182,6 +16250,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10197,6 +16267,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10212,6 +16284,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10227,6 +16301,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10278,6 +16354,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10293,6 +16371,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10308,6 +16388,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10323,6 +16405,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10370,6 +16454,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10385,6 +16471,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10400,6 +16488,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10415,6 +16505,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10458,6 +16550,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10473,6 +16567,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10488,6 +16584,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10538,6 +16636,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10553,6 +16653,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10568,6 +16670,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10583,6 +16687,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10626,6 +16732,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10641,6 +16749,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10656,6 +16766,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10671,6 +16783,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10716,6 +16830,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10731,6 +16847,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10746,6 +16864,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10761,6 +16881,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10776,6 +16898,8 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
@@ -10793,6 +16917,202 @@ export interface operations {
         };
         content: {
           "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  webhooks_static_events_retrieve: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        /** @description A unique value identifying this Webhook. */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticWebhookSubscription"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+    };
+  };
+  webhooks_static_events_partial_update: {
+    parameters: {
+      query?: never;
+      header?: {
+        /** @description Preferred language for human-readable API errors. Supported languages: en, ru, uk, de, it, fr, es. Regional language tags and quality weights are accepted; unsupported or omitted values use English. */
+        "Accept-Language"?: string;
+      };
+      path: {
+        /** @description A unique value identifying this Webhook. */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedStaticWebhookSubscriptionRequest"];
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedStaticWebhookSubscriptionRequest"];
+        "multipart/form-data": components["schemas"]["PatchedStaticWebhookSubscriptionRequest"];
+      };
+    };
+    responses: {
+      /** @description The operation completed successfully. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StaticWebhookSubscription"];
+        };
+      };
+      /** @description The request is malformed or violates a business rule. */
+      400: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description Authentication credentials are missing, expired, or invalid. */
+      401: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The authenticated account cannot perform this operation. */
+      403: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
+            detail?: string;
+            non_field_errors?: string[];
+          } & {
+            [key: string]: string | string[];
+          };
+        };
+      };
+      /** @description The requested resource does not exist in the current account scope. */
+      404: {
+        headers: {
+          "Content-Language": components["headers"]["ContentLanguage"];
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @description Stable machine-readable error code, when available. */
+            code?: string;
             detail?: string;
             non_field_errors?: string[];
           } & {
